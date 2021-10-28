@@ -5,7 +5,7 @@
 
 ![SimplyMeet](SimplyMeet.png)
 
-A community based, private and self hosted platform to meet people, make new friends or to find love. Simple to use, cross-platform, free and open source (**FOSS**), developed by the people, for the people. Start your own instance or join one of the officially listed on [**simplymeet.app**](simplymeet.app).
+A community based, private and self hosted platform to meet people, make new friends or to find love. Simple to use, cross-platform, free and open source (**FOSS**), developed by the people, for the people. Start your own instance or join one of the officially listed on [**simplymeet.app**](https://simplymeet.app/).
 
 ## How it works
 ---
@@ -103,7 +103,7 @@ SimplyMeet is licensed under the [**AGPLv3**](LICENSE) free software license.
 
 ## Joining our list of communities
 ---
-If you want your own community listed on [**simplymeet.app**](simplymeet.app) hop onto our Matrix or Discord server and send me a message with a link to your project, a short description and proof of ownership.
+If you want your own community listed on [**simplymeet.app**](https://simplymeet.app/) hop onto our Matrix or Discord server and send me a message with a link to your project, a short description and proof of ownership.
 
 ## Donate
 ---
