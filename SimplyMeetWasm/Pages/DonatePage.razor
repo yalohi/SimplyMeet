@@ -1,0 +1,59 @@
+@page "/donate"
+@inherits PageBase
+@inject IStringLocalizer<SharedResource> Loc
+
+<SectionCardComponent BackgroundClass="bg-primary">
+	<div class="m-3">
+		<h2 class="text-center mb-3">
+			<strong>@Loc["Donate"]</strong>
+		</h2>
+
+		<div class="bg-secondary rounded p-2 my-2">@Loc["DonateDesc"]</div>
+
+		<hr />
+
+		<div class="bg-primary rounded text-center p-3 my-2">
+			<img class="avatar-tiny" src="/img/xmr.svg" alt="XMR" />
+			<div>@Loc["Monero"]</div>
+		</div>
+
+		<CopyComponent Text="84hvN7KcxxxCXpA8uNLvX3itFYZ2p6TNyDckP23E77FNMLSHcAa4cRH2K1YXnhNi9cc3XBB34nVHVZUVpM9Buu3oRz5A2LE" />
+
+		<div class="bg-secondary text-center rounded p-2 mt-2">
+			<ImageModalComponent
+				Title="@Loc["Monero"]"
+				CssClass="bg-dark cursor-pointer avatar"
+				ImageSrc="/img/xmr-qr.png"
+				Alt="QR" />
+		</div>
+
+		<hr />
+
+		<div class="bg-primary rounded text-center p-3 my-2">
+			<img class="avatar-tiny" src="/img/btc.svg" alt="BTC" />
+			<div>@Loc["Bitcoin"]</div>
+		</div>
+
+		<CopyComponent Text="1Euw6wkvJVRaV44DWwCWvR61Rnwe3gQ26D" />
+
+		<div class="bg-secondary text-center rounded p-2 mt-2">
+			<ImageModalComponent
+				Title="@Loc["Bitcoin"]"
+				CssClass="bg-dark cursor-pointer avatar"
+				ImageSrc="/img/btc-qr.png"
+				Alt="QR" />
+		</div>
+	</div>
+</SectionCardComponent>
+
+@code
+{
+	//===========================================================================================
+	// Protected Methods
+	//===========================================================================================
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+		AppState.ShowFooter = true;
+	}
+}

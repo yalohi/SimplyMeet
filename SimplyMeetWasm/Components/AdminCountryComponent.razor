@@ -1,0 +1,73 @@
+@inject IStringLocalizer<SharedResource> Loc
+
+<label class="mt-2 w-100" for="">
+	<div class="mb-1">@Loc["Country"]</div>
+	<div class="d-flex mt-2">
+		<select class="form-select flex-grow-1 bg-secondary text-white" @bind="_SelectedName">
+			<option value="" disabled selected>@Loc["SelectCountry"]</option>
+			@ChildContent
+		</select>
+
+		<button type="button" class="btn btn-danger border-0 ms-2" @onclick="() => RemoveClick.InvokeAsync(_SelectedName)" disabled="@String.IsNullOrEmpty(_SelectedName)">
+			<i class="fas fa-minus"></i>
+		</button>
+	</div>
+	<div class="d-flex mt-2">
+		<select class="form-select bg-secondary text-white" @bind="_NewRegionId">
+			<option value="-1" disabled selected>@Loc["SelectRegion"]</option>
+			@RegionsContent
+		</select>
+
+		<input
+			type="text"
+			class="form-control bg-secondary text-white ms-2"
+			placeholder="@Loc["Icon"]"
+			maxlength="@ProfileDataConstants.MAX_ICON_LENGTH"
+			autocomplete="off"
+			autocorrect="off"
+			autocapitalize="off"
+			spellcheck="false"
+			@bind="_NewIcon"
+			@bind:event="oninput" />
+
+		<input
+			type="text"
+			class="form-control flex-grow-1 bg-secondary text-white ms-2"
+			placeholder="@Loc["NewCountry"]"
+			maxlength="@ProfileDataConstants.MAX_COUNTRY_LENGTH"
+			autocomplete="off"
+			autocorrect="off"
+			spellcheck="false"
+			@bind="_NewName"
+			@bind:event="oninput" />
+
+		<button type="button" class="btn btn-success border-0 ms-2" @onclick="() => AddClick.InvokeAsync((_NewName, _NewIcon, _NewRegionId))" disabled="@IsAddDisabled">
+			<i class="fas fa-plus"></i>
+		</button>
+	</div>
+</label>
+
+@code
+{
+	//===========================================================================================
+	// Global Variables
+	//===========================================================================================
+	#region Properties
+	[Parameter]
+	public RenderFragment ChildContent { get; set; }
+	[Parameter]
+	public RenderFragment RegionsContent { get; set; }
+	[Parameter]
+	public EventCallback<(String, String, Int32)> AddClick { get; set; }
+	[Parameter]
+	public EventCallback<String> RemoveClick { get; set; }
+
+	private Boolean IsAddDisabled => _NewRegionId == -1 || String.IsNullOrEmpty(_NewIcon) || String.IsNullOrEmpty(_NewName);
+	#endregion
+	#region Fields
+	private String _SelectedName = String.Empty;
+	private String _NewName = String.Empty;
+	private String _NewIcon = String.Empty;
+	private Int32 _NewRegionId = -1;
+	#endregion
+}

@@ -1,0 +1,300 @@
+@page "/match/chat"
+@inherits PageBase
+@implements IDisposable
+@inject IStringLocalizer<SharedResource> Loc
+@inject AccountService AccountService
+@inject HttpService HttpService
+@inject NavigationService NavigationService
+@inject ProfileService ProfileService
+
+<div class="d-flex flex-column h-100">
+	@if (MainHubService.FirstMatchUser == null)
+	{
+		<ErrorComponent />
+	}
+
+	else
+	{
+		@* @ref="_CompactProfileComponent" *@
+		<ProfileCompactComponent
+			CompactProfile=@MainHubService.FirstMatchUser.CompactProfile
+			CssClass="bg-secondary border-0 rounded-0 p-1 mb-2"
+			ActiveCssClass="bg-primary border-0 rounded-0 p-1 mb-2"
+			ChildCssClass="overflow-auto"
+			ProfileCssClass="border-0 mx-2"
+			ShowNavBarButton=true
+			ShowReportButton=true
+			ShowUnmatchButton=true
+			ProfileClick="OnProfileClick"
+			NavBarClick="OnNavBarClick">
+			@if (_ShowProfile)
+			{
+				<div class="row gx-0 m-1">
+					<div class="col bg-success text-center rounded p-2 m-1">
+						<strong>@Loc["You"]</strong>
+						<CopyComponent Text="@_YourPublicKey" />
+					</div>
+					<div class="col bg-warning text-center rounded p-2 m-1">
+						<strong>@Loc["Them"]</strong>
+						<CopyComponent Text="@_TheirPublicKey" />
+					</div>
+				</div>
+			}
+		</ProfileCompactComponent>
+
+		@* @if (_CompactProfileComponent != null && !_CompactProfileComponent.IsActive) *@
+		@if (!_ShowProfile)
+		{
+			<div id="chat" class="flex-grow-1 overflow-auto px-2 h-100" @onscroll="OnChatScroll">
+				@if (_MessageBlockList == null || MainHubService.FirstMatchUserState.IsLoadingPreviousMessages)
+				{
+					<SpinnerComponent />
+				}
+
+				@if (_MessageBlockList != null)
+				{
+					@foreach (var MessageBlock in _MessageBlockList)
+					{
+						var FirstMessage = MessageBlock.MessageList[0];
+						var BackgroundClass = FirstMessage.Sender != null ? (FirstMessage.Sender.PublicId == MainHubService.LocalUser.CompactProfile.PublicId ? "bg-primary" : "bg-secondary") : "bg-dark";
+						var LocalDateTime = FirstMessage.ServerData?.DateTime.ToLocalTime();
+
+						@if (MessageBlock.IsNewDate && LocalDateTime != null)
+						{
+							<div class="vsplit text-muted mb-1">@LocalDateTime.Value.ToShortDateString()</div>
+						}
+
+						<div class="@BackgroundClass rounded mb-1 p-2 w-100">
+							@if (LocalDateTime != null)
+							{
+								<span class="float-end user-select-none">
+									<strong>@LocalDateTime.Value.ToString("HH:mm")</strong>
+								</span>
+							}
+
+							@if (FirstMessage.Sender != null)
+							{
+								<div class="d-flex align-items-center mb-1">
+									<img src="@ProfileService.GetAvatarUrl(FirstMessage.Sender.Avatar)" alt="avatar" class="rounded-circle bg-dark d-block avatar-tiny" />
+									<div class="ps-2">
+										<strong class="text-break">@FirstMessage.Sender.DisplayName</strong>
+									</div>
+								</div>
+							}
+
+							@foreach (var Message in MessageBlock.MessageList)
+							{
+								LocalDateTime = Message.ServerData?.DateTime.ToLocalTime();
+
+								<div class="@BackgroundClass message">
+									@if (Message != FirstMessage && LocalDateTime != null)
+									{
+										<span class="float-end user-select-none">
+											<strong>@LocalDateTime.Value.ToString("HH:mm")</strong>
+										</span>
+									}
+
+									<span class="white-space-pre-line text-break">@(new MarkupString(Message.ClientData?.Message ?? Loc["DecryptFailed"]))</span>
+								</div>
+							}
+						</div>
+					}
+				}
+
+				@if (((_MessageBlockList != null && _MessageBlockList.Count > 0) || !MainHubService.FirstMatchUserState.IsLoadingPreviousMessages) && MainHubService.FirstMatchUserState.IsLoadingFollowingMessages)
+				{
+					<SpinnerComponent />
+				}
+			</div>
+
+			<div class="input-group mt-1">
+				<textarea contenteditable class="form-control bg-dark text-white border-0 rounded-0 px-1 py-0" placeholder="@Loc["SendMessage"]" maxlength="@MainHubConstants.CHAT_MAX_MESSAGE_LENGTH" @bind="_Message" @bind:event="oninput" @onkeypress="OnMessageKeyDown" />
+				<button type="button" class="btn btn-success border-0 rounded-0 px-4" @onclick="OnSendClick">
+					<i class="fas fa-chevron-right fa-2x"></i>
+				</button>
+			</div>
+		}
+	}
+</div>
+
+@code
+{
+	//===========================================================================================
+	// Global Variables
+	//===========================================================================================
+	#region Const Fields
+	private const String CHAT_ID = "chat";
+	#endregion
+	#region Fields
+	@* private ProfileCompactComponent _CompactProfileComponent; *@
+
+	private List<MessageBlockModel> _MessageBlockList;
+	private String _Message;
+	private String _YourPublicKey;
+	private String _TheirPublicKey;
+	private Boolean _NotificationsPermitted;
+	private Boolean _ShowProfile;
+	#endregion
+
+	//===========================================================================================
+	// Public Methods
+	//===========================================================================================
+	public void Dispose()
+	{
+		MainHubService.UserUpdate -= OnUserUpdate;
+		MainHubService.ChatUpdate -= OnChatUpdate;
+		MainHubService.ChatLoad -= OnChatLoad;
+	}
+
+	//===========================================================================================
+	// Protected Methods
+	//===========================================================================================
+	protected override async Task OnInitializedAsync()
+	{
+		if (MainHubService.FirstMatchUser == null)
+		{
+			NavigationService.NavigateTo(NavigationConstants.NAV_MATCH);
+			return;
+		}
+
+		await base.OnInitializedAsync();
+		AppState.ShowNavBar = false;
+
+		_YourPublicKey = Convert.ToBase64String(await AccountService.GetLocalPublicKeyAsync());
+		_TheirPublicKey = Convert.ToBase64String(MainHubService.FirstMatchUser.PublicKey);
+
+		try { _NotificationsPermitted = await JS.InvokeAsync<Boolean>(JSHelperConstants.REQUEST_NOTIFICATION_PERMISSION); }
+		catch (JSException Ex) { Console.WriteLine(Ex.ToString()); }
+
+		MainHubService.UserUpdate += OnUserUpdate;
+		MainHubService.ChatUpdate += OnChatUpdate;
+		MainHubService.ChatLoad += OnChatLoad;
+
+		await MainHubService.RequestChatHistoryAsync(MainHubService.FirstMatchUser.MatchId, false);
+		UpdateMessageBlockList();
+
+		try { await JS.InvokeVoidAsync(JSHelperConstants.SCROLL_ELEMENT_TO_BOTTOM, CHAT_ID); }
+		catch (JSException) { }
+
+		MainHubService.ResetUnreadMessageCount(MainHubService.FirstMatchUserState);
+	}
+
+	//===========================================================================================
+	// Private Methods
+	//===========================================================================================
+	private void OnProfileClick(ProfileCompactComponent InCompactProfile)
+	{
+		_ShowProfile = !_ShowProfile;
+	}
+	private async Task OnSendClick()
+	{
+		if (MainHubService.FirstMatchUser != null && !String.IsNullOrEmpty(_Message))
+		{
+			await MainHubService.SendMessageAsync(MainHubService.FirstMatchUser.MatchId, _Message);
+			_Message = String.Empty;
+		}
+	}
+	private async Task OnChatScroll()
+	{
+		try
+		{
+			var ScrollTop = await JS.InvokeAsync<Int32>(JSHelperConstants.GET_ELEMENT_SCROLL_TOP, CHAT_ID);
+			if (ScrollTop <= 0) await MainHubService.RequestChatHistoryAsync(MainHubService.FirstMatchUser.MatchId, false);
+		}
+
+		catch (JSException) { }
+	}
+	private async Task OnMessageKeyDown(KeyboardEventArgs InArgs)
+	{
+		if (InArgs.CtrlKey && (InArgs.Code == KeyCodeConstants.ENTER || InArgs.Code == KeyCodeConstants.NUMPAD_ENTER))
+			await OnSendClick();
+	}
+
+	private void OnNavBarClick()
+	{
+		AppState.ShowNavBar = !AppState.ShowNavBar;
+	}
+	private void OnUserUpdate(Object InSender, EventArgs InArgs)
+	{
+		UpdateMessageBlockList();
+		StateHasChanged();
+	}
+	private async void OnChatUpdate(Object InSender, EventArgs InArgs)
+	{
+		var LastScrollTop = 0;
+		var LastScrollMax = 0;
+
+		try
+		{
+			LastScrollTop = await JS.InvokeAsync<Int32>(JSHelperConstants.GET_ELEMENT_SCROLL_TOP, CHAT_ID);
+			LastScrollMax = await JS.InvokeAsync<Int32>(JSHelperConstants.GET_ELEMENT_SCROLL_MAX, CHAT_ID);
+		}
+
+		catch (JSException) { }
+
+		var PreviousFirstMessageId = GetFirstMessageId();
+
+		UpdateMessageBlockList();
+		if (!_ShowProfile) StateHasChanged();
+
+		var FirstMessageId = GetFirstMessageId();
+		var IsHistory = FirstMessageId != PreviousFirstMessageId;
+
+		try
+		{
+			if (LastScrollTop < LastScrollMax)
+			{
+				var ScrollMax = await JS.InvokeAsync<Int32>(JSHelperConstants.GET_ELEMENT_SCROLL_MAX, CHAT_ID);
+				var NewScrollTop = IsHistory ? LastScrollTop + (ScrollMax - LastScrollMax) : LastScrollTop;
+				await JS.InvokeVoidAsync(JSHelperConstants.SCROLL_ELEMENT_TO, CHAT_ID, NewScrollTop);
+			}
+
+			else await JS.InvokeVoidAsync(JSHelperConstants.SCROLL_ELEMENT_TO_BOTTOM, CHAT_ID);
+		}
+
+		catch (JSException) { }
+	}
+	private void OnChatLoad(Object InSender, EventArgs InArgs)
+	{
+		StateHasChanged();
+	}
+
+	private Int32 GetFirstMessageId()
+	{
+		return _MessageBlockList != null && _MessageBlockList.Count > 0 ? _MessageBlockList[0].MessageList[0].Id : -1;
+	}
+	private void UpdateMessageBlockList()
+	{
+		_MessageBlockList = new List<MessageBlockModel>();
+		var MessageList = MainHubService.GetMessageListReadOnly(MainHubService.FirstMatchUser.MatchId);
+		if (MessageList == null) return;
+
+		DateTime? LastLocalDateTime = null;
+		ProfileCompactModel LastSender = null;
+		var TempMessageList = new List<DecryptedMessageModel>();
+		var IsBlockNewDate = false;
+
+		foreach (var Message in MessageList)
+		{
+			var LocalDateTime = Message.ServerData?.DateTime.ToLocalTime();
+			var IsNewDate = LastLocalDateTime == null || LocalDateTime == null || LastLocalDateTime.Value.Date != LocalDateTime.Value.Date;
+			var IsNewBlock = IsNewDate || Message.Sender != LastSender;
+
+			LastLocalDateTime = LocalDateTime;
+			LastSender = Message.Sender;
+
+			if (IsNewBlock && TempMessageList.Count > 0)
+			{
+				_MessageBlockList.Add(new MessageBlockModel { MessageList = TempMessageList, IsNewDate = IsBlockNewDate });
+				TempMessageList = new List<DecryptedMessageModel>();
+				IsBlockNewDate = false;
+			}
+
+			if (IsNewDate) IsBlockNewDate = true;
+			TempMessageList.Add(Message);
+		}
+
+		if (TempMessageList.Count > 0) _MessageBlockList.Add(new MessageBlockModel { MessageList = TempMessageList, IsNewDate = IsBlockNewDate });
+		if (!_ShowProfile) StateHasChanged();
+	}
+}

@@ -1,0 +1,143 @@
+@page "/privacy"
+@inherits PageBase
+@inject IStringLocalizer<SharedResource> Loc
+
+<SectionCardComponent BackgroundClass="bg-primary">
+	<div class="mx-3">
+		<h2 class="text-center my-3">
+			<strong>@Loc["PP_PrivacyPolicy"]</strong>
+		</h2>
+
+		<p class="bg-success text-center rounded p-2">@Loc["PP_LastUpdate"]: @(new DateTime(2021, 10, 12).ToShortDateString())</p>
+		<p class="bg-secondary rounded p-2">@Loc["PP_Description"]</p>
+
+		<h4 class="text-center my-2">
+			<strong>@Loc["PP_Cookies"]</strong>
+		</h4>
+
+		<p class="bg-secondary text-center rounded p-2">@Loc["PP_None"]</p>
+
+		<h4 class="text-center my-2">
+			<strong>@Loc["PP_LocalStorage"]</strong>
+		</h4>
+
+		<div class="table-responsive">
+			<table class="table table-bordered table-hover">
+				<thead class="table-primary">
+					<tr>
+						<th scope="col">@Loc["PP_Name"]</th>
+						<th scope="col">@Loc["PP_Until"]</th>
+						<th scope="col">@Loc["PP_Where"]</th>
+						<th scope="col">@Loc["PP_Why"]</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>@Loc["PP_LoginToken"]</td>
+						<td>@Loc["PP_Logout"]<br />@Loc["PP_AccountDeletion"]</td>
+						<td>@Loc["PP_App"]<br />@Loc["PP_Server"]</td>
+						<td>@Loc["PP_LoginTokenDesc"]</td>
+					</tr>
+
+					<tr>
+						<td>@Loc["PP_PrivateKey"]</td>
+						<td>@Loc["PP_Logout"]<br />@Loc["PP_AccountDeletion"]</td>
+						<td>@Loc["PP_App"]</td>
+						<td>@Loc["PP_PrivateKeyDesc"]</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<h4 class="text-center my-2">
+			<strong>@Loc["PP_ServerDatabase"]</strong>
+		</h4>
+
+		<div class="table-responsive">
+			<table class="table table-bordered table-hover">
+				<thead class="table-primary">
+					<tr>
+						<th scope="col">@Loc["PP_Name"]</th>
+						<th scope="col">@Loc["PP_Until"]</th>
+						<th scope="col">@Loc["PP_Where"]</th>
+						<th scope="col">@Loc["PP_Why"]</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>@Loc["PP_PublicId"]</td>
+						<td>@Loc["PP_AccountDeletion"]</td>
+						<td>@Loc["PP_Server"]<br />@Loc["PP_Public"]</td>
+						<td>@Loc["PP_PublicIdComment"]</td>
+					</tr>
+					<tr>
+						<td>@Loc["PP_PublicKey"]</td>
+						<td>@Loc["PP_AccountDeletion"]</td>
+						<td>@Loc["PP_Server"]<br />@Loc["PP_Match"]</td>
+						<td>@Loc["PP_PublicKeyComment"]</td>
+					</tr>
+					<tr>
+						<td>@Loc["PP_Creation"]</td>
+						<td>@Loc["PP_AccountDeletion"]</td>
+						<td>@Loc["PP_Server"]</td>
+						<td>@Loc["PP_CreationComment"]</td>
+					</tr>
+					<tr>
+						<td>@Loc["PP_LastLogin"]</td>
+						<td>@Loc["PP_AccountDeletion"]</td>
+						<td>@Loc["PP_Server"]</td>
+						<td>@Loc["PP_LastLoginComment"]</td>
+					</tr>
+					<tr>
+						<td>@Loc["PP_ProfileData"]</td>
+						<td>@Loc["PP_UserChange"]<br />@Loc["PP_AccountDeletion"]</td>
+						<td>@Loc["PP_Server"]<br />@Loc["PP_Public"]</td>
+						<td>@Loc["PP_ProfileDataComment"]</td>
+					</tr>
+					<tr>
+						<td>@Loc["PP_FilterData"]</td>
+						<td>@Loc["PP_UserChange"]<br />@Loc["PP_AccountDeletion"]</td>
+						<td>@Loc["PP_Server"]</td>
+						<td>@Loc["PP_FilterDataComment"]</td>
+					</tr>
+					<tr>
+						<td>@Loc["PP_MatchData"]</td>
+						<td>@Loc["PP_Unmatch"]<br />@Loc["PP_AccountDeletion"]</td>
+						<td>@Loc["PP_Server"]</td>
+						<td>@Loc["PP_MatchDataComment"]</td>
+					</tr>
+					<tr>
+						<td>@Loc["PP_MatchChoiceData"]</td>
+						<td>@Loc["PP_AccountDeletion"]</td>
+						<td>@Loc["PP_Server"]</td>
+						<td>@Loc["PP_MatchChoiceDataComment"]</td>
+					</tr>
+					<tr>
+						<td>@Loc["PP_ReportData"]</td>
+						<td>@Loc["PP_AccountDeletion"]</td>
+						<td>@Loc["PP_Server"]</td>
+						<td>@Loc["PP_ReportDataComment"]</td>
+					</tr>
+					<tr>
+						<td>@Loc["PP_Messages"]</td>
+						<td>@Loc["PP_Unmatch"]<br />@Loc["PP_AccountDeletion"]</td>
+						<td>@Loc["PP_Server"]<br />@Loc["PP_Match"]</td>
+						<td>@Loc["PP_MessagesComment"]</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</SectionCardComponent>
+
+@code
+{
+	//===========================================================================================
+	// Protected Methods
+	//===========================================================================================
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+		AppState.ShowFooter = true;
+	}
+}

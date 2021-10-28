@@ -1,0 +1,101 @@
+@inject IStringLocalizer<SharedResource> Loc
+@inject AccountService AccountService
+@inject HttpService HttpService
+@inject NotificationService NotificationService
+
+@if (_IsRequesting)
+{
+	<SpinnerComponent />
+}
+
+else if (_GetResponse == null || _GetResponse.Error != null)
+{
+	<ErrorComponent />
+}
+
+else if (_GetResponse.CompactProfiles == null || _GetResponse.CompactProfiles.Count() <= 0)
+{
+	<EmptyComponent />
+}
+
+else
+{
+	<div class="card-body">
+		<PaginationComponent
+			PageLink=@PageLink
+			PageIndex=@PageIndex
+			MaxPageButtonRange=2
+			ItemsPerPage=@ApiRequestConstants.MATCH_GET_CHOICES_LOAD_COUNT
+			ItemCount=@_GetResponse.TotalProfiles
+			ShowStartEndButtons=true />
+
+		@foreach (var CompactProfile in _GetResponse.CompactProfiles)
+		{
+			<ProfileCompactComponent
+				CompactProfile=@CompactProfile
+				CssClass="bg-secondary border-0 rounded p-3 my-1"
+				ActiveCssClass="bg-primary border-0 rounded p-3 my-1"
+				ProfileCssClass="border-0 my-1"
+				ShowReportButton=true
+				ShowRateButtons=true
+				ProfileClick="OnProfileClick"
+				RateClick="@GetChoicesAsync" />
+		}
+	</div>
+}
+
+@code
+{
+	//===========================================================================================
+	// Global Variables
+	//===========================================================================================
+	#region Properties
+	[Parameter]
+	public String PageLink { get; set; }
+	[Parameter]
+	public Int32 PageIndex { get; set; }
+	[Parameter]
+	public EMatchChoice Choice { get; set; }
+	#endregion
+	#region Fields
+	private MatchGetChoicesResponseModel _GetResponse;
+	private ProfileCompactComponent _ActiveProfile;
+	private Boolean _IsRequesting;
+	#endregion
+
+	//===========================================================================================
+	// Protected Methods
+	//===========================================================================================
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync();
+		await GetChoicesAsync();
+	}
+
+	//===========================================================================================
+	// Private Methods
+	//===========================================================================================
+	private async Task GetChoicesAsync()
+	{
+		_GetResponse = null;
+
+		var RequestModel = new MatchGetChoicesRequestModel
+		{
+			Offset = ApiRequestConstants.MATCH_GET_CHOICES_LOAD_COUNT * PageIndex,
+			Count = ApiRequestConstants.MATCH_GET_CHOICES_LOAD_COUNT,
+			Choice = Choice,
+		};
+
+		_IsRequesting = true;
+		_GetResponse = await HttpService.PostJsonRequestAsync<MatchGetChoicesRequestModel, MatchGetChoicesResponseModel>(ApiRequestConstants.MATCH_GET_CHOICES, RequestModel);
+		_IsRequesting = false;
+
+		if (!HttpService.ValidateResponse(_GetResponse)) return;
+	}
+
+	private void OnProfileClick(ProfileCompactComponent InCompactProfile)
+	{
+		if (_ActiveProfile != InCompactProfile) _ActiveProfile?.SetIsActive(false);
+		_ActiveProfile = InCompactProfile;
+	}
+}

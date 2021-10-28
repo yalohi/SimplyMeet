@@ -1,0 +1,82 @@
+﻿@page "/"
+@inherits PageBase
+@inject IStringLocalizer<SharedResource> Loc
+@inject HttpService HttpService
+
+@if (_IsRequesting)
+{
+	<SpinnerComponent />
+}
+
+else if (_GetResponse == null || _GetResponse.Error != null)
+{
+	<ErrorComponent />
+}
+
+else
+{
+	<SectionCardComponent BackgroundClass="bg-success">
+		<AccountComponent Title="@Loc["GetStarted"]" />
+	</SectionCardComponent>
+
+	<SectionCardComponent BackgroundClass="bg-dark">
+		<div class="row gx-0 m-1">
+			<div class="col d-flex align-items-center bg-secondary rounded p-3 m-1">
+				<i class="fas fa-user fa-2x text-info me-3"></i>
+				<strong>@_GetResponse.TotalActiveAccounts @Loc["ActiveAccounts"]</strong>
+			</div>
+			<div class="col d-flex align-items-center bg-secondary rounded p-3 m-1">
+				<i class="fas fa-heart fa-2x text-danger me-3"></i>
+				<strong>@_GetResponse.TotalActiveMatches @Loc["ActiveMatches"]</strong>
+			</div>
+		</div>
+	</SectionCardComponent>
+
+	if (_GetResponse.Cards != null)
+	{
+		var CardCounter = 0;
+		@foreach (var Card in _GetResponse.Cards)
+		{
+			var BackgroundClass = (CardCounter++ % 2 == 0) ? "bg-primary" : "bg-dark";
+
+			<SectionTextComponent
+				BackgroundClass="@BackgroundClass"
+				Title="@Card.Title"
+				Text="@Card.Content" />
+		}
+	}
+}
+
+@code
+{
+	//===========================================================================================
+	// Global Variables
+	//===========================================================================================
+	#region Fields
+	private HomeGetDataResponseModel _GetResponse;
+	private Boolean _IsRequesting;
+	#endregion
+
+	//===========================================================================================
+	// Protected Methods
+	//===========================================================================================
+	protected override async Task OnInitializedAsync()
+	{
+		_IsRequesting = true;
+		await base.OnInitializedAsync();
+		await ReloadCardsAsync();
+		AppState.ShowFooter = true;
+	}
+
+	//===========================================================================================
+	// Private Methods
+	//===========================================================================================
+	private async Task ReloadCardsAsync()
+	{
+		var RequestModel = new HomeGetDataRequestModel();
+		_IsRequesting = true;
+		_GetResponse = await HttpService.PostJsonRequestAsync<HomeGetDataRequestModel, HomeGetDataResponseModel>(ApiRequestConstants.HOME_GET_DATA, RequestModel);
+		_IsRequesting = false;
+		if (!HttpService.ValidateResponse(_GetResponse)) return;
+	}
+}

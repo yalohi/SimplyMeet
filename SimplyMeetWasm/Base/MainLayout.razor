@@ -1,0 +1,52 @@
+@implements IDisposable
+@inherits LayoutComponentBase
+@inject AppState AppState
+
+<audio id="@IdConstants.CHAT_AUDIO_ID" src="/sounds/chat.ogg"></audio>
+
+<div class="container-fluid p-0 h-100">
+	<div class="d-flex flex-column h-100">
+		<div class="sticky-top">
+			<NotificationComponent />
+
+			@if (AppState.ShowNavBar)
+			{
+				<NavBarComponent />
+			}
+		</div>
+
+		<div id="@IdConstants.SCROLL_CONTAINER_ID" class="flex-grow-1 overflow-auto">
+			@Body
+		</div>
+
+		@if (AppState.ShowFooter)
+		{
+			<FooterComponent />
+		}
+	</div>
+</div>
+
+@code
+{
+	//===========================================================================================
+	// Public Methods
+	//===========================================================================================
+	public void Dispose()
+	{
+		AppState.PropertyChanged -= OnAppStateChanged;
+	}
+
+	//===========================================================================================
+	// Protected Methods
+	//===========================================================================================
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+		AppState.PropertyChanged += OnAppStateChanged;
+	}
+
+	//===========================================================================================
+	// Private Methods
+	//===========================================================================================
+	private void OnAppStateChanged(Object InSender, EventArgs InArgs) => StateHasChanged();
+}

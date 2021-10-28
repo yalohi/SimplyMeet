@@ -1,0 +1,159 @@
+@page "/admin/profile_data"
+@inherits PageBase
+@inject IStringLocalizer<SharedResource> Loc
+@inject HttpService HttpService
+
+<AdminNavBarComponent />
+
+<SectionCardComponent BackgroundClass="bg-primary">
+	@if (_IsRequesting)
+	{
+		<SpinnerComponent />
+	}
+
+	else if (_GetResponse == null || _GetResponse.Error != null)
+	{
+		<ErrorComponent />
+	}
+
+	else if (_GetResponse.ProfileData != null)
+	{
+		<div class="card-body">
+			@*** PRONOUNS ***@
+			<AdminProfileDataComponent Name="@Loc["Pronouns"]" NewPlaceholder="@Loc["NewPronouns"]" SelectPlaceholder="@Loc["SelectPronouns"]" NewMaxLength="@ProfileDataConstants.MAX_PRONOUNS_LENGTH"
+				AddClick="OnAddPronounsClick" RemoveClick="OnRemovePronounsClick">
+				@foreach (var Pronouns in _GetResponse.ProfileData.AllPronouns) { <option value="@Pronouns.Name">@Loc[Pronouns.Name]</option> }
+			</AdminProfileDataComponent>
+
+			@*** SEX ***@
+			<AdminIconComponent Name="@Loc["Sex"]" NewPlaceholder="@Loc["NewSex"]" SelectPlaceholder="@Loc["SelectSex"]" NewMaxLength="@ProfileDataConstants.MAX_SEX_LENGTH"
+				AddClick="OnAddSexClick" RemoveClick="OnRemoveSexClick">
+				@foreach (var Sex in _GetResponse.ProfileData.AllSexes) { <option value="@Sex.Name">@Loc.GetIconText(Sex)</option> }
+			</AdminIconComponent>
+
+			@*** GENDER ***@
+			<AdminProfileDataComponent Name="@Loc["Gender"]" NewPlaceholder="@Loc["NewGender"]" SelectPlaceholder="@Loc["SelectGender"]" NewMaxLength="@ProfileDataConstants.MAX_GENDER_LENGTH"
+				AddClick="OnAddGenderClick" RemoveClick="OnRemoveGenderClick">
+				@foreach (var Gender in _GetResponse.ProfileData.AllGenders) { <option value="@Gender.Name">@Loc[Gender.Name]</option> }
+			</AdminProfileDataComponent>
+
+			@*** REGION ***@
+			<AdminIconComponent Name="@Loc["Region"]" NewPlaceholder="@Loc["NewRegion"]" SelectPlaceholder="@Loc["SelectRegion"]" NewMaxLength="@ProfileDataConstants.MAX_REGION_LENGTH"
+				AddClick="OnAddRegionClick" RemoveClick="OnRemoveRegionClick">
+				@foreach (var Region in _GetResponse.ProfileData.AllRegions) { <option value="@Region.Name">@Loc.GetIconText(Region)</option> }
+			</AdminIconComponent>
+
+			@*** COUNTRY ***@
+			<AdminCountryComponent AddClick="OnAddCountryClick" RemoveClick="OnRemoveCountryClick">
+				<ChildContent>
+					@foreach (var Country in _GetResponse.ProfileData.AllCountries) { <option value="@Country.Name">@Loc.GetIconText(Country)</option> }
+				</ChildContent>
+				<RegionsContent>
+					@foreach (var Region in _GetResponse.ProfileData.AllRegions.Where(X => X.Id > 0)) { <option value="@Region.Id">@Loc[Region.Name]</option> }
+					@foreach (var Region in _GetResponse.ProfileData.AllRegions.Where(X => X.Id <= 0)) { <option value="@Region.Id" disabled>@Loc[Region.Name]</option> }
+				</RegionsContent>
+			</AdminCountryComponent>
+
+			@*** SEXUALITIES ***@
+			<AdminProfileDataComponent Name="@Loc["Sexuality"]" NewPlaceholder="@Loc["NewSexuality"]" SelectPlaceholder="@Loc["SelectSexuality"]" NewMaxLength="@ProfileDataConstants.MAX_SEXUALITY_LENGTH"
+				AddClick="OnAddSexualityClick" RemoveClick="OnRemoveSexualityClick">
+				@foreach (var Sexuality in _GetResponse.ProfileData.AllSexualities) { <option value="@Sexuality.Name">@Loc[Sexuality.Name]</option> }
+			</AdminProfileDataComponent>
+		</div>
+
+		<div class="card-footer p-3">
+			<SubmitButtonComponent CssClass="btn btn-success border-0 w-100" Text=@Loc["SaveChanges"] IsDisabled=IsSaveDisabled IsSubmitting=_IsSubmitting Click=@OnSaveChangesClick />
+		</div>
+	}
+</SectionCardComponent>
+
+@code
+{
+	//===========================================================================================
+	// Global Variables
+	//===========================================================================================
+	#region Properties
+	public ProfileDataModel Data => _EditRequest.Data;
+	public Boolean IsSaveDisabled => _IsSubmitting || !_DataChanged;
+	#endregion
+	#region Fields
+	private AdminGetProfileDataResponseModel _GetResponse;
+	private AdminEditProfileDataRequestModel _EditRequest;
+	private Boolean _IsRequesting;
+	private Boolean _IsSubmitting;
+	private Boolean _DataChanged;
+	#endregion
+
+	//===========================================================================================
+	// Protected Methods
+	//===========================================================================================
+	protected override async Task OnInitializedAsync()
+	{
+		_IsRequesting = true;
+		await base.OnInitializedAsync();
+		await ReloadProfileDataAsync();
+	}
+
+	//===========================================================================================
+	// Private Methods
+	//===========================================================================================
+	private async Task ReloadProfileDataAsync()
+	{
+		NotificationService.ClearMainNotification();
+
+		var RequestModel = new AdminGetProfileDataRequestModel();
+		_IsRequesting = true;
+		_GetResponse = await HttpService.PostJsonRequestAsync<AdminGetProfileDataRequestModel, AdminGetProfileDataResponseModel>(ApiRequestConstants.ADMIN_GET_PROFILE_DATA, RequestModel);
+		_IsRequesting = false;
+		if (!HttpService.ValidateResponse(_GetResponse)) return;
+
+		_EditRequest = new AdminEditProfileDataRequestModel { Data = _GetResponse.ProfileData };
+
+	}
+	private async Task SaveChangesAsync()
+	{
+		var Response = await HttpService.PostJsonRequestAsync<AdminEditProfileDataRequestModel, AdminEditProfileDataResponseModel>(ApiRequestConstants.ADMIN_EDIT_PROFILE_DATA, _EditRequest);
+		if (!HttpService.ValidateResponse(Response)) return;
+
+		NotificationService.ClearMainNotification();
+		_DataChanged = false;
+	}
+
+	private async Task OnSaveChangesClick()
+	{
+		_IsSubmitting = true;
+		await SaveChangesAsync();
+		_IsSubmitting = false;
+	}
+
+	private void OnAddPronounsClick(String InName) => Data.AllPronouns = AddProfileData(Data.AllPronouns, new PronounsModel { Name = InName });
+	private void OnRemovePronounsClick(String InName) => Data.AllPronouns = RemoveProfileData(Data.AllPronouns, InName);
+	private void OnAddSexClick((String Name, String Icon) InParams) => Data.AllSexes = AddProfileData(Data.AllSexes, new SexModel { Name = InParams.Name, Icon = InParams.Icon });
+	private void OnRemoveSexClick(String InName) => Data.AllSexes = RemoveProfileData(Data.AllSexes, InName);
+	private void OnAddGenderClick(String InName) => Data.AllGenders = AddProfileData(Data.AllGenders, new GenderModel { Name = InName });
+	private void OnRemoveGenderClick(String InName) => Data.AllGenders = RemoveProfileData(Data.AllGenders, InName);
+	private void OnAddRegionClick((String Name, String Icon) InParams) => Data.AllRegions = AddProfileData(Data.AllRegions, new RegionModel { Name = InParams.Name, Icon = InParams.Icon });
+	private void OnRemoveRegionClick(String InName) => Data.AllRegions = RemoveProfileData(Data.AllRegions, InName);
+	private void OnAddCountryClick((String Name, String Icon, Int32 RegionId) InParams) => Data.AllCountries = AddProfileData(Data.AllCountries, new CountryModel { Name = InParams.Name, Icon = InParams.Icon, RegionId = InParams.RegionId });
+	private void OnRemoveCountryClick(String InName) => Data.AllCountries = RemoveProfileData(Data.AllCountries, InName);
+	private void OnAddSexualityClick(String InName) => Data.AllSexualities = AddProfileData(Data.AllSexualities, new SexualityModel { Name = InName });
+	private void OnRemoveSexualityClick(String InName) => Data.AllSexualities = RemoveProfileData(Data.AllSexualities, InName);
+
+	private IEnumerable<T> AddProfileData<T>(IEnumerable<T> InItems, T InModel) where T : ProfileDataBaseModel
+	{
+		NotificationService.ClearMainNotification();
+		if (InItems.Any(X => X.Name == InModel.Name))
+		{
+			NotificationService.SetMainNotification(@Loc["NameExists"], ENotificationType.Warning);
+			return InItems;
+		}
+
+		_DataChanged = true;
+		return InItems.Append(InModel);
+	}
+	private IEnumerable<T> RemoveProfileData<T>(IEnumerable<T> InItems, String InName) where T : ProfileDataBaseModel
+	{
+		_DataChanged = true;
+		return InItems.Where(X => X.Name != InName);
+	}
+}

@@ -1,0 +1,127 @@
+html, body
+{
+	height: 100%;
+	font-family: 'Roboto';
+}
+
+textarea
+{
+	resize: none;
+}
+
+.btn-outline-success:hover
+{
+	background-color:gray;
+}
+
+.cursor-pointer
+{
+	cursor: pointer;
+}
+
+.white-space-pre-line
+{
+	white-space: pre-line;
+}
+
+.message:hover
+{
+	filter: brightness(80%);
+}
+
+.vsplit
+{
+	display: flex;
+	flex-direction: row;
+}
+
+.vsplit:before,.vsplit:after
+{
+	content: "";
+	flex: 1 1;
+	border-bottom: 1px solid;
+	margin: auto;
+}
+
+.vsplit:before
+{
+	margin-right: 10px
+}
+
+.vsplit:after
+{
+	margin-left: 10px
+}
+
+a.nav
+{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+a.disabled
+{
+	pointer-events: none;
+}
+
+span.notify-bubble
+{
+	position: absolute;
+	-webkit-transform: translateX(-50%);
+	transform: translateX(-50%);
+}
+
+i.large
+{
+	font-size: 10rem;
+}
+
+img.large
+{
+	max-width: 100%;
+	object-fit: scale-down;
+}
+
+img.avatar
+{
+	object-fit: cover;
+	width: 128px;
+	height: 128px;
+	line-height: 128px;
+	text-align: center;
+}
+
+img.avatar-small
+{
+	object-fit: cover;
+	width: 64px;
+	height: 64px;
+	line-height: 64px;
+	text-align: center;
+}
+
+img.avatar-tiny
+{
+	object-fit: cover;
+	width: 32px;
+	height: 32px;
+	line-height: 32px;
+	text-align: center;
+}
+
+input::-webkit-outer-spin-button,input::-webkit-inner-spin-button
+{
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+input[type=number]
+{
+	-moz-appearance: textfield;
+}
+
+#blazor-error-ui
+{
+	display: none;
+}

@@ -1,0 +1,41 @@
+@inject IJSRuntime JS
+@inject IStringLocalizer<SharedResource> Loc
+@inject NotificationService NotificationService
+
+<div class="input-group mt-2">
+	<input
+		type="text"
+		class="form-control bg-secondary text-white border-0"
+		readonly=""
+		value="@Text"
+		autocomplete="off"
+		autocorrect="off"
+		autocapitalize="off"
+		spellcheck="false" />
+
+	<button class="btn btn-primary border-0" type="button" @onclick="OnCopyClick">
+		<i class="fas fa-copy"></i>
+	</button>
+</div>
+
+@code
+{
+	//===========================================================================================
+	// Global Variables
+	//===========================================================================================
+	#region Properties
+	[Parameter]
+	public String Text { get; set; }
+	#endregion
+
+	//===========================================================================================
+	// Private Methods
+	//===========================================================================================
+	private async Task OnCopyClick()
+	{
+		if (String.IsNullOrEmpty(Text)) return;
+
+		await JS.InvokeVoidAsync(JSHelperConstants.WRITE_CLIPBOARD, Text);
+		NotificationService.SetMainNotification(Loc["Copied"], ENotificationType.Info);
+	}
+}

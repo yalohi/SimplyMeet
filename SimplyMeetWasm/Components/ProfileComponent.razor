@@ -1,0 +1,366 @@
+@inject IStringLocalizer<SharedResource> Loc
+@inject AccountService AccountService
+@inject HttpService HttpService
+@inject MainHubService MainHubService
+@inject NotificationService NotificationService
+@inject ProfileService ProfileService
+
+<div class="card @CssClass">
+	@if (_IsRequesting)
+	{
+		<SpinnerComponent />
+	}
+
+	else if (FullProfile != null)
+	{
+		<div class="card-header bg-secondary">
+			<div>
+				@if (_Region != null)
+				{
+					<div class="float-start me-1">@_Region.Icon</div>
+				}
+
+				@if (_Country != null)
+				{
+					<div class="float-start me-1">@_Country.Icon</div>
+				}
+
+				@if (_Sex != null)
+				{
+					<div class="float-start me-1">@_Sex.Icon</div>
+				}
+
+				@if (FullProfile.AccountFlags.HasFlag(EAccountFlags.Active))
+				{
+					<div class="float-end">
+						<span class="badge rounded-pill bg-success ms-1">@Loc["Active"]</span>
+					</div>
+				}
+
+				@if (FullProfile.AccountFlags.HasFlag(EAccountFlags.New))
+				{
+					<div class="float-end">
+						<span class="badge rounded-pill bg-info ms-1">@Loc["New"]</span>
+					</div>
+				}
+			</div>
+
+			<br />
+
+			<ImageModalComponent
+				Title="@FullProfile.Profile.DisplayName"
+				CssClass="bg-dark rounded-circle d-block mx-auto my-3 cursor-pointer avatar"
+				ImageSrc="@(ProfileService.GetAvatarUrl(FullProfile.Profile.Avatar))"
+				Alt="avatar" />
+
+			<h4 class="text-center m-0">
+				<strong>@FullProfile.Profile.DisplayName</strong>
+			</h4>
+
+			<div class="text-center">
+				<span class="badge rounded-pill bg-dark mt-1">@FullProfile.Account.PublicId</span>
+			</div>
+		</div>
+
+		<div class="card-body">
+			@if (!_ShowDetails)
+			{
+				<div class="text-center">
+					<strong>@Loc["NoDetailedProfileData"]</strong>
+				</div>
+			}
+
+			else
+			{
+				@*** BIRTH DATE ***@
+				@if (FullProfile.Profile.BirthDate != null)
+				{
+					<span class="badge bg-secondary text-center w-100 mt-1">@Loc["Age"]</span>
+					<div class="py-1 text-center">@FullProfile.Profile.BirthDate.Value.GetAge()</div>
+				}
+
+				@*** PRONOUNS ***@
+				@if (_Pronouns != null)
+				{
+					<span class="badge bg-secondary text-center w-100 mt-1">@Loc["Pronouns"]</span>
+					<div class="py-1 text-center">@Loc[_Pronouns.Name]</div>
+				}
+
+				@*** SEX ***@
+				@if (_Sex != null)
+				{
+					<span class="badge bg-secondary text-center w-100 mt-1">@Loc["Sex"]</span>
+					<div class="py-1 text-center">@Loc.GetIconText(_Sex)</div>
+				}
+
+				@*** GENDER ***@
+				@if (_Gender != null)
+				{
+					<span class="badge bg-secondary text-center w-100 mt-1">@Loc["Gender"]</span>
+					<div class="py-1 text-center">@Loc[_Gender.Name]</div>
+				}
+
+				@*** REGION ***@
+				@if (_Region != null)
+				{
+					<span class="badge bg-secondary text-center w-100 mt-1">@Loc["Region"]</span>
+					<div class="py-1 text-center">@Loc.GetIconText(_Region)</div>
+				}
+
+				@*** COUNTRY ***@
+				@if (_Country != null)
+				{
+					<span class="badge bg-secondary text-center w-100 mt-1">@Loc["Country"]</span>
+					<div class="py-1 text-center">@Loc.GetIconText(_Country)</div>
+				}
+
+				@*** TAGS ***@
+				@if (FullProfile.Tags.Any())
+				{
+					<span class="badge bg-secondary text-center w-100 mt-1">@Loc["Tags"]</span>
+					@foreach (var Tag in FullProfile.Tags)
+					{
+						<span class="badge bg-primary me-1 mt-1 p-2">@Tag.Name</span>
+					}
+				}
+
+				@*** SEXUALITIES ***@
+				@if (FullProfile.Sexualities.Any())
+				{
+					<span class="badge bg-secondary text-center w-100 mt-1">@Loc["Sexualities"]</span>
+					@foreach (var Sexuality in FullProfile.Sexualities)
+					{
+						<span class="badge bg-primary me-1 mt-1 p-2">@Sexuality.Name</span>
+					}
+				}
+
+				@*** LOOKING FOR ***@
+				if (FullProfile.Profile.LookingFor != ELookingFor.NotSpecified)
+				{
+					<span class="badge bg-secondary text-center w-100 mt-1">@Loc["LookingFor"]</span>
+
+					var LookingForValues = Enum.GetValues<ELookingFor>();
+					<div class="d-flex">
+						@foreach (var Value in LookingForValues)
+						{
+							@if (Value <= 0 || !FullProfile.Profile.LookingFor.HasFlag(Value)) continue;
+
+							var EnumValue = (ELookingFor)Value;
+							var EnumText = EnumValue.ToString();
+
+							<span class="badge bg-primary text-center me-1 mt-1 p-2 w-100">
+								<i class="@ProfileService.GetLookingForIconClasses(EnumValue)"></i>
+								<strong>@Loc[EnumText]</strong>
+							</span>
+						}
+					</div>
+				}
+
+				@*** ABOUT ME ***@
+				@if (!String.IsNullOrEmpty(FullProfile.Profile.AboutMe))
+				{
+					<span class="badge bg-secondary text-center w-100 mt-1">@Loc["AboutMe"]</span>
+					<div class="py-1 white-space-pre-line">@FullProfile.Profile.AboutMe</div>
+				}
+
+				@*** ABOUT YOU ***@
+				@if (!String.IsNullOrEmpty(FullProfile.Profile.AboutYou))
+				{
+					<span class="badge bg-secondary text-center w-100 mt-1">@Loc["AboutYou"]</span>
+					<div class="py-1 white-space-pre-line">@FullProfile.Profile.AboutYou</div>
+				}
+			}
+		</div>
+
+		@if (ShowReportButton || ShowSuspendButton || ShowUnmatchButton)
+		{
+			<div class="card-body pt-0">
+				@if (ShowReportButton)
+				{
+					<ConfirmModalComponent
+						@ref="_ReportConfirmModal"
+						Title="@Loc["ReportConfirmTitle"]"
+						Content="@Loc["ReportConfirmContent"]"
+						ConfirmText="@Loc["Report"]"
+						CloseText="@Loc["Close"]"
+						ConfirmClass="btn-info"
+						OnConfirm="OnReportClick" />
+
+					<button type="button" class="btn btn-info border-0 my-1 w-100" @onclick="() => _ReportConfirmModal?.Open()" disabled="@FullProfile.Reported">@Loc["Report"]</button>
+				}
+
+				@if (ShowSuspendButton)
+				{
+					<ConfirmModalComponent
+						@ref="_SuspendAccountConfirmModal"
+						Title="@Loc["SuspendAccountConfirmTitle"]"
+						Content="@Loc["SuspendAccountConfirmContent"]"
+						ConfirmText="@Loc["SuspendAccount"]"
+						CloseText="@Loc["Close"]"
+						ConfirmClass="btn-danger"
+						OnConfirm="OnSuspendAccountClick" />
+
+					<button type="button" class="btn btn-danger border-0 my-1 w-100" @onclick="() => _SuspendAccountConfirmModal?.Open()">@Loc["SuspendAccount"]</button>
+				}
+
+				@if (ShowUnmatchButton)
+				{
+					<ConfirmModalComponent
+						@ref="_UnmatchConfirmModal"
+						Title="@Loc["UnmatchConfirmTitle"]"
+						Content="@Loc["UnmatchConfirmContent"]"
+						ConfirmText="@Loc["Unmatch"]"
+						CloseText="@Loc["Close"]"
+						ConfirmClass="btn-danger"
+						OnConfirm="OnUnmatchClick" />
+
+					<button type="button" class="btn btn-danger border-0 my-1 w-100" @onclick="() => _UnmatchConfirmModal?.Open()">@Loc["Unmatch"]</button>
+				}
+			</div>
+		}
+
+		@if (ShowRateButtons)
+		{
+			<div class="card-footer p-3">
+				<button type="button" class="btn btn-success border-0 float-start" @onclick="OnLikeClick" disabled="@(Choice == EMatchChoice.Like)">
+					<i class="fas fa-plus fa-3x"></i>
+				</button>
+
+				<button type="button" class="btn btn-danger border-0 float-end" @onclick="OnDislikeClick" disabled="@(Choice == EMatchChoice.Dislike)">
+					<i class="fas fa-minus fa-3x"></i>
+				</button>
+			</div>
+		}
+	}
+</div>
+
+@code
+{
+	//===========================================================================================
+	// Global Variables
+	//===========================================================================================
+	#region Properties
+	[Parameter]
+	public ProfileFullModel FullProfile { get; set; }
+	[Parameter]
+	public String PublicId { get; set; }
+	[Parameter]
+	public String CssClass { get; set; }
+	[Parameter]
+	public EMatchChoice Choice { get; set; }
+	[Parameter]
+	public Boolean ShowReportButton { get; set; }
+	[Parameter]
+	public Boolean ShowSuspendButton { get; set; }
+	[Parameter]
+	public Boolean ShowUnmatchButton { get; set; }
+	[Parameter]
+	public Boolean ShowRateButtons { get; set; }
+
+	[Parameter]
+	public EventCallback ReportClick { get; set; }
+	[Parameter]
+	public EventCallback SuspendClick { get; set; }
+	[Parameter]
+	public EventCallback RateClick { get; set; }
+	#endregion
+	#region Fields
+	private PronounsModel _Pronouns;
+	private SexModel _Sex;
+	private GenderModel _Gender;
+	private RegionModel _Region;
+	private CountryModel _Country;
+	private Boolean _IsRequesting;
+	private Boolean _ShowDetails;
+
+	private ConfirmModalComponent _ReportConfirmModal;
+	private ConfirmModalComponent _SuspendAccountConfirmModal;
+	private ConfirmModalComponent _UnmatchConfirmModal;
+	#endregion
+
+	//===========================================================================================
+	// Public Methods
+	//===========================================================================================
+	public async Task ReloadAsync()
+	{
+		if (!String.IsNullOrEmpty(PublicId))
+		{
+			_IsRequesting = true;
+			var RequestModel = new ProfileGetRequestModel { AccountPublicId = PublicId };
+			var Response = await HttpService.PostJsonRequestAsync<ProfileGetRequestModel, ProfileGetResponseModel>(ApiRequestConstants.PROFILE_GET, RequestModel);
+			_IsRequesting = false;
+			if (!HttpService.ValidateResponse(Response)) return;
+
+			FullProfile = Response.FullProfile;
+		}
+
+		_Pronouns = FullProfile.Profile.PronounsId != null ? FullProfile.Data.AllPronouns.FirstOrDefault(X => X.Id == FullProfile.Profile.PronounsId) : null;
+		_Sex = FullProfile.Profile.SexId != null ? FullProfile.Data.AllSexes.FirstOrDefault(X => X.Id == FullProfile.Profile.SexId) : null;
+		_Gender = FullProfile.Profile.GenderId != null ? FullProfile.Data.AllGenders.FirstOrDefault(X => X.Id == FullProfile.Profile.GenderId) : null;
+		_Region = FullProfile.Profile.RegionId != null ? FullProfile.Data.AllRegions.FirstOrDefault(X => X.Id == FullProfile.Profile.RegionId) : null;
+		_Country = FullProfile.Profile.CountryId != null ? FullProfile.Data.AllCountries.FirstOrDefault(X => X.Id == FullProfile.Profile.CountryId) : null;
+
+		_ShowDetails =
+			FullProfile.Profile.BirthDate != null ||
+			FullProfile.Profile.PronounsId != null ||
+			FullProfile.Profile.SexId != null ||
+			FullProfile.Profile.GenderId != null ||
+			FullProfile.Profile.RegionId != null ||
+			FullProfile.Profile.CountryId != null ||
+			FullProfile.Tags.Any() ||
+			FullProfile.Sexualities.Any() ||
+			FullProfile.Profile.LookingFor != ELookingFor.NotSpecified ||
+			!String.IsNullOrEmpty(FullProfile.Profile.AboutMe) ||
+			!String.IsNullOrEmpty(FullProfile.Profile.AboutYou);
+	}
+
+	//===========================================================================================
+	// Protected Methods
+	//===========================================================================================
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync();
+		await ReloadAsync();
+	}
+
+	//===========================================================================================
+	// Private Methods
+	//===========================================================================================
+	private async Task OnReportClick()
+	{
+		var ReportReason = FullProfile.ReportReasons.FirstOrDefault();
+		var RequestModel = new ProfileReportRequestModel { AccountPublicId = FullProfile.Account.PublicId, ReportReasonId = ReportReason?.Id ?? -1 };
+		var Response = await HttpService.PostJsonRequestAsync<ProfileReportRequestModel, ProfileReportResponseModel>(ApiRequestConstants.PROFILE_REPORT, RequestModel);
+		HttpService.ValidateResponse(Response);
+
+		@* if (ShowRateButtons && Choice != EMatchChoice.Dislike) await ChooseAsync(EMatchChoice.Dislike); *@
+		await ReportClick.InvokeAsync();
+		await ReloadAsync();
+	}
+	private async Task OnSuspendAccountClick()
+	{
+		var RequestModel = new AdminSuspendAccountRequestModel { AccountPublicId = FullProfile.Account.PublicId };
+		var Response = await HttpService.PostJsonRequestAsync<AdminSuspendAccountRequestModel, AdminSuspendAccountResponseModel>(ApiRequestConstants.ADMIN_SUSPEND_ACCOUNT, RequestModel);
+		HttpService.ValidateResponse(Response);
+
+		await SuspendClick.InvokeAsync();
+	}
+	private async Task OnUnmatchClick()
+	{
+		var RequestModel = new MatchUnmatchRequestModel { MatchId = MainHubService.FirstMatchUser.MatchId };
+		var Response = await HttpService.PostJsonRequestAsync<MatchUnmatchRequestModel, MatchUnmatchResponseModel>(ApiRequestConstants.MATCH_UNMATCH, RequestModel);
+		HttpService.ValidateResponse(Response);
+	}
+	private async Task OnLikeClick() => await ChooseAsync(EMatchChoice.Like);
+	private async Task OnDislikeClick() => await ChooseAsync(EMatchChoice.Dislike);
+
+	private async Task ChooseAsync(EMatchChoice InChoice)
+	{
+		var RequestModel = new MatchChooseRequestModel { PublicId = FullProfile.Account.PublicId, Choice = InChoice };
+		var Response = await HttpService.PostJsonRequestAsync<MatchChooseRequestModel, MatchChooseResponseModel>(ApiRequestConstants.MATCH_CHOOSE, RequestModel);
+		HttpService.ValidateResponse(Response);
+
+		Choice = InChoice;
+		await RateClick.InvokeAsync();
+	}
+}

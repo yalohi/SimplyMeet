@@ -1,0 +1,15 @@
+﻿@page "/admin"
+@inherits PageBase
+@inject NavigationService NavigationService
+
+@code
+{
+	//===========================================================================================
+	// Protected Methods
+	//===========================================================================================
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+		NavigationService.NavigateTo(NavigationConstants.NAV_ADMIN_REPORTED_PROFILES);
+	}
+}

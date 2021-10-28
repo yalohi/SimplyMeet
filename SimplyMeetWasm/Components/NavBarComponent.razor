@@ -1,0 +1,96 @@
+@implements IDisposable
+@inject IStringLocalizer<SharedResource> Loc
+@inject AppState AppState
+@inject AccountService AccountService
+@inject MainHubService MainHubService
+
+<nav class="navbar navbar-expand navbar-dark bg-dark justify-content-center p-0">
+	<div class="justify-content-center">
+		<ul class="navbar-nav me-auto">
+			<li class="nav-item">
+				<NavLink class="@_LinkClasses" href="@NavigationConstants.NAV_HOME" Match="NavLinkMatch.All">
+					<i class="fas fa-home fa-3x"></i>
+					<br />@Loc["Home"]
+				</NavLink>
+			</li>
+
+			<li class="nav-item">
+				<NavLink class="@_LoginLinkClasses" href="@NavigationConstants.NAV_PROFILE" Match="NavLinkMatch.Prefix">
+					<i class="fas fa-user fa-3x"></i>
+					<br />@Loc["Profile"]
+				</NavLink>
+			</li>
+
+			<li class="nav-item">
+				<NavLink class="@_LoginLinkClasses" href="@NavigationConstants.NAV_MATCH" Match="NavLinkMatch.Prefix">
+					<i class="fas fa-heart fa-3x"></i>
+					@if (MainHubService.TotalUnreadMessageCount > 0)
+					{
+						<span class="notify-bubble badge rounded-pill bg-danger">@MainHubService.TotalUnreadMessageCount</span>
+					}
+					<br />@Loc["Match"]
+				</NavLink>
+			</li>
+
+			@if (MainHubService.IsAdmin || MainHubService.IsModerator)
+			{
+				<li class="nav-item">
+					<NavLink class="@_LoginLinkClasses" href="@NavigationConstants.NAV_ADMIN" Match="NavLinkMatch.Prefix">
+						<i class="fas fa-cog fa-3x"></i>
+						<br />@Loc["Admin"]
+					</NavLink>
+				</li>
+			}
+		</ul>
+	</div>
+</nav>
+
+@code
+{
+	//===========================================================================================
+	// Global Variables
+	//===========================================================================================
+	#region Fields
+	private String _LinkClasses;
+	private String _LoginLinkClasses;
+	#endregion
+
+	//===========================================================================================
+	// Public Methods
+	//===========================================================================================
+	public void Dispose()
+	{
+		AccountService.Login -= OnLoginUpdate;
+		AccountService.Logout -= OnLoginUpdate;
+		MainHubService.LocalUserUpdate -= OnLocalUserUpdate;
+		MainHubService.ChatUpdate -= OnChatUpdate;
+	}
+
+	//===========================================================================================
+	// Protected Methods
+	//===========================================================================================
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+		await UpdateBarAsync();
+
+		AccountService.Login += OnLoginUpdate;
+		AccountService.Logout += OnLoginUpdate;
+		MainHubService.LocalUserUpdate += OnLocalUserUpdate;
+		MainHubService.ChatUpdate += OnChatUpdate;
+	}
+
+	//===========================================================================================
+	// Private Methods
+	//===========================================================================================
+	private async void OnLoginUpdate(Object InSender, EventArgs InArgs) => await UpdateBarAsync();
+	private void OnLocalUserUpdate(Object InSender, EventArgs InArgs) => StateHasChanged();
+	private void OnChatUpdate(Object InSender, EventArgs InArgs) => StateHasChanged();
+
+	private async Task UpdateBarAsync()
+	{
+		_LinkClasses = "nav-link text-center px-3";
+		_LoginLinkClasses = await AppState.HasLoginAsync() ? _LinkClasses : $"{_LinkClasses} text-muted disabled";
+		StateHasChanged();
+	}
+}

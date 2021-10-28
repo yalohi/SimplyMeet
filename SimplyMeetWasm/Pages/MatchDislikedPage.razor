@@ -1,0 +1,38 @@
+@page "/match/disliked"
+@page "/match/disliked/{pageindex:int}"
+@inherits PageBase
+@inject NavigationService NavigationService
+
+<MatchNavBarComponent />
+
+<SectionCardComponent BackgroundClass="bg-primary">
+	<MatchChoicesComponent
+		PageLink=@NavigationConstants.NAV_MATCH_DISLIKED
+		PageIndex=@PageIndex
+		Choice=EMatchChoice.Dislike />
+</SectionCardComponent>
+
+@code
+{
+	//===========================================================================================
+	// Global Variables
+	//===========================================================================================
+	#region Properties
+	[Parameter]
+	public Int32 PageIndex { get; set; }
+	#endregion
+
+	//===========================================================================================
+	// Protected Methods
+	//===========================================================================================
+	protected override async Task OnInitializedAsync()
+	{
+		if (MainHubService.FirstMatchUser != null)
+		{
+			NavigationService.NavigateTo(NavigationConstants.NAV_MATCH);
+			return;
+		}
+
+		await base.OnInitializedAsync();
+	}
+}

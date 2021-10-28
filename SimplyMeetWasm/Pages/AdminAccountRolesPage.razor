@@ -1,0 +1,200 @@
+﻿@page "/admin/account_roles"
+@inherits PageBase
+@inject IStringLocalizer<SharedResource> Loc
+@inject HttpService HttpService
+
+<AdminNavBarComponent />
+
+<SectionCardComponent BackgroundClass="bg-primary">
+	@if (_IsRequesting)
+	{
+		<SpinnerComponent />
+	}
+
+	else if (_GetResponse == null || _GetResponse.Error != null)
+	{
+		<ErrorComponent />
+	}
+
+	else if (_GetResponse.Roles != null && _GetResponse.AccountRoles != null)
+	{
+		<div class="card-body">
+			<select class="form-select flex-grow-1 bg-secondary text-white" @bind="_NewRoleId">
+				<option value="-1" disabled selected>@Loc["SelectRole"]</option>
+				@foreach (var Role in _GetResponse.Roles) { <option value="@Role.Id">@Loc[Role.Name]</option> }
+			</select>
+
+			<div class="d-flex mt-2">
+				<input
+					type="text"
+					class="form-control bg-secondary text-white"
+					placeholder="@Loc["PublicId"]"
+					maxlength="@AccountConstants.PUBLIC_ID_LENGTH"
+					autocomplete="off"
+					autocorrect="off"
+					autocapitalize="off"
+					spellcheck="false"
+					@bind="_NewAccountPublicId"
+					@bind:event="oninput" />
+
+				<button type="button" class="btn btn-success border-0 ms-2" @onclick="OnAddAccountRoleClick" disabled="@IsAddDisabled">
+					<i class="fas fa-plus"></i>
+				</button>
+			</div>
+
+			@* MAIN ADMIN PROFILE *@
+			<h4 class="text-center my-2">
+				<strong>@Loc["MainAdmin"]</strong>
+			</h4>
+
+			<ProfileCompactComponent
+				CompactProfile="@_GetResponse.MainAdminCompactProfile"
+				CssClass="bg-secondary border border-success rounded p-3 my-1"
+				ActiveCssClass="bg-primary border border-success rounded p-3 my-1"
+				ProfileCssClass="border-0 my-1" />
+
+			@* ROLE PROFILES *@
+			@foreach (var Role in _GetResponse.Roles)
+			{
+				var AccountRoles = _AccountRoleList.Where(X => X.RoleId == Role.Id);
+				if (AccountRoles.Count() <= 0) continue;
+
+				<h4 class="text-center my-2">
+					<strong>@Loc[Role.Name]</strong>
+				</h4>
+
+				@foreach (var AccountRole in AccountRoles)
+				{
+					var CompactProfile = _GetResponse.CompactProfiles.FirstOrDefault(X => X.PublicId == AccountRole.AccountPublicId);
+					var CssClass = $"bg-secondary border {(AccountRole.Id <= 0 ? "border-warning" : "border-success")} rounded p-3 my-1";
+					var ActiveCssClass = $"bg-primary border {(AccountRole.Id <= 0 ? "border-warning" : "border-success")} rounded p-3 my-1";
+
+					if (CompactProfile != null)
+					{
+						<ProfileCompactComponent
+							CompactProfile="@CompactProfile"
+							CssClass="@CssClass"
+							ActiveCssClass="@ActiveCssClass"
+							ProfileCssClass="border-0 my-1"
+							ShowRemoveButton=true
+							ProfileClick="OnProfileClick"
+							RemoveClick="() => OnRemoveAccountRoleClick(AccountRole)" />
+					}
+
+					else
+					{
+						<ProfileCompactComponent
+							PublicId="@AccountRole.AccountPublicId"
+							CssClass="@CssClass"
+							ActiveCssClass="@ActiveCssClass"
+							ProfileCssClass="border-0 my-1"
+							ShowRemoveButton=true
+							ProfileClick="OnProfileClick"
+							RemoveClick="() => OnRemoveAccountRoleClick(AccountRole)" />
+					}
+				}
+			}
+		</div>
+
+		<div class="card-footer p-3">
+			<SubmitButtonComponent CssClass="btn btn-success border-0 w-100" Text=@Loc["SaveChanges"] IsDisabled=IsSaveDisabled IsSubmitting=_IsSubmitting Click=@OnSaveChangesClick />
+		</div>
+	}
+</SectionCardComponent>
+
+@code
+{
+	//===========================================================================================
+	// Global Variables
+	//===========================================================================================
+	#region Properties
+	public Boolean IsAddDisabled => _NewRoleId == -1 || _NewAccountPublicId == null || _NewAccountPublicId.Length != AccountConstants.PUBLIC_ID_LENGTH;
+	public Boolean IsSaveDisabled => _IsSubmitting || !_DataChanged;
+	#endregion
+	#region Fields
+	private AdminGetAccountRolesResponseModel _GetResponse;
+	private ProfileCompactComponent _ActiveProfile;
+
+	private List<AccountRoleModel> _AccountRoleList;
+	private List<Int32> _RemovedIdList;
+
+	private String _NewAccountPublicId;
+	private Int32 _NewRoleId;
+	private Boolean _IsRequesting;
+	private Boolean _IsSubmitting;
+	private Boolean _DataChanged;
+	#endregion
+
+	//===========================================================================================
+	// Protected Methods
+	//===========================================================================================
+	protected override async Task OnInitializedAsync()
+	{
+		_IsRequesting = true;
+		await base.OnInitializedAsync();
+		await ReloadAccountRolesAsync();
+	}
+
+	//===========================================================================================
+	// Private Methods
+	//===========================================================================================
+	private async Task ReloadAccountRolesAsync()
+	{
+		var RequestModel = new AdminGetAccountRolesRequestModel();
+		_IsRequesting = true;
+		_GetResponse = await HttpService.PostJsonRequestAsync<AdminGetAccountRolesRequestModel, AdminGetAccountRolesResponseModel>(ApiRequestConstants.ADMIN_GET_ACCOUNT_ROLES, RequestModel);
+		_IsRequesting = false;
+		if (!HttpService.ValidateResponse(_GetResponse)) return;
+
+		NotificationService.ClearMainNotification();
+
+		_AccountRoleList = _GetResponse.AccountRoles.ToList();
+		_RemovedIdList = new ();
+		_NewAccountPublicId = String.Empty;
+		_NewRoleId = -1;
+		_DataChanged = false;
+	}
+	private async Task SaveChangesAsync()
+	{
+		var EditRequest = new AdminEditAccountRolesRequestModel { RemovedIds = _RemovedIdList, NewAccountRoles = _AccountRoleList.Where(X => X.Id <= 0) };
+		var Response = await HttpService.PostJsonRequestAsync<AdminEditAccountRolesRequestModel, AdminEditAccountRolesResponseModel>(ApiRequestConstants.ADMIN_EDIT_ACCOUNT_ROLES, EditRequest);
+		if (!HttpService.ValidateResponse(Response)) return;
+
+		await ReloadAccountRolesAsync();
+	}
+
+	private async Task OnSaveChangesClick()
+	{
+		_IsSubmitting = true;
+		await SaveChangesAsync();
+		_IsSubmitting = false;
+	}
+
+	private void OnAddAccountRoleClick()
+	{
+		var NewAccountRole = new AccountRoleModel { RoleId = _NewRoleId, AccountPublicId = _NewAccountPublicId };
+		NotificationService.ClearMainNotification();
+
+		if (_AccountRoleList.Any(X => X.RoleId == NewAccountRole.RoleId && X.AccountPublicId == NewAccountRole.AccountPublicId))
+		{
+			NotificationService.SetMainNotification(Loc["AccountRoleExists"], ENotificationType.Warning);
+			return;
+		}
+
+		_AccountRoleList.Add(NewAccountRole);
+		_DataChanged = true;
+	}
+	private void OnProfileClick(ProfileCompactComponent InCompactProfile)
+	{
+		if (_ActiveProfile != InCompactProfile) _ActiveProfile?.SetIsActive(false);
+		_ActiveProfile = InCompactProfile;
+	}
+	private void OnRemoveAccountRoleClick(AccountRoleModel InAccountRole)
+	{
+		NotificationService.ClearMainNotification();
+
+		_AccountRoleList.RemoveAll(X => X.RoleId == InAccountRole.RoleId && X.AccountPublicId == InAccountRole.AccountPublicId);
+		if (InAccountRole.Id > 0) _RemovedIdList.Add(InAccountRole.Id);
+		_DataChanged = true;
+	}
+}

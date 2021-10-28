@@ -1,0 +1,25 @@
+@inject IStringLocalizer<SharedResource> Loc
+@inject MainHubService MainHubService
+
+<div class="row gx-0 sticky-top">
+	<div class="col">
+		<NavLink class="nav btn btn-secondary border-0 rounded-0 p-1 w-100 h-100" href="@NavigationConstants.NAV_ADMIN_REPORTED_PROFILES">
+			<strong>@Loc["ReportedProfiles"]</strong>
+		</NavLink>
+	</div>
+
+	@if (MainHubService.IsAdmin)
+	{
+		<div class="col">
+			<NavLink class="nav btn btn-secondary border-0 rounded-0 p-1 w-100 h-100" href="@NavigationConstants.NAV_ADMIN_ACCOUNT_ROLES">
+				<strong>@Loc["AccountRoles"]</strong>
+			</NavLink>
+		</div>
+
+		<div class="col">
+			<NavLink class="nav btn btn-secondary border-0 rounded-0 p-1 w-100 h-100" href="@NavigationConstants.NAV_ADMIN_PROFILE_DATA">
+				<strong>@Loc["ProfileData"]</strong>
+			</NavLink>
+		</div>
+	}
+</div>

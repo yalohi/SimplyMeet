@@ -1,0 +1,19 @@
+<SectionComponent BackgroundClass=@BackgroundClass>
+	@if (!String.IsNullOrEmpty(Title)) { <h4 class="card-title">@Title</h4> }
+	@if (!String.IsNullOrEmpty(Text)) { <div class="card-text">@(new MarkupString(Text))</div> }
+</SectionComponent>
+
+@code
+{
+	//===========================================================================================
+	// Global Variables
+	//===========================================================================================
+	#region Properties
+	[Parameter]
+	public String BackgroundClass { get; set; }
+	[Parameter]
+	public String Title { get; set; }
+	[Parameter]
+	public String Text { get; set; }
+	#endregion
+}

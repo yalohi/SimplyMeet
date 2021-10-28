@@ -1,0 +1,17 @@
+@page "/match"
+@inherits PageBase
+@inject NavigationService NavigationService
+
+@code
+{
+	//===========================================================================================
+	// Protected Methods
+	//===========================================================================================
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		if (MainHubService.FirstMatchUser == null) NavigationService.NavigateTo(NavigationConstants.NAV_MATCH_NEW);
+		else NavigationService.NavigateTo(NavigationConstants.NAV_MATCH_CHAT);
+	}
+}

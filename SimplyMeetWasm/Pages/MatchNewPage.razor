@@ -1,0 +1,101 @@
+@page "/match/new"
+@inherits PageBase
+@inject IStringLocalizer<SharedResource> Loc
+@inject HttpService HttpService
+@inject NavigationService NavigationService
+
+<MatchNavBarComponent />
+
+<SectionCardComponent BackgroundClass="bg-primary">
+	@if (_IsRequesting)
+	{
+		<SpinnerComponent />
+	}
+
+	else if (_GetResponse == null || _GetResponse.Error != null)
+	{
+		<ErrorComponent />
+	}
+
+	else if (_GetResponse.FullProfile == null)
+	{
+		<div class="card-body text-center p-4">
+			<div class="d-flex align-items-center">
+				<h5 class="m-0 w-100 text-center">
+					<strong>@Loc["NoNewMatchCandidates"]</strong
+				</h5>
+			</div>
+
+			<i class="large fas fa-heart-broken text-danger mt-3"></i>
+		</div>
+
+		<div class="card-footer p-3">
+			<button type="button" class="btn btn-primary border-0 w-100" @onclick="OnReviewDislikedProfilesClick">@Loc["ReviewDislikedProfiles"]</button>
+			<button type="button" class="btn btn-primary border-0 w-100 mt-1" @onclick="OnAdjustFilterClick">@Loc["AdjustFilter"]</button>
+
+			<button type="button" class="btn btn-success border-0 w-100 mt-1" @onclick="GetNextAsync">
+				<i class="fas fa-sync"></i>
+			</button>
+		</div>
+	}
+
+	else
+	{
+		<ProfileComponent
+			FullProfile="@_GetResponse.FullProfile"
+			CssClass="border-0"
+			ShowReportButton=true
+			ShowRateButtons=true
+			ReportClick="@GetNextAsync"
+			RateClick="@GetNextAsync" />
+	}
+</SectionCardComponent>
+
+@code
+{
+	//===========================================================================================
+	// Global Variables
+	//===========================================================================================
+	#region Fields
+	private MatchGetNewResponseModel _GetResponse;
+	private Boolean _IsRequesting;
+	#endregion
+
+	//===========================================================================================
+	// Protected Methods
+	//===========================================================================================
+	protected override async Task OnInitializedAsync()
+	{
+		_IsRequesting = true;
+		if (MainHubService.FirstMatchUser != null)
+		{
+			NavigationService.NavigateTo(NavigationConstants.NAV_MATCH);
+			return;
+		}
+
+		await base.OnInitializedAsync();
+		await GetNextAsync();
+	}
+
+	//===========================================================================================
+	// Private Methods
+	//===========================================================================================
+	private async Task GetNextAsync()
+	{
+		var RequestModel = new MatchGetNewRequestModel();
+		_IsRequesting = true;
+		_GetResponse = await HttpService.PostJsonRequestAsync<MatchGetNewRequestModel, MatchGetNewResponseModel>(ApiRequestConstants.MATCH_GET_NEW, RequestModel);
+		_IsRequesting = false;
+
+		if (!HttpService.ValidateResponse(_GetResponse)) return;
+	}
+
+	private void OnReviewDislikedProfilesClick()
+	{
+		NavigationService.NavigateTo(NavigationConstants.NAV_MATCH_DISLIKED);
+	}
+	private void OnAdjustFilterClick()
+	{
+		NavigationService.NavigateTo(NavigationConstants.NAV_MATCH_FILTER);
+	}
+}

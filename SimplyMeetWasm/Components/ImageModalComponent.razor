@@ -1,0 +1,61 @@
+<img class="@CssClass" src="@ImageSrc" alt="@Alt" @onclick="Open" />
+
+<div class="modal fade @_ModalClass" tabindex="-1" role="dialog" aria-hidden="true" style="display: @_ModalDisplay;">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">@Title</h5>
+				<button type="button" class="btn-close" data-dismiss="modal" @onclick="Close" />
+			</div>
+
+			<div class="modal-body text-center">
+				<img class="large" src="@ImageSrc" alt="@Alt">
+			</div>
+		</div>
+	</div>
+</div>
+
+@if (_ShowBackdrop)
+{
+	<div class="modal-backdrop fade show"></div>
+}
+
+@code
+{
+	//===========================================================================================
+	// Global Variables
+	//===========================================================================================
+	#region Properties
+	[Parameter]
+	public String Title { get; set; }
+	[Parameter]
+	public String CssClass { get; set; }
+	[Parameter]
+	public String ImageSrc { get; set; }
+	[Parameter]
+	public String Alt { get; set; }
+	#endregion
+	#region Fields
+	private String _ModalDisplay;
+	private String _ModalClass;
+	private Boolean _ShowBackdrop;
+	#endregion
+
+	//===========================================================================================
+	// Public Methods
+	//===========================================================================================
+	public void Open()
+	{
+		_ModalDisplay = "block";
+		_ModalClass = "show";
+		_ShowBackdrop = true;
+		StateHasChanged();
+	}
+	public void Close()
+	{
+		_ModalDisplay = "none";
+		_ModalClass = "";
+		_ShowBackdrop = false;
+		StateHasChanged();
+	}
+}

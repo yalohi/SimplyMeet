@@ -1,0 +1,18 @@
+<SectionComponent BackgroundClass=@BackgroundClass>
+	<div class="card bg-dark text-white border-0">
+		@ChildContent
+	</div>
+</SectionComponent>
+
+@code
+{
+	//===========================================================================================
+	// Global Variables
+	//===========================================================================================
+	#region Properties
+	[Parameter]
+	public RenderFragment ChildContent { get; set; }
+	[Parameter]
+	public String BackgroundClass { get; set; }
+	#endregion
+}

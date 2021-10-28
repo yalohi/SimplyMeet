@@ -1,0 +1,32 @@
+version: "3.9"
+services:
+    reverse-proxy:
+        build: reverse-proxy
+        ports:
+            - "443:443"
+        depends_on:
+            - wasm
+            - webapi
+    wasm:
+        build: wasm
+        ports:
+            - "5001:5001"
+        volumes:
+            - wasm-app:/etc/nginx/html:ro
+    webapi:
+        build: webapi
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Production
+        ports:
+            - "5002:5002"
+        volumes:
+            - webapi-app:/app:ro
+            - webapi-data:/app/App_Data
+
+volumes:
+    wasm-app:
+        external: false
+    webapi-app:
+        external: false
+    webapi-data:
+        external: false

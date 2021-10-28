@@ -1,0 +1,122 @@
+@inject IStringLocalizer<SharedResource> Loc
+@inject AppState AppState
+@inject AccountService AccountService
+@inject HttpService HttpService
+@inject NavigationService NavigationService
+@inject NotificationService NotificationService
+
+@if (!_HasLogin)
+{
+	<div class="card-header p-3">
+		<h4 class="text-center m-0">
+			<strong>@Title</strong>
+		</h4>
+	</div>
+
+	<div class="card-body">
+		<input
+			type="text"
+			class="form-control bg-secondary text-white"
+			placeholder="@Loc["PrivateKey"]"
+			maxlength="@AccountConstants.PRIVATE_KEY_TEXT_LENGTH"
+			autocomplete="off"
+			autocorrect="off"
+			autocapitalize="off"
+			spellcheck="false"
+			@bind="_PrivateKey"
+			@bind:event="oninput"
+			@onkeydown="@OnPrivateKeyKeyDown" />
+
+		<SubmitButtonComponent
+			CssClass="btn btn-primary border-0 w-100 mt-2"
+			Text=@Loc["Login"] IsDisabled=IsLoginDisabled
+			IsSubmitting=_IsSubmittingLogin
+			Click=@OnLoginClick />
+
+		<hr />
+
+		<SubmitButtonComponent CssClass="btn btn-warning border-0 w-100" Text=@Loc["GenerateAccount"] IsDisabled=IsGenerateAccountDisabled IsSubmitting=_IsSubmittingGenerateAccount Click=@OnGenerateAccountClick />
+	</div>
+}
+
+else
+{
+	<div class="card-header p-3">
+		<h4 class="text-center m-0">
+			<strong>@Loc["Welcome"]</strong>
+		</h4>
+	</div>
+	<div class="card-body">
+		<button type="button" class="btn btn-primary border-0 w-100" @onclick="OnProfileClick">@Loc["VisitProfile"]</button>
+		<button type="button" class="btn btn-primary border-0 w-100 mt-1" @onclick="OnMatchClick">@Loc["VisitMatch"]</button>
+
+		<hr />
+
+		<button type="button" class="btn btn-danger border-0 w-100" @onclick="OnLogoutClick">@Loc["Logout"]</button>
+	</div>
+}
+
+@code
+{
+	//===========================================================================================
+	// Global Variables
+	//===========================================================================================
+	#region Properties
+	public Boolean IsLoginDisabled => _IsSubmittingLogin || _IsSubmittingGenerateAccount || String.IsNullOrEmpty(_PrivateKey) || _PrivateKey.Length != AccountConstants.PRIVATE_KEY_TEXT_LENGTH;
+	public Boolean IsGenerateAccountDisabled => _IsSubmittingLogin || _IsSubmittingGenerateAccount;
+
+	[Parameter]
+	public String Title { get; set; }
+	#endregion
+	#region Fields
+	private String _PrivateKey;
+	private Boolean _HasLogin;
+	private Boolean _IsSubmittingLogin;
+	private Boolean _IsSubmittingGenerateAccount;
+	#endregion
+
+	//===========================================================================================
+	// Protected Methods
+	//===========================================================================================
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+		_HasLogin = await AppState.HasLoginAsync();
+	}
+
+	//===========================================================================================
+	// Private Methods
+	//===========================================================================================
+	private async Task OnPrivateKeyKeyDown(KeyboardEventArgs InArgs)
+	{
+		if ((InArgs.Code == KeyCodeConstants.ENTER || InArgs.Code == KeyCodeConstants.NUMPAD_ENTER) && !String.IsNullOrEmpty(_PrivateKey)) await OnLoginClick();
+	}
+	private async Task OnLoginClick()
+	{
+		_IsSubmittingLogin = true;
+		await AccountService.RequestLoginAsync(_PrivateKey);
+		_HasLogin = await AppState.HasLoginAsync();
+		_IsSubmittingLogin = false;
+	}
+	private async Task OnGenerateAccountClick()
+	{
+		_IsSubmittingGenerateAccount = true;
+		await AccountService.RequestGenerateAccountAsync();
+		_HasLogin = await AppState.HasLoginAsync();
+		_IsSubmittingGenerateAccount = false;
+	}
+	private async Task OnLogoutClick()
+	{
+		await AccountService.LogoutAsync();
+		_HasLogin = await AppState.HasLoginAsync();
+	}
+
+	private void OnProfileClick()
+	{
+		NavigationService.NavigateTo(NavigationConstants.NAV_PROFILE);
+	}
+	private void OnMatchClick()
+	{
+		NavigationService.NavigateTo(NavigationConstants.NAV_MATCH);
+	}
+}

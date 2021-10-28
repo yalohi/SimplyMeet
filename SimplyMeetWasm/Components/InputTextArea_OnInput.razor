@@ -1,0 +1,8 @@
+@inherits InputTextArea
+
+@* TODO: fix performance for oninput controls *@
+<textarea
+	class="@CssClass"
+	@attributes="@AdditionalAttributes"
+	@bind="@CurrentValueAsString" />
+	@* @bind:event="oninput" /> *@

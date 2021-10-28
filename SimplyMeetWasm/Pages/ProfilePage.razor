@@ -1,0 +1,705 @@
+@page "/profile"
+@inherits PageBase
+@inject IStringLocalizer<SharedResource> Loc
+@inject AccountService AccountService
+@inject HttpService HttpService
+@inject NavigationService NavigationService
+@inject ProfileService ProfileService
+
+<SectionCardComponent BackgroundClass="bg-primary">
+	@if (_IsRequesting)
+	{
+		<SpinnerComponent />
+	}
+
+	else if (_GetResponse == null || _GetResponse.Error != null)
+	{
+		<ErrorComponent />
+	}
+
+	else if (_EditContext != null)
+	{
+		<ConfirmModalComponent
+			@ref="_AccountDeleteConfirmModal"
+			Title="@Loc["AccountDeleteConfirmTitle"]"
+			Content="@Loc["AccountDeleteConfirmContent"]"
+			ConfirmText="@Loc["Delete"]"
+			CloseText="@Loc["Close"]"
+			ConfirmClass="btn-danger"
+			OnConfirm="OnDeleteAccountClick" />
+
+		<EditForm EditContext="@_EditContext" OnSubmit="OnSaveChangesClick">
+			<DataAnnotationsValidator />
+
+			@*** HEADER ***@
+			<div class="card-header text-end p-3">
+				@* <div class="btn-group" role="group">
+					<button type="button" class="btn btn-primary border-0" @onclick="OnImportClick">@Loc["Import"]</button>
+					<button type="button" class="btn btn-primary border-0" @onclick="OnExportClick">@Loc["Export"]</button>
+				</div> *@
+
+				<SubmitButtonComponent
+					CssClass="btn btn-danger border-0"
+					Text=@Loc["DeleteAccount"]
+					IsDisabled=IsSubmitting
+					IsSubmitting=_IsSubmittingDeleteAccount
+					Click=_AccountDeleteConfirmModal.Open />
+
+				@* <div class="mt-3 w-100">@Loc["Created"]: @Account.Creation.ToShortDateString()</div>
+				<div class="w-100">@Loc["LastLogin"]: @(Account.LastLogin?.ToShortDateString() ?? Loc["Never"])</div> *@
+			</div>
+
+			@*** PRIVATE KEY ***@
+			@if (!String.IsNullOrEmpty(_PrivateKey_Base64))
+			{
+				<div class="card-body bg-success text-center">
+					<i class="@_PrivateKeyVisibilityIcon cursor-pointer" @onclick="OnTogglePrivateKeyClick"></i>
+
+					<h6 class="m-0">
+						<strong>@Loc["PrivateKey"]</strong>
+					</h6>
+
+					@if (_IsPrivateKeyVisible)
+					{
+						<div class="bg-warning rounded mt-2 p-2">
+							<strong>@Loc["PrivateKeyNotice"]</strong>
+						</div>
+
+						<CopyComponent Text="@_PrivateKey_Base64" />
+					}
+				</div>
+			}
+
+			@*** INFO ***@
+			<div class="card-body bg-secondary">
+				<ImageModalComponent
+					Title="@Profile.DisplayName"
+					CssClass="bg-dark rounded-circle d-block mx-auto my-3 cursor-pointer avatar"
+					ImageSrc="@(_PreviewAvatar ?? ProfileService.GetAvatarUrl(Profile.Avatar))"
+					Alt="avatar" />
+
+				<h4 class="text-center m-0">
+					<strong>@Profile.DisplayName</strong>
+				</h4>
+
+				<div class="text-center">
+					<span class="badge rounded-pill bg-dark mt-1">@Account.PublicId</span>
+				</div>
+			</div>
+
+			@*** BODY ***@
+			<div class="card-body">
+				@*** AVATAR ***@
+				<label class="w-100" for="">
+					<div class="mb-1">@Loc["Avatar"]</div>
+
+					<div class="d-flex">
+						<InputFile OnChange="@OnAvatarFileChanged" class="form-control flex-grow-1 bg-secondary text-white" accept=".jpg,.jpeg,.png" />
+
+						<SubmitButtonComponent
+							CssClass="btn btn-danger border-0 ms-2"
+							Text=@(_AvatarStream != null ? Loc["Clear"] : Loc["Reset"])
+							IsDisabled=@(IsSubmitting || (_AvatarStream == null && _HasDefaultAvatar))
+							IsSubmitting=_IsSubmittingResetAvatar
+							Click=OnClearResetAvatarClick />
+					</div>
+				</label>
+
+				@*** DISPLAYNAME ***@
+				<label class="mt-2 w-100" for="">
+					@* <div class="mb-1">@Loc["DisplayName"] (@String.Format(Loc["CharactersLeft"], Math.Max(ProfileConstants.MAX_DISPLAY_NAME_LENGTH - _EditRequest.DisplayName.Length, 0)))</div> *@
+					<div class="mb-1">@Loc["DisplayName"]</div>
+
+					<InputText_OnInput
+						class="form-control bg-secondary text-white"
+						placeholder="@Loc["DisplayName"]"
+						maxlength="@ProfileConstants.MAX_DISPLAY_NAME_LENGTH"
+						autocomplete="off"
+						autocorrect="off"
+						autocapitalize="off"
+						spellcheck="false"
+						@bind-Value="_EditRequest.DisplayName" />
+				</label>
+
+				@if (_ShowDetails)
+				{
+					@*** PRONOUNS ***@
+					<label class="mt-2 w-100" for="">
+						<div class="mb-1">@Loc["Pronouns"]</div>
+
+						<InputSelect class="form-select bg-secondary text-white" @bind-Value="_EditRequest.PronounsId">
+							<option value="">@Loc["NotSpecified"]</option>
+							@foreach (var Pronouns in FullProfile.Data.AllPronouns)
+							{
+								<option value="@Pronouns.Id">@Loc[Pronouns.Name]</option>
+							}
+						</InputSelect>
+					</label>
+
+					@*** SEX ***@
+					<label class="mt-2 w-100" for="">
+						<div class="mb-1">@Loc["Sex"]</div>
+
+						<InputSelect class="form-select bg-secondary text-white" @bind-Value="_EditRequest.SexId">
+							<option value="">@Loc["NotSpecified"]</option>
+							@foreach (var Sex in FullProfile.Data.AllSexes)
+							{
+								<option value="@Sex.Id">@Loc.GetIconText(Sex)</option>
+							}
+						</InputSelect>
+					</label>
+
+					@*** GENDER ***@
+					<label class="mt-2 w-100" for="">
+						<div class="mb-1">@Loc["Gender"]</div>
+
+						<InputSelect class="form-select bg-secondary text-white" @bind-Value="_EditRequest.GenderId">
+							<option value="">@Loc["NotSpecified"]</option>
+							@foreach (var Gender in FullProfile.Data.AllGenders)
+							{
+								<option value="@Gender.Id">@Loc[Gender.Name]</option>
+							}
+						</InputSelect>
+					</label>
+
+					@*** REGION ***@
+					<label class="mt-2 w-100" for="">
+						<div class="mb-1">@Loc["Region"]</div>
+
+						<InputSelect class="form-select bg-secondary text-white"
+							ValueExpression="() => _EditRequest.RegionId"
+							Value="_EditRequest.RegionId"
+							ValueChanged="(Int32? X) => OnRegionChanged(X)">
+							<option value="">@Loc["NotSpecified"]</option>
+							@foreach (var Region in FullProfile.Data.AllRegions)
+							{
+								<option value="@Region.Id">@Loc.GetIconText(Region)</option>
+							}
+						</InputSelect>
+					</label>
+
+					@*** COUNTRY ***@
+					<label class="mt-2 w-100" for="">
+						<div class="mb-1">@Loc["Country"]</div>
+
+						<InputSelect class="form-select bg-secondary text-white"
+							ValueExpression="() => _EditRequest.CountryId"
+							Value="_EditRequest.CountryId"
+							ValueChanged="(Int32? X) => OnCountryChanged(X)">
+							<option value="">@Loc["NotSpecified"]</option>
+							@foreach (var Country in _Countries)
+							{
+								<option value="@Country.Id">@Loc.GetIconText(Country)</option>
+							}
+						</InputSelect>
+					</label>
+
+					@*** BIRTH DATE ***@
+					<label class="mt-2 w-100" for="">
+						<div class="mb-1">@Loc["BirthDate"]</div>
+
+						<InputDate class="form-control  bg-secondary text-white w-100" @bind-Value="_EditRequest.BirthDate" />
+					</label>
+
+					@*** TAGS ***@
+					<label class="mt-2 w-100" for="">
+						<div class="mb-1">@Loc["Tags"]</div>
+
+						@foreach (var Tag in _EditRequest.Tags)
+						{
+							<span class="badge bg-primary m-1 p-2">@Tag.Name <i class="fas fa-backspace cursor-pointer" @onclick="() => OnRemoveTagClick(Tag.Name)"></i></span>
+						}
+
+						@foreach (var Tag in _NewTagList)
+						{
+							<span class="badge bg-success m-1 p-2">@Tag.Name <i class="fas fa-backspace cursor-pointer" @onclick="() => OnRemoveTagClick(Tag.Name)"></i></span>
+						}
+
+						<div class="d-flex mt-2">
+							<input
+								type="text"
+								class="form-control flex-grow-1 bg-secondary text-white text-uppercase"
+								placeholder="@Loc["NewTag"]"
+								maxlength="@ProfileConstants.MAX_TAG_NAME_LENGTH"
+								autocorrect="off"
+								autocapitalize="off"
+								spellcheck="false"
+								@bind="_NewTagName"
+								@bind:event="oninput"
+								@onkeydown="OnTagKeyDown" />
+
+							<button type="button" class="btn btn-success border-0 ms-2" @onclick="OnAddTagClick" disabled="@(IsSubmitting || String.IsNullOrEmpty(_NewTagName))">
+								<i class="fas fa-plus"></i>
+							</button>
+						</div>
+					</label>
+
+					@*** SEXUALITIES ***@
+					<label class="mt-2 w-100" for="">
+						<div class="mb-1">@Loc["Sexualities"]</div>
+
+						@foreach (var Sexuality in _EditRequest.Sexualities)
+						{
+							<span class="badge bg-primary m-1 p-2">@Sexuality.Name <i class="fas fa-backspace cursor-pointer" @onclick="() => OnRemoveSexualityClick(Sexuality.Id)"></i></span>
+						}
+
+						@foreach (var Sexuality in _NewSexualityList)
+						{
+							<span class="badge bg-success m-1 p-2">@Sexuality.Name <i class="fas fa-backspace cursor-pointer" @onclick="() => OnRemoveSexualityClick(Sexuality.Id)"></i></span>
+						}
+
+						<div class="d-flex mt-2">
+							<select class="form-select flex-grow-1 bg-secondary text-white" @bind="_NewSexualityId" @onkeydown="OnSexualityKeyDown">
+								<option value="-1" disabled>@Loc["SelectSexuality"]</option>
+								@foreach (var Sexuality in FullProfile.Data.AllSexualities)
+								{
+									<option value="@Sexuality.Id">@Loc[Sexuality.Name]</option>
+								}
+							</select>
+
+							<button type="button" class="btn btn-success border-0 ms-2" @onclick="OnAddSexualityClick" disabled="@(IsSubmitting || _NewSexualityId == -1)">
+								<i class="fas fa-plus"></i>
+							</button>
+						</div>
+					</label>
+
+					@*** LOOKING FOR ***@
+					<label class="mt-2 w-100" for="">
+						<div class="mb-1">@Loc["LookingFor"]</div>
+
+						<div class="bg-info d-flex align-items-center rounded mb-2 p-2">
+							<i class="fas fa-info-circle fa-2x"></i>
+							<div class="ps-3 flex-grow-1">
+								<strong>@Loc["FilterValueInfo"]</strong>
+							</div>
+						</div>
+
+						<div class="btn-group-vertical d-flex" role="group">
+							@{
+								var LookingForValues = Enum.GetValues<ELookingFor>();
+								foreach (var Value in LookingForValues)
+								{
+									if (Value <= 0) continue;
+
+									var EnumValue = (ELookingFor)Value;
+									var EnumText = EnumValue.ToString();
+
+									<input
+										type="checkbox"
+										class="btn-check"
+										id="btn-check-@EnumText"
+										autocomplete="off"
+										checked="@(_EditRequest.LookingFor.HasFlag(Value))"
+										@onchange="() => OnLookingForChanged(EnumValue)" />
+
+									<label class="btn btn-outline-success text-white p-2 w-100" for="btn-check-@EnumText">
+										<i class="@ProfileService.GetLookingForIconClasses(EnumValue)"></i>
+										<strong>@Loc[EnumText]</strong>
+									</label>
+								}
+							}
+						</div>
+					</label>
+
+					@*** ABOUT ME ***@
+					<label class="mt-2 w-100" for="">
+						@* <div class="mb-1">@Loc["AboutMe"] (@String.Format(Loc["CharactersLeft"], Math.Max(ProfileConstants.MAX_ABOUT_LENGTH - _EditRequest.AboutMe.Length, 0)))</div> *@
+						<div class="mb-1">@Loc["AboutMe"]</div>
+
+						<InputTextArea_OnInput
+							class="form-control bg-secondary text-white"
+							maxlength="@ProfileConstants.MAX_ABOUT_LENGTH"
+							rows="5"
+							@bind-Value="_EditRequest.AboutMe" />
+					</label>
+
+					@*** ABOUT YOU ***@
+					<label class="mt-2 w-100" for="">
+						@* <div class="mb-1">@Loc["AboutYou"] (@String.Format(Loc["CharactersLeft"], Math.Max(ProfileConstants.MAX_ABOUT_LENGTH - _EditRequest.AboutYou.Length, 0)))</div> *@
+						<div class="mb-1">@Loc["AboutYou"]</div>
+
+						<InputTextArea_OnInput
+							class="form-control bg-secondary text-white"
+							maxlength="@ProfileConstants.MAX_ABOUT_LENGTH"
+							rows="5"
+							@bind-Value="_EditRequest.AboutYou" />
+					</label>
+				}
+			</div>
+
+			@*** FOOTER ***@
+			<div class="card-footer p-3">
+				@if (!_ShowDetails)
+				{
+					<button type="button" class="btn btn-primary border-0 mb-2 w-100" @onclick="@(() => _ShowDetails = !_ShowDetails)">@Loc["ShowMoreDetails"]</button>
+				}
+
+				<SubmitButtonComponent
+					CssClass="btn btn-success border-0 w-100"
+					Text=@Loc["SaveChanges"]
+					IsDisabled=IsSaveChangesDisabled
+					IsSubmitting=_IsSubmittingSaveChanges
+					Click=@OnSaveChangesClick />
+			</div>
+		</EditForm>
+	}
+</SectionCardComponent>
+
+@code
+{
+	//===========================================================================================
+	// Global Variables
+	//===========================================================================================
+	#region Properties
+	public ProfileFullModel FullProfile => _GetResponse.FullProfile;
+	public AccountModel Account => _GetResponse.FullProfile.Account;
+	public ProfileModel Profile => _GetResponse.FullProfile.Profile;
+	public Boolean IsSubmitting => _IsSubmittingDeleteAccount || _IsSubmittingResetAvatar || _IsSubmittingSaveChanges;
+	public Boolean IsSaveChangesDisabled => IsSubmitting || !_EditContext.Validate() || (!_EditContext.IsModified() && _AvatarStream == null && !_TagsChanged && !_SexualitiesChanged && !_LookingForChanged);
+	#endregion
+	#region Fields
+	private EditContext _EditContext;
+	private ProfileGetEditDataResponseModel _GetResponse;
+	private ProfileEditRequestModel _EditRequest;
+
+	private ConfirmModalComponent _AccountDeleteConfirmModal;
+
+	private String _PrivateKey_Base64;
+	private String _PrivateKeyVisibilityIcon;
+	private Boolean _IsPrivateKeyVisible;
+
+	private Stream _AvatarStream;
+	private String _AvatarContentType;
+	private String _PreviewAvatar;
+	private Boolean _HasDefaultAvatar;
+
+	private IEnumerable<CountryModel> _Countries;
+
+	private List<TagModel> _NewTagList;
+	private String _NewTagName;
+	private Boolean _TagsChanged;
+
+	private List<SexualityModel> _NewSexualityList;
+	private Int32 _NewSexualityId;
+	private Boolean _SexualitiesChanged;
+	private Boolean _LookingForChanged;
+
+	private Boolean _IsRequesting;
+	private Boolean _IsSubmittingDeleteAccount;
+	private Boolean _IsSubmittingResetAvatar;
+	private Boolean _IsSubmittingSaveChanges;
+	private Boolean _ShowDetails;
+	#endregion
+
+	//===========================================================================================
+	// Protected Methods
+	//===========================================================================================
+	protected override async Task OnInitializedAsync()
+	{
+		_IsRequesting = true;
+		await base.OnInitializedAsync();
+		await ReloadProfileAsync();
+
+		_PrivateKey_Base64 = await AppState.GetPrivateKeyAsync();
+		OnTogglePrivateKeyClick();
+		if (!AppState.IsFirstLogin) OnTogglePrivateKeyClick();
+	}
+
+	//===========================================================================================
+	// Private Methods
+	//===========================================================================================
+	private async Task ReloadProfileAsync()
+	{
+		NotificationService.ClearMainNotification();
+
+		try
+		{
+			var RequestModel = new ProfileGetEditDataRequestModel();
+			_IsRequesting = true;
+			_GetResponse = await HttpService.PostJsonRequestAsync<ProfileGetEditDataRequestModel, ProfileGetEditDataResponseModel>(ApiRequestConstants.PROFILE_GET_EDIT_DATA, RequestModel);
+			_IsRequesting = false;
+
+			if (!HttpService.ValidateResponse(_GetResponse)) return;
+		}
+
+		catch
+		{
+			NavigationService.NavigateTo(NavigationConstants.NAV_HOME);
+			return;
+		}
+
+		FullProfile.Data.AllPronouns = FullProfile.Data.AllPronouns.OrderBy(X => X.Name);
+		FullProfile.Data.AllSexes = FullProfile.Data.AllSexes.OrderBy(X => X.Name);
+		FullProfile.Data.AllGenders = FullProfile.Data.AllGenders.OrderBy(X => X.Name);
+		FullProfile.Data.AllRegions = FullProfile.Data.AllRegions.OrderBy(X => X.Name);
+		FullProfile.Data.AllCountries = FullProfile.Data.AllCountries.OrderBy(X => X.Name);
+		FullProfile.Data.AllSexualities = FullProfile.Data.AllSexualities.OrderBy(X => X.Name);
+
+		_EditRequest = new ProfileEditRequestModel
+		{
+			DisplayName = FullProfile.Profile.DisplayName ?? String.Empty,
+			PronounsId = FullProfile.Profile.PronounsId,
+			SexId = FullProfile.Profile.SexId,
+			GenderId = FullProfile.Profile.GenderId,
+			RegionId = FullProfile.Profile.RegionId,
+			CountryId = FullProfile.Profile.CountryId,
+			BirthDate = FullProfile.Profile.BirthDate,
+			Tags = FullProfile.Tags,
+			Sexualities = FullProfile.Sexualities,
+			LookingFor = FullProfile.Profile.LookingFor,
+			AboutMe = FullProfile.Profile.AboutMe ?? String.Empty,
+			AboutYou = FullProfile.Profile.AboutYou ?? String.Empty,
+		};
+
+		OnRegionChanged(_EditRequest.RegionId);
+		OnCountryChanged(_EditRequest.CountryId);
+
+		_NewTagList = new List<TagModel>();
+		_NewSexualityList = new List<SexualityModel>();
+		_NewTagName = String.Empty;
+		_NewSexualityId = -1;
+
+		_EditContext = new EditContext(_EditRequest);
+		_EditContext.SetFieldCssClassProvider(new BootstrapFieldCssClassProvider());
+
+		_HasDefaultAvatar = !Path.GetFileNameWithoutExtension(FullProfile.Profile.Avatar).StartsWith(FullProfile.Account.PublicId);
+		_ShowDetails = (FullProfile.Profile.PronounsId.HasValue
+			|| FullProfile.Profile.SexId.HasValue
+			|| FullProfile.Profile.GenderId.HasValue
+			|| FullProfile.Profile.RegionId.HasValue
+			|| FullProfile.Profile.CountryId.HasValue
+			|| FullProfile.Profile.BirthDate.HasValue
+			|| FullProfile.Profile.LookingFor != ELookingFor.NotSpecified
+			|| FullProfile.Profile.AboutMe != null
+			|| FullProfile.Profile.AboutYou != null
+			|| FullProfile.Tags.Any()
+			|| FullProfile.Sexualities.Any());
+	}
+	private async Task SaveChangesAsync()
+	{
+		if (_AvatarStream != null)
+		{
+			var EditAvatarResponse = await HttpService.PostFileAsync<ProfileEditAvatarResponseModel>(ApiRequestConstants.PROFILE_EDIT_AVATAR, _AvatarStream, _AvatarContentType);
+			if (!HttpService.ValidateResponse(EditAvatarResponse)) return;
+
+			await OnClearResetAvatarClick();
+		}
+
+		if (_EditContext.IsModified() || _TagsChanged || _SexualitiesChanged || _LookingForChanged)
+		{
+			var RequestModel = GetProfileEditRequestModel();
+			var Response = await HttpService.PostJsonRequestAsync<ProfileEditRequestModel, ProfileEditResponseModel>(ApiRequestConstants.PROFILE_EDIT, RequestModel);
+			if (!HttpService.ValidateResponse(Response)) return;
+
+			_EditContext.MarkAsUnmodified();
+			_TagsChanged = false;
+			_SexualitiesChanged = false;
+			_LookingForChanged = false;
+		}
+
+		await ReloadProfileAsync();
+	}
+
+	private async Task OnImportClick()
+	{
+		await Task.Delay(1); // TODO
+	}
+	private async Task OnExportClick()
+	{
+		await Task.Delay(1); // TODO
+	}
+	private async Task OnDeleteAccountClick()
+	{
+		_IsSubmittingDeleteAccount = true;
+		var RequestModel = new AccountDeleteRequestModel();
+		var Response = await HttpService.PostJsonRequestAsync<AccountDeleteRequestModel, AccountDeleteResponseModel>(ApiRequestConstants.ACCOUNT_DELETE, RequestModel);
+		_IsSubmittingDeleteAccount = false;
+
+		if (!HttpService.ValidateResponse(Response)) return;
+
+		await AccountService.LogoutAsync();
+		NavigationService.NavigateTo(NavigationConstants.NAV_HOME);
+	}
+	private async Task OnAvatarFileChanged(InputFileChangeEventArgs InArgs)
+	{
+		_AvatarStream?.Dispose();
+		_AvatarStream = TryOpenReadImage(InArgs.File);
+		_AvatarContentType = InArgs.File.ContentType;
+		if (_AvatarStream == null) return;
+
+		using (var PreviewStream = TryOpenReadImage(InArgs.File))
+		{
+			var ImageBytes = new Byte[InArgs.File.Size];
+			await PreviewStream.ReadAsync(ImageBytes);
+			_PreviewAvatar = $"data:{InArgs.File.ContentType};base64,{Convert.ToBase64String(ImageBytes)}";
+			StateHasChanged();
+		}
+	}
+	private async Task OnClearResetAvatarClick()
+	{
+		if (_AvatarStream != null)
+		{
+			_AvatarStream?.Dispose();
+			_AvatarStream = null;
+			_AvatarContentType = null;
+			_PreviewAvatar = null;
+			return;
+		}
+
+		if (!_HasDefaultAvatar)
+		{
+			_IsSubmittingResetAvatar = true;
+			var RequestModel = new ProfileResetAvatarRequestModel();
+			var Response = await HttpService.PostJsonRequestAsync<ProfileResetAvatarRequestModel, ProfileResetAvatarResponseModel>(ApiRequestConstants.PROFILE_RESET_AVATAR, RequestModel);
+			_IsSubmittingResetAvatar = false;
+
+			if (!HttpService.ValidateResponse(Response)) return;
+
+			await ReloadProfileAsync();
+		}
+	}
+	private async Task OnSaveChangesClick()
+	{
+		_IsSubmittingSaveChanges = true;
+		await SaveChangesAsync();
+		_IsSubmittingSaveChanges = false;
+	}
+
+	private ProfileEditRequestModel GetProfileEditRequestModel()
+	{
+
+		var Request = new ProfileEditRequestModel()
+		{
+			DisplayName = _EditRequest.DisplayName,
+			PronounsId = _EditRequest.PronounsId,
+			SexId = _EditRequest.SexId,
+			GenderId = _EditRequest.GenderId,
+			RegionId = _EditRequest.RegionId,
+			CountryId = _EditRequest.CountryId,
+			BirthDate = _EditRequest.BirthDate,
+			Tags = _EditRequest.Tags.Concat(_NewTagList),
+			Sexualities = _EditRequest.Sexualities.Concat(_NewSexualityList),
+			LookingFor = _EditRequest.LookingFor,
+			AboutMe = !String.IsNullOrEmpty(_EditRequest.AboutMe) ? _EditRequest.AboutMe : null,
+			AboutYou = !String.IsNullOrEmpty(_EditRequest.AboutYou) ? _EditRequest.AboutYou : null,
+		};
+
+		return Request;
+	}
+	private void OnTogglePrivateKeyClick()
+	{
+		_IsPrivateKeyVisible = !_IsPrivateKeyVisible;
+		_PrivateKeyVisibilityIcon = _IsPrivateKeyVisible ? "fas fa-eye" : "fas fa-eye-slash";
+	}
+	private void OnRegionChanged(Int32? InValue)
+	{
+		var RegionId = InValue;
+		_EditRequest.RegionId = RegionId;
+
+		if (RegionId == null) _Countries = _GetResponse.FullProfile.Data.AllCountries;
+		else _Countries = _GetResponse.FullProfile.Data.AllCountries.Where(X => X.RegionId == RegionId);
+
+		var Country = RegionId != null ? _Countries.FirstOrDefault(X => X.Id == _EditRequest.CountryId) : null;
+		OnCountryChanged(Country?.Id);
+	}
+	private void OnCountryChanged(Int32? InValue)
+	{
+		var CountryId = InValue;
+		_EditRequest.CountryId = CountryId;
+		if (CountryId == null) return;
+
+		var Country = _GetResponse.FullProfile.Data.AllCountries.FirstOrDefault(X => X.Id == CountryId);
+		if (Country != null && _EditRequest.RegionId != Country.RegionId) OnRegionChanged(Country.RegionId);
+	}
+	private void OnTagKeyDown(KeyboardEventArgs InArgs)
+	{
+		if (InArgs.Code == KeyCodeConstants.ENTER || InArgs.Code == KeyCodeConstants.NUMPAD_ENTER) OnAddTagClick();
+	}
+	private void OnAddTagClick()
+	{
+		if (String.IsNullOrEmpty(_NewTagName)) return;
+
+		NotificationService.ClearMainNotification();
+		_NewTagName = _NewTagName.ToUpper();
+
+		var CombinedTags = _EditRequest.Tags.Concat(_NewTagList);
+		if (CombinedTags.Count() >= ProfileConstants.MAX_TAGS)
+		{
+			NotificationService.SetMainNotification(Loc["TagMaxReached"], ENotificationType.Warning);
+			return;
+		}
+
+		var HasTag = CombinedTags.Any(X => X.Name == _NewTagName);
+		if (HasTag)
+		{
+			NotificationService.SetMainNotification(Loc["TagExists"], ENotificationType.Warning);
+			return;
+		}
+
+		_NewTagList.Add(new TagModel { Name = _NewTagName });
+		_TagsChanged = true;
+	}
+	private void OnRemoveTagClick(String InTagName)
+	{
+		NotificationService.ClearMainNotification();
+
+		_EditRequest.Tags = _EditRequest.Tags.Where(X => X.Name != InTagName);
+		_NewTagList = _NewTagList.Where(X => X.Name != InTagName).ToList();
+		_TagsChanged = true;
+	}
+	private void OnSexualityKeyDown(KeyboardEventArgs InArgs)
+	{
+		if (InArgs.Code == KeyCodeConstants.ENTER || InArgs.Code == KeyCodeConstants.NUMPAD_ENTER) OnAddSexualityClick();
+	}
+	private void OnAddSexualityClick()
+	{
+		if (_NewSexualityId <= 0) return;
+
+		NotificationService.ClearMainNotification();
+
+		var CombinedSexualities = _EditRequest.Sexualities.Concat(_NewSexualityList);
+		if (CombinedSexualities.Count() >= ProfileConstants.MAX_SEXUALITIES)
+		{
+			NotificationService.SetMainNotification(Loc["SexualityMaxReached"], ENotificationType.Warning);
+			return;
+		}
+
+		var HasSexuality = CombinedSexualities.Any(X => X.Id == _NewSexualityId);
+		if (HasSexuality)
+		{
+			NotificationService.SetMainNotification(Loc["SexualityExists"], ENotificationType.Warning);
+			return;
+		}
+
+		var NewSexuality = _GetResponse.FullProfile.Data.AllSexualities.FirstOrDefault(X => X.Id == _NewSexualityId);
+		_NewSexualityList.Add(NewSexuality);
+		_SexualitiesChanged = true;
+	}
+	private void OnRemoveSexualityClick(Int32 InSexualityId)
+	{
+		NotificationService.ClearMainNotification();
+
+		_EditRequest.Sexualities = _EditRequest.Sexualities.Where(X => X.Id != InSexualityId);
+		_NewSexualityList = _NewSexualityList.Where(X => X.Id != InSexualityId).ToList();
+		_SexualitiesChanged = true;
+	}
+	private void OnLookingForChanged(ELookingFor InValue)
+	{
+		_EditRequest.LookingFor ^= InValue;
+		_LookingForChanged = true;
+	}
+
+	private Stream TryOpenReadImage(IBrowserFile InFile)
+	{
+		try
+		{
+			return InFile.OpenReadStream(ProfileConstants.MAX_AVATAR_SIZE);
+		}
+
+		catch (IOException)
+		{
+			NotificationService.SetMainNotification(String.Format(Loc["ImageSizeLimit"], ProfileConstants.MAX_AVATAR_SIZE.ToSizeText()), ENotificationType.Warning);
+			return null;
+		}
+	}
+}

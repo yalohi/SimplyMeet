@@ -1,0 +1,162 @@
+@inject AccountService AccountService
+@inject HttpService HttpService
+@inject ProfileService ProfileService
+
+<div class="@(IsActive ? ActiveCssClass : CssClass)">
+	<div class="d-flex align-items-center">
+		@if (CompactProfile == null)
+		{
+			<SpinnerComponent />
+		}
+
+		else
+		{
+			<ImageModalComponent
+				Title="@CompactProfile.DisplayName"
+				CssClass="bg-dark rounded-circle d-block cursor-pointer avatar-small"
+				ImageSrc="@ProfileService.GetAvatarUrl(CompactProfile.Avatar)"
+				Alt="avatar" />
+
+			<div class="ps-3">
+				<strong class="text-break">@CompactProfile.DisplayName</strong><br />
+				<span class="badge rounded-pill bg-dark mt-1">@CompactProfile.PublicId</span>
+			</div>
+
+			<div class="ps-3 flex-grow-1 text-end text-nowrap">
+				<button type="button" class="btn btn-success border-0" @onclick="OnProfileClick">
+					<i class="fas fa-user-circle fa-2x"></i>
+				</button>
+
+				@if (ShowRemoveButton)
+				{
+					<button type="button" class="btn btn-danger border-0 ms-2" @onclick="() => RemoveClick.InvokeAsync(this)">
+						<i class="fas fa-minus fa-2x"></i>
+					</button>
+				}
+
+				@if (ShowNavBarButton)
+				{
+					<button type="button" class="btn btn-dark border-0 ms-2" @onclick="() => NavBarClick.InvokeAsync()">
+						<i class="fas fa-bars fa-2x"></i>
+					</button>
+				}
+			</div>
+		}
+	</div>
+</div>
+
+@if (IsActive)
+{
+	<div class="ChildCssClass">
+		<ProfileComponent
+			PublicId="@CompactProfile.PublicId"
+			CssClass="@ProfileCssClass"
+			Choice="@CompactProfile.Choice"
+			ShowReportButton=@ShowReportButton
+			ShowSuspendButton=@ShowSuspendButton
+			ShowUnmatchButton=@ShowUnmatchButton
+			ShowRateButtons=@ShowRateButtons
+			SuspendClick="@SuspendClick"
+			RateClick="@RateClick" />
+
+		@ChildContent
+	</div>
+}
+
+@code
+{
+	//===========================================================================================
+	// Global Variables
+	//===========================================================================================
+	#region Properties
+	[Parameter]
+	public RenderFragment ChildContent { get; set; }
+	[Parameter]
+	public String ChildCssClass { get; set; }
+
+	// Compact Profile
+	[Parameter]
+	public ProfileCompactModel CompactProfile { get; set; }
+	[Parameter]
+	public String PublicId { get; set; }
+	[Parameter]
+	public String CssClass { get; set; }
+	[Parameter]
+	public String ActiveCssClass { get; set; }
+	[Parameter]
+	public Boolean ShowProfileButton { get; set; }
+	[Parameter]
+	public Boolean ShowRemoveButton { get; set; }
+	[Parameter]
+	public Boolean ShowNavBarButton { get; set; }
+
+	[Parameter]
+	public EventCallback<ProfileCompactComponent> ProfileClick { get; set; }
+	[Parameter]
+	public EventCallback RemoveClick { get; set; }
+	[Parameter]
+	public EventCallback NavBarClick { get; set; }
+
+	// Profile
+	[Parameter]
+	public String ProfileCssClass { get; set; }
+	[Parameter]
+	public Boolean ShowReportButton { get; set; }
+	[Parameter]
+	public Boolean ShowSuspendButton { get; set; }
+	[Parameter]
+	public Boolean ShowUnmatchButton { get; set; }
+	[Parameter]
+	public Boolean ShowRateButtons { get; set; }
+
+	[Parameter]
+	public EventCallback SuspendClick { get; set; }
+	[Parameter]
+	public EventCallback RateClick { get; set; }
+	#endregion
+	#region Properties
+	public Boolean IsActive { get; private set; }
+	#endregion
+
+	//===========================================================================================
+	// Public Methods
+	//===========================================================================================
+	public async Task ReloadAsync()
+	{
+		if (!String.IsNullOrEmpty(PublicId))
+		{
+			var RequestModel = new ProfileGetCompactRequestModel { PublicId = PublicId };
+			var Response = await HttpService.PostJsonRequestAsync<ProfileGetCompactRequestModel, ProfileGetCompactResponseModel>(ApiRequestConstants.PROFILE_GET_COMPACT, RequestModel);
+			if (!HttpService.ValidateResponse(Response)) return;
+
+			CompactProfile = Response.CompactProfile;
+		}
+	}
+
+	public void SetIsActive(Boolean InIsActive)
+	{
+		IsActive = InIsActive;
+	}
+	public void ToggleActive()
+	{
+		IsActive = !IsActive;
+	}
+
+	//===========================================================================================
+	// Protected Methods
+	//===========================================================================================
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync();
+		await ReloadAsync();
+	}
+
+	//===========================================================================================
+	// Private Methods
+	//===========================================================================================
+	private async Task OnProfileClick()
+	{
+		ToggleActive();
+		await ProfileClick.InvokeAsync(this);
+	}
+}

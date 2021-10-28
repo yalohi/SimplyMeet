@@ -1,0 +1,29 @@
+@inject NotificationService NotificationService
+
+@if (!String.IsNullOrEmpty(NotificationService.Text))
+{
+	var BackgroundClass = NotificationService.Type switch
+	{
+		ENotificationType.Info => "bg-info",
+		ENotificationType.Warning => "bg-warning",
+		ENotificationType.Danger => "bg-danger",
+		_ => "bg-secondary",
+	};
+
+	<div class="@BackgroundClass text-center">
+		<button type="button" class="btn-close float-end" @onclick="NotificationService.ClearMainNotification" />
+		@NotificationService.Text
+	</div>
+}
+
+@code
+{
+	//===========================================================================================
+	// Protected Methods
+	//===========================================================================================
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+		NotificationService.PropertyChanged += (InSender, InArgs) => StateHasChanged();
+	}
+}

@@ -1,0 +1,81 @@
+<ul class="pagination">
+	@if (ShowStartEndButtons)
+	{
+		<li class="page-item @(IsPreviousButtonDisabled ? "disabled" : "")">
+			<a class="page-link" href="@PageLink/0"><i class="fas fa-step-backward"></i></a>
+		</li>
+	}
+
+	@if (ShowPreviousNextButtons)
+	{
+		<li class="page-item @(IsPreviousButtonDisabled ? "disabled" : "")">
+			<a class="page-link" href="@PageLink/@(PageIndex - 1)"><i class="fas fa-backward"></i></a>
+		</li>
+	}
+
+	@if (ShowMorePagesIndicators && PageButtonStart > 0)
+	{
+		<li class="page-item disabled">
+			<a class="page-link"><i class="fas fa-ellipsis-h"></i></a>
+		</li>
+	}
+
+	@for (var Index = 0; Index < PageButtonCount; Index++)
+	{
+		<li class="page-item @(PageButtonStart + Index == PageIndex ? "active" : "")">
+			<a class="page-link" href="@PageLink/@(PageButtonStart + Index)">@(PageButtonStart + Index + 1)</a>
+		</li>
+	}
+
+	@if (ShowMorePagesIndicators && PageButtonStart < PageCount - PageButtonCount)
+	{
+		<li class="page-item disabled">
+			<a class="page-link"><i class="fas fa-ellipsis-h"></i></a>
+		</li>
+	}
+
+	@if (ShowPreviousNextButtons)
+	{
+		<li class="page-item @(IsNextButtonDisabled ? "disabled" : "")">
+			<a class="page-link" href="@PageLink/@(PageIndex + 1)"><i class="fas fa-forward"></i></a>
+		</li>
+	}
+
+	@if (ShowStartEndButtons)
+	{
+		<li class="page-item @(IsNextButtonDisabled ? "disabled" : "")">
+			<a class="page-link" href="@PageLink/@(PageCount - 1)"><i class="fas fa-step-forward"></i></a>
+		</li>
+	}
+</ul>
+
+@code
+{
+	//===========================================================================================
+	// Global Variables
+	//===========================================================================================
+	#region Properties
+	[Parameter]
+	public String PageLink { get; set; }
+	[Parameter]
+	public Int32 PageIndex { get; set; }
+	[Parameter]
+	public Int32 MaxPageButtonRange { get; set; }
+	[Parameter]
+	public Int32 ItemsPerPage { get; set; }
+	[Parameter]
+	public Int32 ItemCount { get; set; }
+	[Parameter]
+	public Boolean ShowStartEndButtons { get; set; }
+	[Parameter]
+	public Boolean ShowPreviousNextButtons { get; set; }
+	[Parameter]
+	public Boolean ShowMorePagesIndicators { get; set; }
+
+	public Int32 PageCount => (ItemCount - 1) / ItemsPerPage + 1;
+	public Int32 PageButtonCount => Math.Min(MaxPageButtonRange * 2 + 1, PageCount);
+	public Int32 PageButtonStart => Math.Clamp(PageIndex - MaxPageButtonRange, 0, Math.Max(PageCount - PageButtonCount, 0));
+	public Boolean IsPreviousButtonDisabled => PageIndex <= 0;
+	public Boolean IsNextButtonDisabled => PageIndex >= PageCount - 1;
+	#endregion
+}

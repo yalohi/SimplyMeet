@@ -1,0 +1,9 @@
+@inherits InputText
+
+@* TODO: fix performance for oninput controls *@
+<input
+	type="text"
+	class="@CssClass"
+	@attributes="@AdditionalAttributes"
+	@bind="@CurrentValueAsString" />
+	@* @bind:event="oninput" /> *@

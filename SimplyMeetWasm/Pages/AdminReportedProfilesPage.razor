@@ -1,0 +1,113 @@
+﻿@page "/admin/reported_profiles"
+@page "/admin/reported_profiles/{pageindex:int}"
+@inherits PageBase
+@inject IStringLocalizer<SharedResource> Loc
+@inject HttpService HttpService
+
+<AdminNavBarComponent />
+
+<SectionCardComponent BackgroundClass="bg-primary">
+	@if (_IsRequesting)
+	{
+		<SpinnerComponent />
+	}
+
+	else if (_GetResponse == null || _GetResponse.Error != null)
+	{
+		<ErrorComponent />
+	}
+
+	else if (_GetResponse.ReportedProfiles == null || _GetResponse.ReportedProfiles.Count() <= 0)
+	{
+		<EmptyComponent />
+	}
+
+	else
+	{
+		<div class="card-body">
+			<PaginationComponent
+				PageLink="@NavigationConstants.NAV_ADMIN_REPORTED_PROFILES"
+				PageIndex=@PageIndex
+				MaxPageButtonRange=2
+				ItemsPerPage=@ApiRequestConstants.ADMIN_GET_REPORTED_PROFILES_LOAD_COUNT
+				ItemCount=@_GetResponse.TotalReportedAccounts
+				ShowStartEndButtons=true />
+
+			@foreach (var ReportedAccount in _GetResponse.ReportedProfiles.Take(ApiRequestConstants.ADMIN_GET_REPORTED_PROFILES_LOAD_COUNT))
+			{
+				<div class="bg-warning rounded text-center">
+					<strong>@ReportedAccount.ReportCount @Loc["Reports"]</strong>
+				</div>
+
+				<ProfileCompactComponent
+					CompactProfile="@ReportedAccount.CompactProfile"
+					CssClass="bg-secondary border-0 rounded p-3 my-1"
+					ActiveCssClass="bg-primary border-0 rounded p-3 my-1"
+					ProfileCssClass="border-0 my-1"
+					ShowSuspendButton=true
+					SuspendClick="@OnSuspendClick"
+					ProfileClick="@OnProfileClick" />
+			}
+		</div>
+	}
+</SectionCardComponent>
+
+
+@code
+{
+	//===========================================================================================
+	// Global Variables
+	//===========================================================================================
+	#region Properties
+	[Parameter]
+	public Int32 PageIndex { get; set; }
+	#endregion
+	#region Fields
+	private AdminGetReportedProfilesResponseModel _GetResponse;
+	private ProfileCompactComponent _ActiveProfile;
+	private Boolean _IsRequesting;
+	#endregion
+
+	//===========================================================================================
+	// Protected Methods
+	//===========================================================================================
+	protected override async Task OnInitializedAsync()
+	{
+		_IsRequesting = true;
+		await base.OnInitializedAsync();
+	}
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync();
+		await ReloadReportedProfilesAsync();
+	}
+
+	//===========================================================================================
+	// Private Methods
+	//===========================================================================================
+	private async Task ReloadReportedProfilesAsync()
+	{
+		NotificationService.ClearMainNotification();
+
+		var RequestModel = new AdminGetReportedProfilesRequestModel
+		{
+			Offset = ApiRequestConstants.ADMIN_GET_REPORTED_PROFILES_LOAD_COUNT * PageIndex,
+			Count = ApiRequestConstants.ADMIN_GET_REPORTED_PROFILES_LOAD_COUNT,
+		};
+
+		_IsRequesting = true;
+		_GetResponse = await HttpService.PostJsonRequestAsync<AdminGetReportedProfilesRequestModel, AdminGetReportedProfilesResponseModel>(ApiRequestConstants.ADMIN_GET_REPORTED_PROFILES, RequestModel);
+		_IsRequesting = false;
+		if (!HttpService.ValidateResponse(_GetResponse)) return;
+	}
+
+	private void OnProfileClick(ProfileCompactComponent InCompactProfile)
+	{
+		if (_ActiveProfile != InCompactProfile) _ActiveProfile?.SetIsActive(false);
+		_ActiveProfile = InCompactProfile;
+	}
+	private async Task OnSuspendClick()
+	{
+		await ReloadReportedProfilesAsync();
+	}
+}

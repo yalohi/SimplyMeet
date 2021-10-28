@@ -1,0 +1,77 @@
+<div class="modal fade @_ModalClass" tabindex="-1" role="dialog" aria-hidden="true" style="display: @_ModalDisplay;">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">@Title</h5>
+				<button type="button" class="btn-close" data-dismiss="modal" @onclick="Close" />
+			</div>
+
+			<div class="modal-body">
+				@Content
+			</div>
+
+			<div class="modal-footer">
+				<button type="submit" class="btn @ConfirmClass border-0" @onclick="Confirm">@ConfirmText</button>
+				<button type="reset" class="btn btn-secondary border-0" data-dismiss="modal" @onclick="Close">@CloseText</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+@if (_ShowBackdrop)
+{
+	<div class="modal-backdrop fade show"></div>
+}
+
+@code
+{
+	//===========================================================================================
+	// Global Variables
+	//===========================================================================================
+	#region Properties
+	[Parameter]
+	public String Title { get; set; }
+	[Parameter]
+	public String Content { get; set; }
+	[Parameter]
+	public String ConfirmText { get; set; }
+	[Parameter]
+	public String CloseText { get; set; }
+	[Parameter]
+	public String ConfirmClass { get; set; }
+	[Parameter]
+	public EventCallback OnConfirm { get; set; }
+	#endregion
+	#region Fields
+	private String _ModalDisplay;
+	private String _ModalClass;
+	private Boolean _ShowBackdrop;
+	#endregion
+
+	//===========================================================================================
+	// Public Methods
+	//===========================================================================================
+	public void Open()
+	{
+		_ModalDisplay = "block";
+		_ModalClass = "show";
+		_ShowBackdrop = true;
+		StateHasChanged();
+	}
+	public void Close()
+	{
+		_ModalDisplay = "none";
+		_ModalClass = "";
+		_ShowBackdrop = false;
+		StateHasChanged();
+	}
+
+	//===========================================================================================
+	// Private Methods
+	//===========================================================================================
+	private async Task Confirm()
+	{
+		Close();
+		await OnConfirm.InvokeAsync();
+	}
+}

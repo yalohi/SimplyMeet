@@ -1,0 +1,597 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="AboutMe" xml:space="preserve">
+        <value>About Me</value>
+    </data>
+    <data name="AboutYou" xml:space="preserve">
+        <value>About You</value>
+    </data>
+    <data name="AccountDeleteConfirmContent" xml:space="preserve">
+        <value>This will permanently delete your Account. Are you sure you want to proceed?</value>
+    </data>
+    <data name="AccountDeleteConfirmTitle" xml:space="preserve">
+        <value>Confirm Account Deletion</value>
+    </data>
+    <data name="AccountRoleExists" xml:space="preserve">
+        <value>Account already has that role</value>
+    </data>
+    <data name="AccountRoles" xml:space="preserve">
+        <value>Account Roles</value>
+    </data>
+    <data name="Active" xml:space="preserve">
+        <value>Active</value>
+    </data>
+    <data name="ActiveAccounts" xml:space="preserve">
+        <value>Active Accounts</value>
+    </data>
+    <data name="ActiveMatches" xml:space="preserve">
+        <value>Active Matches</value>
+    </data>
+    <data name="AdjustFilter" xml:space="preserve">
+        <value>Adjust Match Filter</value>
+    </data>
+    <data name="Admin" xml:space="preserve">
+        <value>Admin</value>
+    </data>
+    <data name="Age" xml:space="preserve">
+        <value>Age</value>
+    </data>
+    <data name="Avatar" xml:space="preserve">
+        <value>Avatar</value>
+    </data>
+    <data name="BadRequest" xml:space="preserve">
+        <value>400 - Bad Request</value>
+    </data>
+    <data name="BirthDate" xml:space="preserve">
+        <value>Birth Date</value>
+    </data>
+    <data name="CharactersLeft" xml:space="preserve">
+        <value>{0} characters left</value>
+    </data>
+    <data name="Clear" xml:space="preserve">
+        <value>Clear</value>
+    </data>
+    <data name="Close" xml:space="preserve">
+        <value>Close</value>
+    </data>
+    <data name="Conversation" xml:space="preserve">
+        <value>Conversation</value>
+    </data>
+    <data name="Copied" xml:space="preserve">
+        <value>Copied!</value>
+    </data>
+    <data name="Country" xml:space="preserve">
+        <value>Country</value>
+    </data>
+    <data name="Created" xml:space="preserve">
+        <value>Created</value>
+    </data>
+    <data name="DecryptFailed" xml:space="preserve">
+        <value>&lt;i&gt;Could not decrypt message. Missing PrivateKey from LocalStorage?&lt;/i&gt;</value>
+    </data>
+    <data name="Delete" xml:space="preserve">
+        <value>Delete</value>
+    </data>
+    <data name="DeleteAccount" xml:space="preserve">
+        <value>Delete Account</value>
+    </data>
+    <data name="Disliked" xml:space="preserve">
+        <value>Disliked</value>
+    </data>
+    <data name="DisplayName" xml:space="preserve">
+        <value>Display Name</value>
+    </data>
+    <data name="DonateDesc" xml:space="preserve">
+        <value>If you want to support the development of this project or help with the server costs consider sending a small donation via one of the following ways. All your support is greatly appreciated. Thank you!</value>
+    </data>
+    <data name="Empty" xml:space="preserve">
+        <value>Seems like it is empty here, for now.</value>
+    </data>
+    <data name="Error" xml:space="preserve">
+        <value>This is where you would be viewing amazing content, if the damned thing had loaded!</value>
+    </data>
+    <data name="ErrorAccountSuspended" xml:space="preserve">
+        <value>Account has been suspended!</value>
+    </data>
+    <data name="ErrorCrypto" xml:space="preserve">
+        <value>Cryptographic Error!</value>
+    </data>
+    <data name="ErrorDatabase" xml:space="preserve">
+        <value>Database Error!</value>
+    </data>
+    <data name="ErrorGenerateFailed" xml:space="preserve">
+        <value>Server failed to generate new account!</value>
+    </data>
+    <data name="ErrorInvalidOperation" xml:space="preserve">
+        <value>Invalid Operation!</value>
+    </data>
+    <data name="ErrorInvalidPrivateKey" xml:space="preserve">
+        <value>Invalid Private Key!</value>
+    </data>
+    <data name="ErrorNoSuchAccount" xml:space="preserve">
+        <value>No such account!</value>
+    </data>
+    <data name="ErrorRequestFailed" xml:space="preserve">
+        <value>Request failed. Service might be offline. Also check your connection.</value>
+    </data>
+    <data name="ErrorTooManyRequests" xml:space="preserve">
+        <value>Too many requests! Try again later.</value>
+    </data>
+    <data name="Export" xml:space="preserve">
+        <value>Export</value>
+    </data>
+    <data name="Filter" xml:space="preserve">
+        <value>Filter</value>
+    </data>
+    <data name="FilterInfo" xml:space="preserve">
+        <value>Note: This filter affects your personal match feed as well as you appearing in other peoples match feed.</value>
+    </data>
+    <data name="FilterValueInfo" xml:space="preserve">
+        <value>Note: This value affects the match feed.</value>
+    </data>
+    <data name="Footer" xml:space="preserve">
+        <value>powered by SimplyMeet</value>
+    </data>
+    <data name="Friendship" xml:space="preserve">
+        <value>Friendship</value>
+    </data>
+    <data name="From" xml:space="preserve">
+        <value>From</value>
+    </data>
+    <data name="Gender" xml:space="preserve">
+        <value>Gender</value>
+    </data>
+    <data name="GenerateAccount" xml:space="preserve">
+        <value>Generate Account</value>
+    </data>
+    <data name="GetStarted" xml:space="preserve">
+        <value>Get started</value>
+    </data>
+    <data name="Home" xml:space="preserve">
+        <value>Home</value>
+    </data>
+    <data name="Icon" xml:space="preserve">
+        <value>Icon</value>
+    </data>
+    <data name="Import" xml:space="preserve">
+        <value>Import</value>
+    </data>
+    <data name="InternalServerError" xml:space="preserve">
+        <value>500 - Internal Server Error</value>
+    </data>
+    <data name="LastLogin" xml:space="preserve">
+        <value>Last Login</value>
+    </data>
+    <data name="Liked" xml:space="preserve">
+        <value>Liked</value>
+    </data>
+    <data name="Login" xml:space="preserve">
+        <value>Login</value>
+    </data>
+    <data name="Logout" xml:space="preserve">
+        <value>Logout</value>
+    </data>
+    <data name="LookingFor" xml:space="preserve">
+        <value>Looking For</value>
+    </data>
+    <data name="Love" xml:space="preserve">
+        <value>Love</value>
+    </data>
+    <data name="MainAdmin" xml:space="preserve">
+        <value>Main Admin</value>
+    </data>
+    <data name="MatchChatSuggestion" xml:space="preserve">
+        <value>&lt;div class="text-center"&gt;Want to take the conversation elsewhere?&lt;br /&gt;Give &lt;a href="https://app.element.io/"&gt;Matrix&lt;/a&gt; a try! It offers features very similar to Discord but protects your privacy a lot better.&lt;/div&gt;</value>
+    </data>
+    <data name="MatchStartMessage" xml:space="preserve">
+        <value>&lt;div class="text-center"&gt;&lt;strong&gt;This marks the beginning of your match! Now don't be shy and say hi to each other.&lt;/strong&gt; 🙊&lt;/div&gt;</value>
+    </data>
+    <data name="NameExists" xml:space="preserve">
+        <value>Name already exists</value>
+    </data>
+    <data name="Never" xml:space="preserve">
+        <value>Never</value>
+    </data>
+    <data name="New" xml:space="preserve">
+        <value>New</value>
+    </data>
+    <data name="NewCountry" xml:space="preserve">
+        <value>New Country</value>
+    </data>
+    <data name="NewGender" xml:space="preserve">
+        <value>New Gender</value>
+    </data>
+    <data name="NewPronouns" xml:space="preserve">
+        <value>New Pronouns</value>
+    </data>
+    <data name="NewRegion" xml:space="preserve">
+        <value>New Region</value>
+    </data>
+    <data name="NewSex" xml:space="preserve">
+        <value>New Sex</value>
+    </data>
+    <data name="NewSexuality" xml:space="preserve">
+        <value>New Sexuality</value>
+    </data>
+    <data name="NewTag" xml:space="preserve">
+        <value>New Tag</value>
+    </data>
+    <data name="NoDetailedProfileData" xml:space="preserve">
+        <value>No additional information available</value>
+    </data>
+    <data name="NoNewMatchCandidates" xml:space="preserve">
+        <value>We don't have any new match candidates for you right now. 🙁</value>
+    </data>
+    <data name="NotSpecified" xml:space="preserve">
+        <value>Not specified</value>
+    </data>
+    <data name="PP_AccountDeletion" xml:space="preserve">
+        <value>Account-Deletion</value>
+    </data>
+    <data name="PP_App" xml:space="preserve">
+        <value>App</value>
+    </data>
+    <data name="PP_Cookies" xml:space="preserve">
+        <value>Cookies</value>
+    </data>
+    <data name="PP_Creation" xml:space="preserve">
+        <value>Creation Date</value>
+    </data>
+    <data name="PP_CreationComment" xml:space="preserve">
+        <value>Used to show the "New" tag on your profile.</value>
+    </data>
+    <data name="PP_Description" xml:space="preserve">
+        <value>The following policy describes the kind of data we store, why and until when it is stored. All stored data is only used to provide the basic functionality of the service and will be deleted immediately from production if no longer necessary. However, in case of critical failure we store full database backups up to 7 days.</value>
+    </data>
+    <data name="PP_FilterData" xml:space="preserve">
+        <value>Filter Data</value>
+    </data>
+    <data name="PP_FilterDataComment" xml:space="preserve">
+        <value>All the data you can edit on your filter page. Used for the match feed.</value>
+    </data>
+    <data name="PP_LastLogin" xml:space="preserve">
+        <value>Last Login Date</value>
+    </data>
+    <data name="PP_LastLoginComment" xml:space="preserve">
+        <value>Used to determine active accounts.</value>
+    </data>
+    <data name="PP_LastUpdate" xml:space="preserve">
+        <value>Last Update</value>
+    </data>
+    <data name="PP_LocalStorage" xml:space="preserve">
+        <value>Local Storage</value>
+    </data>
+    <data name="PP_LoginToken" xml:space="preserve">
+        <value>Login Token</value>
+    </data>
+    <data name="PP_LoginTokenDesc" xml:space="preserve">
+        <value>This keeps you logged in even after restarting the app.</value>
+    </data>
+    <data name="PP_Logout" xml:space="preserve">
+        <value>Logout</value>
+    </data>
+    <data name="PP_Match" xml:space="preserve">
+        <value>Match</value>
+    </data>
+    <data name="PP_MatchChoiceData" xml:space="preserve">
+        <value>Match Choice Data</value>
+    </data>
+    <data name="PP_MatchChoiceDataComment" xml:space="preserve">
+        <value>For the service to know who you would like to match.</value>
+    </data>
+    <data name="PP_MatchData" xml:space="preserve">
+        <value>Match Data</value>
+    </data>
+    <data name="PP_MatchDataComment" xml:space="preserve">
+        <value>For the service to know who you are matched with.</value>
+    </data>
+    <data name="PP_Messages" xml:space="preserve">
+        <value>Messages</value>
+    </data>
+    <data name="PP_MessagesComment" xml:space="preserve">
+        <value>To load messages, possibly from new devices. Message contents are end to end encrypted.</value>
+    </data>
+    <data name="PP_Name" xml:space="preserve">
+        <value>Name</value>
+    </data>
+    <data name="PP_None" xml:space="preserve">
+        <value>None</value>
+    </data>
+    <data name="PP_PrivacyPolicy" xml:space="preserve">
+        <value>Privacy Policy</value>
+    </data>
+    <data name="PP_PrivateKey" xml:space="preserve">
+        <value>Private Key</value>
+    </data>
+    <data name="PP_PrivateKeyDesc" xml:space="preserve">
+        <value>This is used to process end to end encrypted conversations with your matches.</value>
+    </data>
+    <data name="PP_ProfileData" xml:space="preserve">
+        <value>Profile Data</value>
+    </data>
+    <data name="PP_ProfileDataComment" xml:space="preserve">
+        <value>All the data you can edit on your profile. Used for the match feed and publicly visible.</value>
+    </data>
+    <data name="PP_Public" xml:space="preserve">
+        <value>Public</value>
+    </data>
+    <data name="PP_PublicId" xml:space="preserve">
+        <value>Public Id</value>
+    </data>
+    <data name="PP_PublicIdComment" xml:space="preserve">
+        <value>A 10 character identification code used to uniquely reference accounts.</value>
+    </data>
+    <data name="PP_PublicKey" xml:space="preserve">
+        <value>Public Key</value>
+    </data>
+    <data name="PP_PublicKeyComment" xml:space="preserve">
+        <value>The public key used for login requests and sent to your matches for end to end encryption.</value>
+    </data>
+    <data name="PP_ReportData" xml:space="preserve">
+        <value>Report Data</value>
+    </data>
+    <data name="PP_ReportDataComment" xml:space="preserve">
+        <value>Used to help Moderators suspend inappriorate accounts.</value>
+    </data>
+    <data name="PP_Server" xml:space="preserve">
+        <value>Server</value>
+    </data>
+    <data name="PP_ServerDatabase" xml:space="preserve">
+        <value>Server Database</value>
+    </data>
+    <data name="PP_Unmatch" xml:space="preserve">
+        <value>Unmatch</value>
+    </data>
+    <data name="PP_Until" xml:space="preserve">
+        <value>Until</value>
+    </data>
+    <data name="PP_UserChange" xml:space="preserve">
+        <value>User-Change</value>
+    </data>
+    <data name="PP_Where" xml:space="preserve">
+        <value>Where</value>
+    </data>
+    <data name="PP_Why" xml:space="preserve">
+        <value>Why</value>
+    </data>
+    <data name="PrivateKey" xml:space="preserve">
+        <value>Private Key</value>
+    </data>
+    <data name="PrivateKeyNotice" xml:space="preserve">
+        <value>Take note of this key. It is the key to your account and all your messages. It was generated on your device and never left it. Don't share this key with anyone else.</value>
+    </data>
+    <data name="ProfileData" xml:space="preserve">
+        <value>Profile Data</value>
+    </data>
+    <data name="Pronouns" xml:space="preserve">
+        <value>Pronouns</value>
+    </data>
+    <data name="PublicId" xml:space="preserve">
+        <value>Public Id</value>
+    </data>
+    <data name="Region" xml:space="preserve">
+        <value>Region</value>
+    </data>
+    <data name="Report" xml:space="preserve">
+        <value>Report</value>
+    </data>
+    <data name="ReportConfirmContent" xml:space="preserve">
+        <value>This will report the Account to the Moderators of this site for having an inappropriate profile. Are you sure you want to proceed?</value>
+    </data>
+    <data name="ReportConfirmTitle" xml:space="preserve">
+        <value>Confirm Report</value>
+    </data>
+    <data name="ReportedProfiles" xml:space="preserve">
+        <value>Reported Profiles</value>
+    </data>
+    <data name="Reports" xml:space="preserve">
+        <value>Reports</value>
+    </data>
+    <data name="Reset" xml:space="preserve">
+        <value>Reset</value>
+    </data>
+    <data name="ReviewDislikedProfiles" xml:space="preserve">
+        <value>Review Disliked Profiles</value>
+    </data>
+    <data name="SaveChanges" xml:space="preserve">
+        <value>Save Changes</value>
+    </data>
+    <data name="SelectCountry" xml:space="preserve">
+        <value>Select Country</value>
+    </data>
+    <data name="SelectGender" xml:space="preserve">
+        <value>Select Gender</value>
+    </data>
+    <data name="SelectPronouns" xml:space="preserve">
+        <value>Select Pronouns</value>
+    </data>
+    <data name="SelectRegion" xml:space="preserve">
+        <value>Select Region</value>
+    </data>
+    <data name="SelectRole" xml:space="preserve">
+        <value>Select Role</value>
+    </data>
+    <data name="SelectSex" xml:space="preserve">
+        <value>Select Sex</value>
+    </data>
+    <data name="SelectSexuality" xml:space="preserve">
+        <value>Select Sexuality</value>
+    </data>
+    <data name="SendMessage" xml:space="preserve">
+        <value>Send an encrypted message...</value>
+    </data>
+    <data name="Sex" xml:space="preserve">
+        <value>Sex</value>
+    </data>
+    <data name="Sexualities" xml:space="preserve">
+        <value>Sexualities</value>
+    </data>
+    <data name="SexualityExists" xml:space="preserve">
+        <value>You already applied this Sexuality!</value>
+    </data>
+    <data name="SexualityMaxReached" xml:space="preserve">
+        <value>Sexuality limit reached!</value>
+    </data>
+    <data name="ShowMoreDetails" xml:space="preserve">
+        <value>Show More Details</value>
+    </data>
+    <data name="SuspendAccount" xml:space="preserve">
+        <value>Suspend Account</value>
+    </data>
+    <data name="SuspendAccountConfirmContent" xml:space="preserve">
+        <value>This will hide the account from all match feeds and they won't be able to match anyone themselves anymore. Are you sure you want to proceed?</value>
+    </data>
+    <data name="SuspendAccountConfirmTitle" xml:space="preserve">
+        <value>Confirm Suspend Account</value>
+    </data>
+    <data name="TagExists" xml:space="preserve">
+        <value>You already applied this Tag!</value>
+    </data>
+    <data name="TagMaxReached" xml:space="preserve">
+        <value>Tag limit reached!</value>
+    </data>
+    <data name="Tags" xml:space="preserve">
+        <value>Tags</value>
+    </data>
+    <data name="Unauthorized" xml:space="preserve">
+        <value>401 - Unauthorized</value>
+    </data>
+    <data name="Unmatch" xml:space="preserve">
+        <value>Unmatch</value>
+    </data>
+    <data name="UnmatchConfirmContent" xml:space="preserve">
+        <value>This will unmatch your current match. You won't be able to send or receive any messages from them anymore. Are you sure you want to proceed?</value>
+    </data>
+    <data name="UnmatchConfirmTitle" xml:space="preserve">
+        <value>Confirm Unmatch</value>
+    </data>
+    <data name="VisitMatch" xml:space="preserve">
+        <value>Visit your match section</value>
+    </data>
+    <data name="VisitProfile" xml:space="preserve">
+        <value>Visit your profile section</value>
+    </data>
+    <data name="Welcome" xml:space="preserve">
+        <value>Welcome</value>
+    </data>
+    <data name="ImageSizeLimit" xml:space="preserve">
+        <value>Image file too big. Max Size: {0}</value>
+    </data>
+</root>
