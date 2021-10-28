@@ -8,7 +8,7 @@ namespace SimplyMeetShared.Constants
 		// Global Variables
 		//===========================================================================================
 		#region Const Fields
-		public const String BASE_ADDRESS = "https://127.0.0.1/api/";
+		public const String BASE_ADDRESS = "https://hiki.simplymeet.app/api/";
 		public const String BASE_PATH = "/api/";
 
 		public const String AVATARS = "Avatars";

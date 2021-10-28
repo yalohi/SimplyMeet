@@ -246,8 +246,16 @@ namespace SimplyMeetApi.Migrations
 		//===========================================================================================
 		private void InsertDefaults_Fluent()
 		{
-			// Roles
+			// Cards
 			var IdCounter = 0;
+			Insert.IntoTable(CARDS_TABLE).Row(new CardModel { Id = ++IdCounter, Title = "Hiki Meet", Content = "A place to meet <a href=\"https://en.wikipedia.org/wiki/Hikikomori\">Hikikomori</a>, whether you just need someone to talk, want to make a new friend or looking to find something more romantic." });
+			Insert.IntoTable(CARDS_TABLE).Row(new CardModel { Id = ++IdCounter, Title = "Simple", Content = "Generate a new account and get started with just 1 single click. You can start matching others right afterwards, but you might want to fill out some of your profile fields first to get better matches." });
+			Insert.IntoTable(CARDS_TABLE).Row(new CardModel { Id = ++IdCounter, Title = "Private", Content = "Every field in your profile is optional. Your messages are end to end encrypted so that their content can only be read by you and your match. Delete your account at any point in time, together with all of your data. Check out our simple <a href=\"privacy\">Privacy Policy</a> for more information." });
+			Insert.IntoTable(CARDS_TABLE).Row(new CardModel { Id = ++IdCounter, Title = "FOSS", Content = "Powered by free and open source software. No advertisement, no feature pay walls. You are <strong>NOT</strong> the product. Find out more about the project on the <a href=\"https://github.com/yalohi/SimplyMeet\">SimplyMeet Github</a>." });
+			Insert.IntoTable(CARDS_TABLE).Row(new CardModel { Id = ++IdCounter, Title = "A simple plea", Content = "Treat others like you want to be treated yourself. Be kind and honest. Be yourself. Remember that we are all in this together. It is never easy to find someone who really clicks with you on a personal level. Let's try our best to find the right person for each of us, together!" });
+
+			// Roles
+			IdCounter = 0;
 			var RoleNames = Enum.GetNames(typeof(EAccountRole));
 			foreach (var RoleName in RoleNames) Insert.IntoTable(ROLES_TABLE).Row(new RoleModel { Id = ++IdCounter, Name = RoleName });
 
