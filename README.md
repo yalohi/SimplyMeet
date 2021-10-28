@@ -5,14 +5,12 @@
 
 ![SimplyMeet](SimplyMeet.png)
 
-A community based, private and self hosted platform to meet people, make new friends or to find love. Simple to use, cross-platform, free and open source (**FOSS**), developed by the people, for the people. Start your own instance or join one of the officially listed on [**simplymeet.app**](simplymeet.app).
+A community based, private and self hosted platform to meet people, make new friends or to find love. Simple to use, cross-platform, free and open source (**FOSS**), developed by the people, for the people. Start your own instance or join one of the officially listed on [**simplymeet.app**](https://simplymeet.app/).
 
 ## How it works
----
 ![Showcase](Showcase.png)
 
 ## Motivation
----
 It can be difficult to find true, meaningful connections to others. Most software that focuses on bringing communities together utilizes open and public spaces. While it can be great sharing your thoughts and feelings with a larger audience, it often boils down to a very small subset of the group being active with the majority of people only reading and lurking. For people that have a more quiet nature, being shy or suffering from social anxiety, participating in already established groups can be overwhelming making them feel unneeded and like they don't belong.
 
 Then there are dating apps. Centralized and controlled by large companies, trying to make a profit out of peoples loneliness and misery, harvesting your data, including feature paywalls, with the objective to keep you on their platform for as long as they can.
@@ -20,7 +18,6 @@ Then there are dating apps. Centralized and controlled by large companies, tryin
 I believe we can do better. We can develop, host and share our own platforms. SimplyMeet aims to solve these problems, offering you the possibility to create your own community spaces and meet like-minded people.
 
 ## Dependencies
----
 To build and run SimplyMeet you will need the following software installed:
 * [**Git**](https://git-scm.com/) (Cloning + Scripts)
 * [**Rsync**](https://rsync.samba.org/) (Scripts)
@@ -28,14 +25,12 @@ To build and run SimplyMeet you will need the following software installed:
 * [**Docker**](https://www.docker.com/) (Building + Running) [Optional]
 
 ## Clone the project
----
 ```
 git clone https://github.com/yalohi/SimplyMeet
 cd SimplyMeet
 ```
 
 ## Configuration
----
 ### Client (WASM)
 * **`SimplyMeetShared/Constants/ApiRequestConstants.cs`**
   * Set **`BASE_ADDRESS`** to the location of your WebApi Backend on your domain.
@@ -49,7 +44,6 @@ cd SimplyMeet
 * Add your own certificates to **`Docker/reverse-proxy/`**
 
 ## Get started (Linux Server + Docker) [Recommended]
----
 ```
 cd Scripts
 ./build.sh
@@ -87,7 +81,6 @@ Restores the **`N`**'th available backup. A higher number means an older backup.
 Creates a data backup, pulls the latest changes and rebuilds the project.
 
 ## Get Started (Linux Server) [DIY Method]
----
 ```
 cd Scripts
 ./build-no-docker.sh
@@ -98,15 +91,12 @@ In the newly created Build folder you will find:
 * The WebApi Backend, which runs its own web server (Kestrel) on a port configured in the appsettings file and can be served directly or behind a reverse proxy.
 
 ## License
----
 SimplyMeet is licensed under the [**AGPLv3**](LICENSE) free software license.
 
 ## Joining our list of communities
----
-If you want your own community listed on [**simplymeet.app**](simplymeet.app) hop onto our Matrix or Discord server and send me a message with a link to your project, a short description and proof of ownership.
+If you want your own community listed on [**simplymeet.app**](https://simplymeet.app/) hop onto our Matrix or Discord server and send me a message with a link to your project, a short description and proof of ownership.
 
 ## Donate
----
 If you want to support the development of this project, consider sending a small donation via one of the following ways. All your support is greatly appreciated. Thank you!
 
 * <img src="./SimplyMeetWasm/wwwroot/img/xmr.svg" width="16" /> Monero (XMR)
