@@ -448,7 +448,7 @@
         <value>Report Data</value>
     </data>
     <data name="PP_ReportDataComment" xml:space="preserve">
-        <value>Used to help Moderators suspend inappriorate accounts.</value>
+        <value>Used to help Moderators suspend inappropriate accounts.</value>
     </data>
     <data name="PP_Server" xml:space="preserve">
         <value>Server</value>
