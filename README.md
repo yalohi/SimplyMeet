@@ -59,9 +59,9 @@ cd Scripts
 * **`simplymeet-webapi`**
 
 And 3 Docker volumes.
-* **`simplymeet_wasm-app`**
-* **`simplymeet_webapi-app`**
-* **`simplymeet_webapi-data`**
+* **`simplymeet-wasm-app`**
+* **`simplymeet-webapi-app`**
+* **`simplymeet-webapi-data`**
 
 Some utility scripts you can use include:
 
@@ -69,7 +69,7 @@ Some utility scripts you can use include:
 ./backup-create.sh
 ```
 
-Creates a new backup of the **`simplymeet_webapi-data`** volume and deletes backups older than 7 days.
+Creates a new backup of the **`simplymeet-webapi-data`** volume and deletes backups older than 7 days.
 
 ```
 ./backup-restore.sh [N]
