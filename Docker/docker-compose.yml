@@ -1,13 +1,15 @@
-version: "3.9"
+version: "3.3"
 services:
     hiki-wasm:
         build: wasm
+        container_name: ${COMPOSE_PROJECT_NAME}-hiki-wasm
         ports:
             - "5001:5001"
         volumes:
             - hiki-wasm-app:/etc/nginx/html:ro
     hiki-webapi:
         build: webapi
+        container_name: ${COMPOSE_PROJECT_NAME}-hiki-webapi
         environment:
             - ASPNETCORE_ENVIRONMENT=Production
         ports:
@@ -18,8 +20,11 @@ services:
 
 volumes:
     hiki-wasm-app:
+        name: ${COMPOSE_PROJECT_NAME}-hiki-wasm-app
         external: false
     hiki-webapi-app:
+        name: ${COMPOSE_PROJECT_NAME}-hiki-webapi-app
         external: false
     hiki-webapi-data:
+        name: ${COMPOSE_PROJECT_NAME}-hiki-webapi-data
         external: false
