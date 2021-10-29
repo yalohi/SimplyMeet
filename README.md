@@ -44,6 +44,9 @@ cd SimplyMeet
 * Add your own certificates to **`Docker/reverse-proxy/`**
 
 ## Get started (Linux Server + Docker) [Recommended]
+
+Run the scripts with **`sudo`** if your user isn't part of the docker group!
+
 ```
 cd Scripts
 ./build.sh
