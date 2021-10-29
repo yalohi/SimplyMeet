@@ -2,6 +2,7 @@ version: "3.3"
 services:
     reverse-proxy:
         build: reverse-proxy
+        container_name: ${COMPOSE_PROJECT_NAME}-reverse-proxy
         ports:
             - "443:443"
         depends_on:
@@ -9,12 +10,14 @@ services:
             - webapi
     wasm:
         build: wasm
+        container_name: ${COMPOSE_PROJECT_NAME}-wasm
         ports:
             - "5001:5001"
         volumes:
             - wasm-app:/etc/nginx/html:ro
     webapi:
         build: webapi
+        container_name: ${COMPOSE_PROJECT_NAME}-webapi
         environment:
             - ASPNETCORE_ENVIRONMENT=Production
         ports:
@@ -25,8 +28,11 @@ services:
 
 volumes:
     wasm-app:
+        name: ${COMPOSE_PROJECT_NAME}-wasm-app
         external: false
     webapi-app:
+        name: ${COMPOSE_PROJECT_NAME}-webapi-app
         external: false
     webapi-data:
+        name: ${COMPOSE_PROJECT_NAME}-webapi-data
         external: false
