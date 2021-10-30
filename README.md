@@ -105,13 +105,13 @@ If you want to support the development of this project, consider sending a small
 * <img src="./SimplyMeetWasm/wwwroot/img/xmr.svg" width="16" /> Monero (XMR)
 * 84hvN7KcxxxCXpA8uNLvX3itFYZ2p6TNyDckP23E77FNMLSHcAa4cRH2K1YXnhNi9cc3XBB34nVHVZUVpM9Buu3oRz5A2LE
 
-<div style="text-align: center;">
+<p align="center">
 	<img src="./SimplyMeetWasm/wwwroot/img/xmr-qr.png" width="128" />
-</div>
+</p>
 
 * <img src="./SimplyMeetWasm/wwwroot/img/btc.svg" width="16" /> Bitcoin (BTC)
 * 1Euw6wkvJVRaV44DWwCWvR61Rnwe3gQ26D
 
-<div style="text-align: center;">
+<p align="center">
 	<img src="./SimplyMeetWasm/wwwroot/img/btc-qr.png" width="128" />
-</div>
+</p>
