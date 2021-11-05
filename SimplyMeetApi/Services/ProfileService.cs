@@ -279,9 +279,12 @@ namespace SimplyMeetApi.Services
 				Reported = (await _DatabaseService.GetReportAsync(new ReportModel { ReporterAccountId = InAuth.AccountId, ReportedAccountId = InAccount.Id }, InConnection) != null),
 			};
 
+			FullProfile.Account.Id = -1;
+			FullProfile.Account.ProfileId = -1;
+			FullProfile.Account.FilterId = -1;
+
 			if (InIsPublic)
 			{
-				FullProfile.Account.Id = -1;
 				FullProfile.Account.PublicKey_Base64 = null;
 				FullProfile.Account.Creation = DateTime.UnixEpoch;
 				FullProfile.Account.LastActive = null;
