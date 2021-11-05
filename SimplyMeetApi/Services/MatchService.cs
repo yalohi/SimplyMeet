@@ -45,6 +45,8 @@ namespace SimplyMeetApi.Services
 				if (Account == null) return new MatchGetNewResponseModel { Error = ErrorConstants.ERROR_DATABASE };
 				if (Account.Status == EAccountStatus.Suspended) return new MatchGetNewResponseModel { Error = ErrorConstants.ERROR_ACCOUNT_SUSPENDED };
 
+				if (await _DatabaseService.UpdateAccountActiveAsync(Account, InConnection) <= 0) return new MatchGetNewResponseModel { Error = ErrorConstants.ERROR_DATABASE };
+
 				var Profile = await _DatabaseService.GetModelByIdAsync(new ProfileModel { Id = Account.ProfileId }, InConnection);
 				if (Profile == null) return new MatchGetNewResponseModel { Error = ErrorConstants.ERROR_DATABASE };
 
@@ -90,6 +92,8 @@ namespace SimplyMeetApi.Services
 			{
 				var Account = await _DatabaseService.GetModelByIdAsync(new AccountModel { Id = InModel.Auth.AccountId }, InConnection);
 				if (Account == null) return new MatchGetChoicesResponseModel { Error = ErrorConstants.ERROR_DATABASE };
+
+				if (await _DatabaseService.UpdateAccountActiveAsync(Account, InConnection) <= 0) return new MatchGetChoicesResponseModel { Error = ErrorConstants.ERROR_DATABASE };
 
 				var GetMatchChoicesModel = new GetMatchChoicesModel
 				{

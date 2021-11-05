@@ -13,7 +13,7 @@ namespace SimplyMeetApi.Migrations
 		//===========================================================================================
 		// Global Variables
 		//===========================================================================================
-		#region Fields
+		#region Const Fields
 		private const String D1_CARDS_TABLE = "CARDS";
 		private const String D1_ACCOUNTS_TABLE = "ACCOUNTS";
 		private const String D1_ACCOUNT_ROLES_TABLE = "ACCOUNT_ROLES";
@@ -39,13 +39,13 @@ namespace SimplyMeetApi.Migrations
 		//===========================================================================================
 		// Migration Models
 		//===========================================================================================
-		private class D1_CardModel
+		internal class D1_CardModel
 		{
 			public Int32 Id { get; set; }
 			public String Title { get; set; }
 			public String Content { get; set; }
 		}
-		private class D1_AccountModel
+		internal class D1_AccountModel
 		{
 			public Int32 Id { get; set; }
 
@@ -58,13 +58,13 @@ namespace SimplyMeetApi.Migrations
 			public Int32 ProfileId { get; set; }
 			public Int32 FilterId { get; set; }
 		}
-		private class D1_AccountRoleModel
+		internal class D1_AccountRoleModel
 		{
 			public Int32 Id { get; set; }
 			public Int32 RoleId { get; set; }
 			public String AccountPublicId { get; set; }
 		}
-		private class D1_ProfileModel
+		internal class D1_ProfileModel
 		{
 			public Int32 Id { get; set; }
 
@@ -84,17 +84,17 @@ namespace SimplyMeetApi.Migrations
 			public String AboutMe { get; set; }
 			public String AboutYou { get; set; }
 		}
-		private class D1_ProfileTagModel
+		internal class D1_ProfileTagModel
 		{
 			public Int32 ProfileId { get; set; }
 			public Int32 TagId { get; set; }
 		}
-		private class D1_ProfileSexualityModel
+		internal class D1_ProfileSexualityModel
 		{
 			public Int32 ProfileId { get; set; }
 			public Int32 SexualityId { get; set; }
 		}
-		private class D1_FilterModel
+		internal class D1_FilterModel
 		{
 			public Int32 Id { get; set; }
 
@@ -108,58 +108,58 @@ namespace SimplyMeetApi.Migrations
 			public Int32 ToAge { get; set; }
 			public Boolean AgeEnabled { get; set; }
 		}
-		private class D1_RoleModel
+		internal class D1_RoleModel
 		{
 			public Int32 Id { get; set; }
 			public String Name { get; set; }
 		}
-		private class D1_TagModel
+		internal class D1_TagModel
 		{
 			public Int32 Id { get; set; }
 			public String Name { get; set; }
 		}
-		private class D1_SexualityModel : D1_ProfileDataBaseModel
+		internal class D1_SexualityModel : D1_ProfileDataBaseModel
 		{
 		}
-		private class D1_PronounsModel : D1_ProfileDataBaseModel
+		internal class D1_PronounsModel : D1_ProfileDataBaseModel
 		{
 		}
-		private class D1_SexModel : D1_ProfileDataIconBaseModel
+		internal class D1_SexModel : D1_ProfileDataIconBaseModel
 		{
 		}
-		private class D1_GenderModel : D1_ProfileDataBaseModel
+		internal class D1_GenderModel : D1_ProfileDataBaseModel
 		{
 		}
-		private class D1_RegionModel : D1_ProfileDataIconBaseModel
+		internal class D1_RegionModel : D1_ProfileDataIconBaseModel
 		{
 		}
-		private class D1_CountryModel : D1_ProfileDataIconBaseModel
+		internal class D1_CountryModel : D1_ProfileDataIconBaseModel
 		{
 			public Int32 RegionId { get; set; }
 		}
-		private abstract class D1_ProfileDataIconBaseModel : D1_ProfileDataBaseModel
+		internal abstract class D1_ProfileDataIconBaseModel : D1_ProfileDataBaseModel
 		{
 			public String Icon { get; set; }
 		}
-		private abstract class D1_ProfileDataBaseModel
+		internal abstract class D1_ProfileDataBaseModel
 		{
 			public Int32 Id { get; set; }
 			public String Name { get; set; }
 		}
-		private class D1_MatchChoiceModel
+		internal class D1_MatchChoiceModel
 		{
 			public Int32 Id { get; set; }
 			public Int32 AccountId { get; set; }
 			public Int32 MatchAccountId { get; set; }
 			public EMatchChoice Choice { get; set; }
 		}
-		private class D1_MatchModel
+		internal class D1_MatchModel
 		{
 			public Int32 Id { get; set; }
 			public Int32 AccountId { get; set; }
 			public Int32 MatchAccountId { get; set; }
 		}
-		private class D1_MessageModel
+		internal class D1_MessageModel
 		{
 			public Int32 Id { get; set; }
 			public Int32 MatchId { get; set; }
@@ -169,14 +169,14 @@ namespace SimplyMeetApi.Migrations
 			public String ClientDataJson_Encrypted_Base64 { get; set; }
 			public String ClientDataJson_Nonce_Base64 { get; set; }
 		}
-		private class D1_ReportModel
+		internal class D1_ReportModel
 		{
 			public Int32 Id { get; set; }
 			public Int32 ReporterAccountId { get; set; }
 			public Int32 ReportedAccountId { get; set; }
 			public Int32 ReportReasonId { get; set; }
 		}
-		private class D1_ReportReasonModel
+		internal class D1_ReportReasonModel
 		{
 			public Int32 Id { get; set; }
 			public String Name { get; set; }
