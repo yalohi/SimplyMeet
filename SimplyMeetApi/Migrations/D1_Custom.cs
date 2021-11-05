@@ -47,7 +47,7 @@ namespace SimplyMeetApi.Migrations
 					[{nameof(AccountModel.PublicId)}] {TEXT} {NOT_NULL} {UNIQUE},
 					[{nameof(AccountModel.PublicKey_Base64)}] {TEXT} {NOT_NULL} {UNIQUE},
 					[{nameof(AccountModel.Creation)}] {TEXT} {NOT_NULL},
-					[{nameof(AccountModel.LastLogin)}] {TEXT},
+					[{nameof(AccountModel.LastActive)}] {TEXT},
 					[{nameof(AccountModel.Status)}] {INTEGER} {NOT_NULL},
 					[{nameof(AccountModel.ProfileId)}] {INTEGER} {NOT_NULL} {UNIQUE},
 					[{nameof(AccountModel.FilterId)}] {INTEGER} {NOT_NULL} {UNIQUE},
