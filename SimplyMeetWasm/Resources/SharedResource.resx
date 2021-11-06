@@ -276,8 +276,8 @@
     <data name="InternalServerError" xml:space="preserve">
         <value>500 - Internal Server Error</value>
     </data>
-    <data name="LastLogin" xml:space="preserve">
-        <value>Last Login</value>
+    <data name="LastActive" xml:space="preserve">
+        <value>Last Active</value>
     </data>
     <data name="Liked" xml:space="preserve">
         <value>Liked</value>
@@ -366,10 +366,10 @@
     <data name="PP_FilterDataComment" xml:space="preserve">
         <value>All the data you can edit on your filter page. Used for the match feed.</value>
     </data>
-    <data name="PP_LastLogin" xml:space="preserve">
-        <value>Last Login Date</value>
+    <data name="PP_LastActive" xml:space="preserve">
+        <value>Last Active Date</value>
     </data>
-    <data name="PP_LastLoginComment" xml:space="preserve">
+    <data name="PP_LastActiveComment" xml:space="preserve">
         <value>Used to determine active accounts.</value>
     </data>
     <data name="PP_LastUpdate" xml:space="preserve">

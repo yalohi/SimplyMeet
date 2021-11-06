@@ -255,7 +255,7 @@ namespace SimplyMeetApi.Services
 
 			var AccountFlags = EAccountFlags.None;
 			if ((DateTime.UtcNow - InAccount.Creation).TotalDays <= AccountConstants.FLAG_NEW_DAYS) AccountFlags |= EAccountFlags.New;
-			if (InAccount.LastLogin != null && (DateTime.UtcNow - InAccount.LastLogin.Value).TotalDays <= AccountConstants.FLAG_ACTIVE_DAYS) AccountFlags |= EAccountFlags.Active;
+			if (InAccount.LastActive != null && (DateTime.UtcNow - InAccount.LastActive.Value).TotalDays <= AccountConstants.FLAG_ACTIVE_DAYS) AccountFlags |= EAccountFlags.Active;
 
 			var Profile = await _DatabaseService.GetModelByIdAsync(new ProfileModel { Id = InAccount.ProfileId }, InConnection);
 			if (Profile == null) return null;
@@ -279,12 +279,15 @@ namespace SimplyMeetApi.Services
 				Reported = (await _DatabaseService.GetReportAsync(new ReportModel { ReporterAccountId = InAuth.AccountId, ReportedAccountId = InAccount.Id }, InConnection) != null),
 			};
 
+			FullProfile.Account.Id = -1;
+			FullProfile.Account.ProfileId = -1;
+			FullProfile.Account.FilterId = -1;
+
 			if (InIsPublic)
 			{
-				FullProfile.Account.Id = -1;
 				FullProfile.Account.PublicKey_Base64 = null;
 				FullProfile.Account.Creation = DateTime.UnixEpoch;
-				FullProfile.Account.LastLogin = null;
+				FullProfile.Account.LastActive = null;
 				FullProfile.Filter = null;
 			}
 

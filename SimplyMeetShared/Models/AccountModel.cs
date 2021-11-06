@@ -14,7 +14,7 @@ namespace SimplyMeetShared.Models
 		public String PublicId { get; set; }
 		public String PublicKey_Base64 { get; set; }
 		public DateTime Creation { get; set; }
-		public DateTime? LastLogin { get; set; }
+		public DateTime? LastActive { get; set; }
 		public EAccountStatus Status { get; set; }
 
 		public Int32 ProfileId { get; set; }
