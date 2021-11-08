@@ -13,3 +13,11 @@ window.writeClipboard = (text) => navigator.clipboard.writeText(text);
 // notifications
 window.requestNotificationPermission = () => Notification.requestPermission().then(p => p === "granted" ? true : false);
 window.createNotification = (title, body, icon) => new Notification(title, { body: body, icon: icon });
+
+// chat
+window.updateGrowingTextArea = (id) =>
+{
+	var element = document.getElementById(id);
+	element.style.height = 'auto';
+	element.style.height = (element.scrollHeight) + 'px';
+};
