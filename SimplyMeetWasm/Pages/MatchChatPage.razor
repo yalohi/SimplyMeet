@@ -108,7 +108,16 @@
 			</div>
 
 			<div class="input-group mt-1">
-				<textarea contenteditable class="form-control bg-dark text-white border-0 rounded-0 px-1 py-0" placeholder="@Loc["SendMessage"]" maxlength="@MainHubConstants.CHAT_MAX_MESSAGE_LENGTH" @bind="_Message" @bind:event="oninput" @onkeypress="OnMessageKeyDown" />
+				<textarea
+					id="@IdConstants.SEND_MESSAGE_ID"
+					class="form-control bg-dark text-white border-0 rounded-0 px-1 py-0"
+					placeholder="@Loc["SendMessage"]"
+					maxlength="@MainHubConstants.CHAT_MAX_MESSAGE_LENGTH"
+					rows="2"
+					style="resize:both;"
+					@bind="Message" @bind:event="oninput"
+					@onkeypress="OnMessageKeyDown" />
+
 				<button type="button" class="btn btn-success border-0 rounded-0 px-4" @onclick="OnSendClick">
 					<i class="fas fa-chevron-right fa-2x"></i>
 				</button>
@@ -124,6 +133,19 @@
 	//===========================================================================================
 	#region Const Fields
 	private const String CHAT_ID = "chat";
+	#endregion
+	#region Properties
+	public String Message
+	{
+		get { return _Message; }
+		set
+		{
+			if (_Message == value) return;
+
+			_Message = value;
+			OnChatInput();
+		}
+	}
 	#endregion
 	#region Fields
 	@* private ProfileCompactComponent _CompactProfileComponent; *@
@@ -182,9 +204,14 @@
 	//===========================================================================================
 	// Private Methods
 	//===========================================================================================
-	private void OnProfileClick(ProfileCompactComponent InCompactProfile)
+	private async void OnProfileClick(ProfileCompactComponent InCompactProfile)
 	{
 		_ShowProfile = !_ShowProfile;
+		if (_ShowProfile) return;
+
+		StateHasChanged();
+		await Task.Delay(1); // HACK
+		OnChatInput();
 	}
 	private async Task OnSendClick()
 	{
@@ -192,6 +219,8 @@
 		{
 			await MainHubService.SendMessageAsync(MainHubService.FirstMatchUser.MatchId, _Message);
 			_Message = String.Empty;
+			StateHasChanged();
+			OnChatInput();
 		}
 	}
 	private async Task OnChatScroll()
@@ -218,6 +247,10 @@
 	{
 		UpdateMessageBlockList();
 		StateHasChanged();
+	}
+	private async void OnChatInput()
+	{
+		await JS.InvokeVoidAsync(JSHelperConstants.UPDATE_GROWING_TEXT_AREA, IdConstants.SEND_MESSAGE_ID);
 	}
 	private async void OnChatUpdate(Object InSender, EventArgs InArgs)
 	{
