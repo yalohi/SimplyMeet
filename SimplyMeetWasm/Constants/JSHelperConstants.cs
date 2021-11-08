@@ -23,6 +23,9 @@ namespace SimplyMeetWasm.Constants
 		// notifications
 		public const String REQUEST_NOTIFICATION_PERMISSION = "requestNotificationPermission";
 		public const String CREATE_NOTIFICATION = "createNotification";
+
+		// chat
+		public const String UPDATE_GROWING_TEXT_AREA = "updateGrowingTextArea";
 		#endregion
 	}
 }
