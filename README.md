@@ -11,11 +11,11 @@ A community based, private and self hosted platform to meet people, make new fri
 ![Showcase](Showcase.png)
 
 ## Motivation
-It can be difficult to find true, meaningful connections to others. Most software that focuses on bringing communities together utilizes open and public spaces. While it can be great sharing your thoughts and feelings with a larger audience, it often boils down to a very small subset of the group being active with the majority of people only reading and lurking. For people that have a more quiet nature, being shy or suffering from social anxiety, participating in already established groups can be overwhelming making them feel unneeded and like they don't belong.
+It can be very difficult to find another person to form a true, meaningful connection with. Most of the popular social media and community interaction platforms focus on massive exposure, sometimes completely public. While it can be great sharing your thoughts and feelings with a larger audience, it often boils down to a small subset of the group actively chatting, while the majority of paticipants end up only reading the conversations of others. For people with a quiet nature, being shy or suffering from social anxiety, taking part in already established groups can be overwhelming; making them feel unwelcome and like they don't belong.
 
-Then there are dating apps. Centralized and controlled by large companies, trying to make a profit out of peoples loneliness and misery, harvesting your data, including feature paywalls, with the objective to keep you on their platform for as long as they can.
+Then there are dating apps. Centralized, controlled by large companies - trying to turn peoples loneliness and misery into cold, hard cash. Harvesting of user data, abusive paywalls, fake matches... All to make a profit and keep the poor souls on the platform for as long as they can.
 
-I believe we can do better. We can develop, host and share our own platforms. SimplyMeet aims to solve these problems, offering you the possibility to create your own community spaces and meet like-minded people.
+I believe we can do better. We can develop, host and share our own platforms. SimplyMeet aims to solve the problems of big social media, offering you the possibility to create your own community space and meet people just like you.
 
 ## Dependencies
 To build and run SimplyMeet you will need the following software installed:
