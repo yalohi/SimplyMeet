@@ -11,11 +11,11 @@ A community based, private and self hosted platform to meet people, make new fri
 ![Showcase](Showcase.png)
 
 ## Motivation
-It can be very difficult to find another person to form a true, meaningful connection with. Most of the popular social media and community interaction platforms focus on massive exposure, sometimes completely public. While it can be great sharing your thoughts and feelings with a larger audience, it often boils down to a small subset of the group actively chatting, while the majority of paticipants end up only reading the conversations of others. For people with a quiet nature, being shy or suffering from social anxiety, taking part in already established groups can be overwhelming; making them feel unwelcome and like they don't belong.
+It can be very difficult to find another person to form a true, meaningful connection with. Most of the popular social media platforms focus on massive exposure, sometimes making your profile completely public. While it can be great sharing your thoughts and feelings with a larger audience, it often boils down to a small subset of the group actively chatting, while the majority of paticipants end up only reading the conversations of others. For people with a quiet nature, being shy or suffering from social anxiety, taking part in already established groups can be overwhelming; making them feel unwelcome and like they don't belong.
 
-Then there are dating apps. Centralized, controlled by large companies - trying to turn peoples loneliness and misery into cold, hard cash. Harvesting of user data, abusive paywalls, fake matches... All to make a profit and keep the poor souls on the platform for as long as they can.
+Then there are dating apps. Also centralized, controlled by large companies - trying to turn peoples loneliness and misery into cold, hard cash. Using tracking, abusive paywalls, bot accounts, fake matches etc., only to make a profit and keep our poor souls on their platforms for as long as they can.
 
-I believe we can do better. We can develop, host and share our own platforms. SimplyMeet aims to solve the problems of big social media, offering you the possibility to create your own community space and meet people just like you.
+I believe we can do better. We can develop, host and share our own platforms. SimplyMeet aims to solve these problems, offering you the possibility to create your own community space and meet people just like you.
 
 ## Dependencies
 To build and run SimplyMeet you will need the following software installed:
@@ -97,10 +97,10 @@ In the newly created Build folder you will find:
 SimplyMeet is licensed under the [**AGPLv3**](LICENSE) free software license.
 
 ## Joining our list of communities
-If you want your own community listed on [**simplymeet.app**](https://simplymeet.app/) hop onto our Matrix or Discord server and send me a message with a link to your project, a short description and proof of ownership.
+If you want your own community listed on [**simplymeet.app**](https://simplymeet.app/), hop onto our Matrix or Discord server and send me (yalohi) a message with a link to your project, a short description and proof of ownership.
 
 ## Donate
-If you want to support the development of this project, consider sending a small donation via one of the following ways. All your support is greatly appreciated. Thank you!
+If you want to support the development of this project, consider sending a small donation via one of the following ways. Your support is greatly appreciated. Thank you!
 
 * <img src="./SimplyMeetWasm/wwwroot/img/xmr.svg" width="16" /> Monero (XMR)
 * 84hvN7KcxxxCXpA8uNLvX3itFYZ2p6TNyDckP23E77FNMLSHcAa4cRH2K1YXnhNi9cc3XBB34nVHVZUVpM9Buu3oRz5A2LE
