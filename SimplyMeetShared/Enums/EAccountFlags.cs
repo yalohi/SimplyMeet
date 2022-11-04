@@ -1,10 +1,9 @@
-namespace SimplyMeetShared.Enums
+namespace SimplyMeetShared.Enums;
+
+[System.Flags]
+public enum EAccountFlags
 {
-	[System.Flags]
-	public enum EAccountFlags
-	{
-		None = 0,
-		New = 1,
-		Active = 2,
-	}
+	None = 0,
+	New = 1,
+	Active = 2,
 }

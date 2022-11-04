@@ -1,14 +1,11 @@
-﻿using System;
+﻿namespace SimplyMeetApi.Configuration;
 
-namespace SimplyMeetApi.Configuration
+public class DatabaseConfiguration
 {
-	public class DatabaseConfiguration
-	{
-		//===========================================================================================
-		// Global Variables
-		//===========================================================================================
-		#region Properties
-		public String ConnectionString { get; private set; }
-		#endregion
-	}
+	//===========================================================================================
+	// Global Variables
+	//===========================================================================================
+	#region Properties
+	public String ConnectionString { get; private set; }
+	#endregion
 }

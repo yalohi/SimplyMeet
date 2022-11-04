@@ -1,14 +1,11 @@
-﻿using System;
+﻿namespace SimplyMeetApi.Configuration;
 
-namespace SimplyMeetApi.Configuration
+public class StaticFilesConfiguration
 {
-	public class StaticFilesConfiguration
-	{
-		//===========================================================================================
-		// Global Variables
-		//===========================================================================================
-		#region Properties
-		public String AvatarsPath { get; private set; }
-		#endregion
-	}
+	//===========================================================================================
+	// Global Variables
+	//===========================================================================================
+	#region Properties
+	public String AvatarsPath { get; private set; }
+	#endregion
 }

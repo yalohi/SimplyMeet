@@ -1,39 +1,33 @@
-using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Logging;
+namespace SimplyMeetApi.Hubs;
 
-namespace SimplyMeetApi.Hubs
+public class ExceptionFilter : IHubFilter
 {
-	public class ExceptionFilter : IHubFilter
-	{
-		//===========================================================================================
-		// Global Variables
-		//===========================================================================================
-		#region Fields
-		private readonly ILogger _Logger;
-		#endregion
+	//===========================================================================================
+	// Global Variables
+	//===========================================================================================
+	#region Fields
+	private readonly ILogger _Logger;
+	#endregion
 
-		//===========================================================================================
-		// Public Methods
-		//===========================================================================================
-		public ExceptionFilter(ILogger<ExceptionFilter> InLogger)
+	//===========================================================================================
+	// Public Methods
+	//===========================================================================================
+	public ExceptionFilter(ILogger<ExceptionFilter> InLogger)
+	{
+		_Logger = InLogger;
+	}
+
+	public async ValueTask<Object> InvokeMethodAsync(HubInvocationContext InContext, Func<HubInvocationContext, ValueTask<Object>> InNext)
+	{
+		try
 		{
-			_Logger = InLogger;
+			return await InNext(InContext);
 		}
 
-		public async ValueTask<Object> InvokeMethodAsync(HubInvocationContext InContext, Func<HubInvocationContext, ValueTask<Object>> InNext)
+		catch (Exception Ex)
 		{
-			try
-			{
-				return await InNext(InContext);
-			}
-
-			catch (Exception Ex)
-			{
-				_Logger.LogError(Ex, Ex.Message);
-				throw;
-			}
+			_Logger.LogError(Ex, Ex.Message);
+			throw;
 		}
 	}
 }
