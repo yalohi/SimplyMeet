@@ -89,21 +89,25 @@ public class ProfileService
 			var Region = InModel.Request.RegionId != null ? ProfileData.AllRegions.FirstOrDefault(X => X.Id == InModel.Request.RegionId) : null;
 			var Country = InModel.Request.CountryId != null ? ProfileData.AllCountries.FirstOrDefault(X => X.Id == InModel.Request.CountryId) : null;
 
-			foreach (var Tag in InModel.Request.Tags) Tag.Name = Tag.Name.ToUpper().Truncate(ProfileConstants.MAX_TAG_NAME_LENGTH);
-			InModel.Request.Tags = InModel.Request.Tags.Take(ProfileConstants.MAX_TAGS).Distinct(X => X.Name);
+			var ValidatedTagList = new List<TagModel>();
+			foreach (var Tag in InModel.Request.Tags) ValidatedTagList.Add(Tag with { Name = Tag.Name.ToUpper().Truncate(ProfileConstants.MAX_TAG_NAME_LENGTH) });
+			InModel.Request.Tags = ValidatedTagList.Take(ProfileConstants.MAX_TAGS).Distinct(X => X.Name);
 			InModel.Request.Sexualities = InModel.Request.Sexualities.Take(ProfileConstants.MAX_SEXUALITIES).Distinct(X => X.Name);
 
 			// update profile
-			Profile.DisplayName = InModel.Request.DisplayName;
-			Profile.PronounsId = Pronouns?.Id;
-			Profile.SexId = Sex?.Id;
-			Profile.GenderId = Gender?.Id;
-			Profile.RegionId = Country != null ? Country.RegionId : Region?.Id;
-			Profile.CountryId = Country?.Id;
-			Profile.BirthDate = InModel.Request.BirthDate;
-			Profile.LookingFor = InModel.Request.LookingFor;
-			Profile.AboutMe = InModel.Request.AboutMe;
-			Profile.AboutYou = InModel.Request.AboutYou;
+			Profile = Profile with
+			{
+				DisplayName = InModel.Request.DisplayName,
+				PronounsId = Pronouns?.Id,
+				SexId = Sex?.Id,
+				GenderId = Gender?.Id,
+				RegionId = Country != null ? Country.RegionId : Region?.Id,
+				CountryId = Country?.Id,
+				BirthDate = InModel.Request.BirthDate,
+				LookingFor = InModel.Request.LookingFor,
+				AboutMe = InModel.Request.AboutMe,
+				AboutYou = InModel.Request.AboutYou,
+			};
 
 			// update database
 			if (await _DatabaseService.UpdateModelByIdAsync(Profile, InConnection) <= 0)
@@ -113,9 +117,14 @@ public class ProfileService
 			foreach (var Tag in InModel.Request.Tags)
 			{
 				var TagWithId = await _DatabaseService.GetTagByNameAsync(Tag.Name, InConnection) ?? new TagModel { Name = Tag.Name };
+				if (TagWithId.Id <= 0)
+				{
+					if (await _DatabaseService.InsertModelReturnIdAsync(Tag, InConnection) is var TagId && TagId <= 0)
+						return new ProfileEditResponseModel { Error = ErrorConstants.ERROR_DATABASE };
 
-				if (TagWithId.Id <= 0 && (TagWithId.Id = await _DatabaseService.InsertModelReturnIdAsync(Tag, InConnection)) <= 0)
-					return new ProfileEditResponseModel { Error = ErrorConstants.ERROR_DATABASE };
+					TagWithId = TagWithId with { Id = TagId };
+				}
+
 				if (await _DatabaseService.InsertModelAsync(new ProfileTagModel { ProfileId = Profile.Id, TagId = TagWithId.Id }, InConnection) <= 0)
 					return new ProfileEditResponseModel { Error = ErrorConstants.ERROR_DATABASE };
 			}
@@ -176,7 +185,7 @@ public class ProfileService
 				catch (IOException) { return new ProfileEditAvatarResponseModel { Error = ErrorConstants.ERROR_IO }; }
 			}
 
-			Profile.Avatar = Path.GetFileName(AvatarFileName);
+			Profile = Profile with { Avatar = Path.GetFileName(AvatarFileName) };
 			if (await _DatabaseService.UpdateModelByIdAsync(Profile, InConnection) <= 0) return new ProfileEditAvatarResponseModel { Error = ErrorConstants.ERROR_DATABASE };
 
 			await _MainHubService.SendUserUpdateAsync(Account, InConnection);
@@ -199,7 +208,7 @@ public class ProfileService
 			try { if (File.Exists(AvatarFileName)) File.Delete(AvatarFileName); }
 			catch (IOException) { return new ProfileResetAvatarResponseModel { Error = ErrorConstants.ERROR_IO }; }
 
-			Profile.Avatar = ProfileConstants.DEFAULT_AVATAR;
+			Profile = Profile with { Avatar = ProfileConstants.DEFAULT_AVATAR };
 			if (await _DatabaseService.UpdateModelByIdAsync(Profile, InConnection) <= 0) return new ProfileResetAvatarResponseModel { Error = ErrorConstants.ERROR_DATABASE };
 
 			await _MainHubService.SendUserUpdateAsync(Account, InConnection);
@@ -251,9 +260,18 @@ public class ProfileService
 			AccountFlags = AccountFlags,
 			Data = await GetProfileDataAsync(InConnection),
 
-			Account = InAccount,
+			Account = InAccount with
+			{
+				Id = -1,
+				ProfileId = -1,
+				FilterId = -1,
+				PublicKey_Base64 = InIsPublic ? null : InAccount.PublicKey_Base64,
+				Creation = InIsPublic ? DateTime.UnixEpoch : InAccount.Creation,
+				LastActive = InIsPublic ? null : InAccount.LastActive
+			},
+
 			Profile = Profile,
-			Filter = Filter,
+			Filter = InIsPublic ? null: Filter,
 
 			Tags = await _DatabaseService.GetProfileTagsAsync(Profile, InConnection),
 			Sexualities = await _DatabaseService.GetProfileSexualitiesAsync(Profile, InConnection),
@@ -262,25 +280,13 @@ public class ProfileService
 			Reported = (await _DatabaseService.GetReportAsync(new ReportModel { ReporterAccountId = InAuth.AccountId, ReportedAccountId = InAccount.Id }, InConnection) != null),
 		};
 
-		FullProfile.Account.Id = -1;
-		FullProfile.Account.ProfileId = -1;
-		FullProfile.Account.FilterId = -1;
-
-		if (InIsPublic)
-		{
-			FullProfile.Account.PublicKey_Base64 = null;
-			FullProfile.Account.Creation = DateTime.UnixEpoch;
-			FullProfile.Account.LastActive = null;
-			FullProfile.Filter = null;
-		}
-
 		return FullProfile;
 	}
-	public async Task<ProfileDataModel> GetProfileDataAsync(IDbConnection InConnection)
+	public async Task<M_ProfileDataModel> GetProfileDataAsync(IDbConnection InConnection)
 	{
 		if (InConnection == null) throw new ArgumentNullException(nameof(InConnection));
 
-		return new ProfileDataModel
+		return new M_ProfileDataModel
 		{
 			AllPronouns = await _DatabaseService.GetAllAsync<PronounsModel>(InConnection),
 			AllSexes = await _DatabaseService.GetAllAsync<SexModel>(InConnection),

@@ -58,7 +58,7 @@ public class AccountService
 			var UserPublicKey_Base64 = Convert.ToBase64String(InModel.Request.UserPublicKey);
 			var NewAccount = await GenerateNewAccountAsync(UserPublicKey_Base64, InConnection);
 			if (NewAccount == null) return new AccountGetChallengeResponseModel { Error = ErrorConstants.ERROR_GENERATE_FAILED };
-			if ((NewAccount.Id = await _DatabaseService.InsertModelReturnIdAsync(NewAccount, InConnection)) <= 0) return new AccountGetChallengeResponseModel { Error = ErrorConstants.ERROR_DATABASE };
+			if (await _DatabaseService.InsertModelReturnIdAsync(NewAccount, InConnection) is var NewAccountId && NewAccountId <= 0) return new AccountGetChallengeResponseModel { Error = ErrorConstants.ERROR_DATABASE };
 
 			var NewProfile = new ProfileModel
 			{
@@ -70,19 +70,13 @@ public class AccountService
 			{
 			};
 
-			if ((NewProfile.Id = await _DatabaseService.InsertModelReturnIdAsync(NewProfile, InConnection)) <= 0) return new AccountGetChallengeResponseModel { Error = ErrorConstants.ERROR_DATABASE };
-			if ((NewFilter.Id = await _DatabaseService.InsertModelReturnIdAsync(NewFilter, InConnection)) <= 0) return new AccountGetChallengeResponseModel { Error = ErrorConstants.ERROR_DATABASE };
+			if (await _DatabaseService.InsertModelReturnIdAsync(NewProfile, InConnection) is var NewProfileId && NewProfileId <= 0) return new AccountGetChallengeResponseModel { Error = ErrorConstants.ERROR_DATABASE };
+			if (await _DatabaseService.InsertModelReturnIdAsync(NewFilter, InConnection) is var NewFilterId && NewFilterId <= 0) return new AccountGetChallengeResponseModel { Error = ErrorConstants.ERROR_DATABASE };
 
-			NewAccount.ProfileId = NewProfile.Id;
-			NewAccount.FilterId = NewFilter.Id;
+			NewAccount = NewAccount with { Id = NewAccountId, ProfileId = NewProfileId, FilterId = NewFilterId };
 			if (await _DatabaseService.UpdateModelByIdAsync(NewAccount, InConnection) <= 0) return new AccountGetChallengeResponseModel { Error = ErrorConstants.ERROR_DATABASE };
 
-			var Model = new ServiceModel<AccountGetChallengeRequestModel>
-			{
-				Auth = InModel.Auth,
-				Request = new AccountGetChallengeRequestModel { UserPublicKey = Convert.FromBase64String(NewAccount.PublicKey_Base64) }
-			};
-
+			var Model = new ServiceModel<AccountGetChallengeRequestModel>(InModel.Auth, new AccountGetChallengeRequestModel { UserPublicKey = Convert.FromBase64String(NewAccount.PublicKey_Base64) });
 			return await GetChallengeAsync(Model);
 		});
 	}
@@ -156,7 +150,7 @@ public class AccountService
 			var PublicKey = await AttemptGenerateAsync(GenerateDummyPublicKey, _DatabaseService.CheckAccountPublicKeyAsync, InConnection);
 			var GenAccount = await GenerateNewAccountAsync(PublicKey, InConnection);
 			if (GenAccount == null) return;
-			if ((GenAccount.Id = await _DatabaseService.InsertModelReturnIdAsync(GenAccount, InConnection)) <= 0) return;
+			if (await _DatabaseService.InsertModelReturnIdAsync(GenAccount, InConnection) is var GenAccountId && GenAccountId <= 0) return;
 
 			var PronounsId = ProfileData.AllPronouns.FirstOrDefault(X => X.Id == RandomStatics.RANDOM.Next(0, ProfileData.AllPronouns.Count() + 1))?.Id;
 			var SexId = ProfileData.AllSexes.FirstOrDefault(X => X.Id == RandomStatics.RANDOM.Next(0, ProfileData.AllSexes.Count() + 1))?.Id;
@@ -194,11 +188,10 @@ public class AccountService
 				// AgeEnabled = true,
 			};
 
-			if ((GenProfile.Id = await _DatabaseService.InsertModelReturnIdAsync(GenProfile, InConnection)) <= 0) return;
-			if ((GenFilter.Id = await _DatabaseService.InsertModelReturnIdAsync(GenFilter, InConnection)) <= 0) return;
+			if (await _DatabaseService.InsertModelReturnIdAsync(GenProfile, InConnection) is var GenProfileId && GenProfileId <= 0) return;
+			if (await _DatabaseService.InsertModelReturnIdAsync(GenFilter, InConnection) is var GenFilterId && GenFilterId <= 0) return;
 
-			GenAccount.ProfileId = GenProfile.Id;
-			GenAccount.FilterId = GenFilter.Id;
+			GenAccount = GenAccount with { Id = GenAccountId, ProfileId = GenProfileId, FilterId = GenFilterId };
 			if (await _DatabaseService.UpdateModelByIdAsync(GenAccount, InConnection) <= 0) return;
 		}
 	}

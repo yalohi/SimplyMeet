@@ -44,12 +44,7 @@ public class TokenService
 			var Challenge = new Byte[SolvedChallenge.Length + NaCl.Curve25519XSalsa20Poly1305.TagLength];
 			CryptoBox.Encrypt(Challenge, SolvedChallenge, Nonce);
 
-			var NewChallenge = new ChallengeModel
-			{
-				Challenge = Challenge,
-				SolvedChallenge = SolvedChallenge,
-				ExpireDateUTC = DateTime.UtcNow.Add(TimeSpan.FromSeconds(AccountConstants.CHALLENGE_TIMEOUT_SECONDS)),
-			};
+			var NewChallenge = new ChallengeModel(Challenge, SolvedChallenge, DateTime.UtcNow.Add(TimeSpan.FromSeconds(AccountConstants.CHALLENGE_TIMEOUT_SECONDS)));
 
 			lock (_ChallengeDict)
 			{

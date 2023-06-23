@@ -31,7 +31,7 @@ public class AdminController : ControllerBase
 		if (!_AuthorizationService.HasRole(Auth, EAccountRole.Admin) && !_AuthorizationService.HasRole(Auth, EAccountRole.Moderator)) return Unauthorized();
 		if (!ModelState.IsValid) return BadRequest();
 
-		var Model = new ServiceModel<AdminGetReportedProfilesRequestModel> { Auth = Auth, Request = InRequestModel };
+		var Model = new ServiceModel<AdminGetReportedProfilesRequestModel>(Auth, InRequestModel);
 		var Response = await _AdminService.GetReportedProfilesAsync(Model);
 		return Ok(Response);
 	}
@@ -45,7 +45,7 @@ public class AdminController : ControllerBase
 		if (!_AuthorizationService.HasRole(Auth, EAccountRole.Admin)) return Unauthorized();
 		if (!ModelState.IsValid) return BadRequest();
 
-		var Model = new ServiceModel<AdminGetProfileDataRequestModel> { Auth = Auth, Request = InRequestModel };
+		var Model = new ServiceModel<AdminGetProfileDataRequestModel>(Auth, InRequestModel);
 		var Response = await _AdminService.GetProfileDataAsync(Model);
 		return Ok(Response);
 	}
@@ -59,7 +59,7 @@ public class AdminController : ControllerBase
 		if (!_AuthorizationService.HasRole(Auth, EAccountRole.Admin)) return Unauthorized();
 		if (!ModelState.IsValid) return BadRequest();
 
-		var Model = new ServiceModel<AdminGetAccountRolesRequestModel> { Auth = Auth, Request = InRequestModel };
+		var Model = new ServiceModel<AdminGetAccountRolesRequestModel>(Auth, InRequestModel);
 		var Response = await _AdminService.GetAccountRolesAsync(Model);
 		return Ok(Response);
 	}
@@ -73,7 +73,7 @@ public class AdminController : ControllerBase
 		if (!_AuthorizationService.HasRole(Auth, EAccountRole.Admin) && !_AuthorizationService.HasRole(Auth, EAccountRole.Moderator)) return Unauthorized();
 		if (!ModelState.IsValid) return BadRequest();
 
-		var Model = new ServiceModel<AdminSuspendAccountRequestModel> { Auth = Auth, Request = InRequestModel };
+		var Model = new ServiceModel<AdminSuspendAccountRequestModel>(Auth, InRequestModel);
 		var Response = await _AdminService.SuspendAccountAsync(Model);
 		return Ok(Response);
 	}
@@ -87,7 +87,7 @@ public class AdminController : ControllerBase
 		if (!_AuthorizationService.HasRole(Auth, EAccountRole.Admin)) return Unauthorized();
 		if (!ModelState.IsValid) return BadRequest();
 
-		var Model = new ServiceModel<AdminEditProfileDataRequestModel> { Auth = Auth, Request = InRequestModel };
+		var Model = new ServiceModel<AdminEditProfileDataRequestModel>(Auth, InRequestModel);
 		var Response = await _AdminService.EditProfileDataAsync(Model);
 		return Ok(Response);
 	}
@@ -101,7 +101,7 @@ public class AdminController : ControllerBase
 		if (!_AuthorizationService.HasRole(Auth, EAccountRole.Admin)) return Unauthorized();
 		if (!ModelState.IsValid) return BadRequest();
 
-		var Model = new ServiceModel<AdminEditAccountRolesRequestModel> { Auth = Auth, Request = InRequestModel };
+		var Model = new ServiceModel<AdminEditAccountRolesRequestModel>(Auth, InRequestModel);
 		var Response = await _AdminService.EditAccountRolesAsync(Model);
 		return Ok(Response);
 	}

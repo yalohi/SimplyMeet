@@ -100,7 +100,7 @@ public class AdminService
 			var Account = await _DatabaseService.GetAccountByPublicIdAsync(InModel.Request.AccountPublicId, InConnection);
 			if (Account == null) return new AdminSuspendAccountResponseModel { Error = ErrorConstants.ERROR_NO_SUCH_ACCOUNT };
 
-			Account.Status = EAccountStatus.Suspended;
+			Account = Account with { Status = EAccountStatus.Suspended };
 
 			if (await _DatabaseService.DeleteAccountReportsAsync(Account, InConnection) <= 0)
 				return new AdminSuspendAccountResponseModel { Error = ErrorConstants.ERROR_DATABASE };
@@ -118,12 +118,12 @@ public class AdminService
 		{
 			// TODO: validate model
 
-			if (InModel.Request.Data.AllPronouns != null) await _DatabaseService.DeleteMissingIdsAsync<PronounsModel>(new IdsModel { Ids = InModel.Request.Data.AllPronouns.Where(X => X.Id > 0).Select(X => X.Id) }, InConnection);
-			if (InModel.Request.Data.AllSexes != null) await _DatabaseService.DeleteMissingIdsAsync<SexModel>(new IdsModel { Ids = InModel.Request.Data.AllSexes.Where(X => X.Id > 0).Select(X => X.Id) }, InConnection);
-			if (InModel.Request.Data.AllGenders != null) await _DatabaseService.DeleteMissingIdsAsync<GenderModel>(new IdsModel { Ids = InModel.Request.Data.AllGenders.Where(X => X.Id > 0).Select(X => X.Id) }, InConnection);
-			if (InModel.Request.Data.AllRegions != null) await _DatabaseService.DeleteMissingIdsAsync<RegionModel>(new IdsModel { Ids = InModel.Request.Data.AllRegions.Where(X => X.Id > 0).Select(X => X.Id) }, InConnection);
-			if (InModel.Request.Data.AllCountries != null) await _DatabaseService.DeleteMissingIdsAsync<CountryModel>(new IdsModel { Ids = InModel.Request.Data.AllCountries.Where(X => X.Id > 0).Select(X => X.Id) }, InConnection);
-			if (InModel.Request.Data.AllSexualities != null) await _DatabaseService.DeleteMissingIdsAsync<SexualityModel>(new IdsModel { Ids = InModel.Request.Data.AllSexualities.Where(X => X.Id > 0).Select(X => X.Id) }, InConnection);
+			if (InModel.Request.Data.AllPronouns != null) await _DatabaseService.DeleteMissingIdsAsync<PronounsModel>(new IdsModel(InModel.Request.Data.AllPronouns.Where(X => X.Id > 0).Select(X => X.Id)), InConnection);
+			if (InModel.Request.Data.AllSexes != null) await _DatabaseService.DeleteMissingIdsAsync<SexModel>(new IdsModel(InModel.Request.Data.AllSexes.Where(X => X.Id > 0).Select(X => X.Id)), InConnection);
+			if (InModel.Request.Data.AllGenders != null) await _DatabaseService.DeleteMissingIdsAsync<GenderModel>(new IdsModel(InModel.Request.Data.AllGenders.Where(X => X.Id > 0).Select(X => X.Id)), InConnection);
+			if (InModel.Request.Data.AllRegions != null) await _DatabaseService.DeleteMissingIdsAsync<RegionModel>(new IdsModel(InModel.Request.Data.AllRegions.Where(X => X.Id > 0).Select(X => X.Id)), InConnection);
+			if (InModel.Request.Data.AllCountries != null) await _DatabaseService.DeleteMissingIdsAsync<CountryModel>(new IdsModel(InModel.Request.Data.AllCountries.Where(X => X.Id > 0).Select(X => X.Id)), InConnection);
+			if (InModel.Request.Data.AllSexualities != null) await _DatabaseService.DeleteMissingIdsAsync<SexualityModel>(new IdsModel(InModel.Request.Data.AllSexualities.Where(X => X.Id > 0).Select(X => X.Id)), InConnection);
 
 			if (InModel.Request.Data.AllPronouns != null) await _DatabaseService.InsertModelsAsync<PronounsModel>(InModel.Request.Data.AllPronouns.Where(X => X.Id <= 0), InConnection);
 			if (InModel.Request.Data.AllSexes != null) await _DatabaseService.InsertModelsAsync<SexModel>(InModel.Request.Data.AllSexes.Where(X => X.Id <= 0), InConnection);

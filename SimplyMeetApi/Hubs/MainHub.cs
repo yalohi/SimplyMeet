@@ -36,7 +36,7 @@ public class MainHub : Hub
 	[Throttle(Group = EThrottleGroup.General)]
 	public async Task ChatGetHistory(ChatGetHistoryRequestModel InRequestModel)
 	{
-		await _MainHubService.ChatGetHistoryAsync(new ServiceHubModel<ChatGetHistoryRequestModel> { Auth = await _AuthorizationService.GetHubAuthAsync(Context), Request = InRequestModel });
+		await _MainHubService.ChatGetHistoryAsync(new ServiceHubModel<ChatGetHistoryRequestModel>(await _AuthorizationService.GetHubAuthAsync(Context), InRequestModel));
 	}
 
 	[Authorize]
@@ -44,6 +44,6 @@ public class MainHub : Hub
 	[Throttle(Group = EThrottleGroup.Chat)]
 	public async Task ChatSend(ChatSendRequestModel InRequestModel)
 	{
-		await _MainHubService.ChatSendAsync(new ServiceHubModel<ChatSendRequestModel> { Auth = await _AuthorizationService.GetHubAuthAsync(Context), Request = InRequestModel });
+		await _MainHubService.ChatSendAsync(new ServiceHubModel<ChatSendRequestModel>(await _AuthorizationService.GetHubAuthAsync(Context), InRequestModel));
 	}
 }

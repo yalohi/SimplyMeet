@@ -7,7 +7,7 @@ public class ThrottleService
 	//===========================================================================================
 	#region Fields
 	private readonly ConcurrentDictionary<EThrottleGroup, ThrottleLimitModel> _ThrottleLimitDict;
-	private readonly ConcurrentDictionary<IPAddress, ConcurrentDictionary<EThrottleGroup, ThrottleModel>> _ThrottleDict;
+	private readonly ConcurrentDictionary<IPAddress, ConcurrentDictionary<EThrottleGroup, M_ThrottleModel>> _ThrottleDict;
 	#endregion
 
 	//===========================================================================================
@@ -18,11 +18,11 @@ public class ThrottleService
 		_ThrottleLimitDict = new ();
 		_ThrottleDict = new ();
 
-		_ThrottleLimitDict.TryAdd(EThrottleGroup.General, new ThrottleLimitModel { Limit = 60, ResetMinutes = 1 });
-		_ThrottleLimitDict.TryAdd(EThrottleGroup.AccountLogin, new ThrottleLimitModel { Limit = 10, ResetMinutes = 15 });
-		_ThrottleLimitDict.TryAdd(EThrottleGroup.AccountCreate, new ThrottleLimitModel { Limit = 3, ResetMinutes = 60 });
-		_ThrottleLimitDict.TryAdd(EThrottleGroup.Report, new ThrottleLimitModel { Limit = 5, ResetMinutes = 60 });
-		_ThrottleLimitDict.TryAdd(EThrottleGroup.Chat, new ThrottleLimitModel { Limit = 15, ResetMinutes = 1 });
+		_ThrottleLimitDict.TryAdd(EThrottleGroup.General, new ThrottleLimitModel(60, 1));
+		_ThrottleLimitDict.TryAdd(EThrottleGroup.AccountLogin, new ThrottleLimitModel(10, 15));
+		_ThrottleLimitDict.TryAdd(EThrottleGroup.AccountCreate, new ThrottleLimitModel(3, 60));
+		_ThrottleLimitDict.TryAdd(EThrottleGroup.Report, new ThrottleLimitModel(5, 60));
+		_ThrottleLimitDict.TryAdd(EThrottleGroup.Chat, new ThrottleLimitModel(15, 1));
 
 		if (InThrottleConfig.Value.ThrottleLimitDict != null)
 		{
@@ -70,7 +70,7 @@ public class ThrottleService
 	//===========================================================================================
 	// Private Methods
 	//===========================================================================================
-	private Boolean IsThrottleLimitReached(ThrottleModel InModel, EThrottleGroup InGroup)
+	private Boolean IsThrottleLimitReached(M_ThrottleModel InModel, EThrottleGroup InGroup)
 	{
 		if (!_ThrottleLimitDict.TryGetValue(InGroup, out var LimitModel)) return false;
 

@@ -29,7 +29,7 @@ public class MatchController : ControllerBase
 	{
 		if (!ModelState.IsValid) return BadRequest();
 
-		var Model = new ServiceModel<MatchGetNewRequestModel> { Auth = await _AuthorizationService.GetControllerAuthAsync(HttpContext), Request = InRequestModel };
+		var Model = new ServiceModel<MatchGetNewRequestModel>(await _AuthorizationService.GetControllerAuthAsync(HttpContext), InRequestModel);
 		var Response = await _MatchService.GetNewAsync(Model);
 		return Ok(Response);
 	}
@@ -41,7 +41,7 @@ public class MatchController : ControllerBase
 	{
 		if (!ModelState.IsValid) return BadRequest();
 
-		var Model = new ServiceModel<MatchGetChoicesRequestModel> { Auth = await _AuthorizationService.GetControllerAuthAsync(HttpContext), Request = InRequestModel };
+		var Model = new ServiceModel<MatchGetChoicesRequestModel>(await _AuthorizationService.GetControllerAuthAsync(HttpContext), InRequestModel);
 		var Response = await _MatchService.GetChoicesAsync(Model);
 		return Ok(Response);
 	}
@@ -53,7 +53,7 @@ public class MatchController : ControllerBase
 	{
 		if (!ModelState.IsValid) return BadRequest();
 
-		var Model = new ServiceModel<MatchGetFilterRequestModel> { Auth = await _AuthorizationService.GetControllerAuthAsync(HttpContext), Request = InRequestModel };
+		var Model = new ServiceModel<MatchGetFilterRequestModel>(await _AuthorizationService.GetControllerAuthAsync(HttpContext), InRequestModel);
 		var Response = await _MatchService.GetFilterAsync(Model);
 		return Ok(Response);
 	}
@@ -65,7 +65,7 @@ public class MatchController : ControllerBase
 	{
 		if (!ModelState.IsValid) return BadRequest();
 
-		var Model = new ServiceModel<MatchEditFilterRequestModel> { Auth = await _AuthorizationService.GetControllerAuthAsync(HttpContext), Request = InRequestModel };
+		var Model = new ServiceModel<MatchEditFilterRequestModel>(await _AuthorizationService.GetControllerAuthAsync(HttpContext), InRequestModel);
 		var Response = await _MatchService.EditFilterAsync(Model);
 		return Ok(Response);
 	}
@@ -77,7 +77,7 @@ public class MatchController : ControllerBase
 	{
 		if (!ModelState.IsValid) return BadRequest();
 
-		var Model = new ServiceModel<MatchChooseRequestModel> { Auth = await _AuthorizationService.GetControllerAuthAsync(HttpContext), Request = InRequestModel };
+		var Model = new ServiceModel<MatchChooseRequestModel>(await _AuthorizationService.GetControllerAuthAsync(HttpContext), InRequestModel);
 		var Response = await _MatchService.ChooseAsync(Model);
 		return Ok(Response);
 	}
@@ -89,7 +89,7 @@ public class MatchController : ControllerBase
 	{
 		if (!ModelState.IsValid) return BadRequest();
 
-		var Model = new ServiceModel<MatchUnmatchRequestModel> { Auth = await _AuthorizationService.GetControllerAuthAsync(HttpContext), Request = InRequestModel };
+		var Model = new ServiceModel<MatchUnmatchRequestModel>(await _AuthorizationService.GetControllerAuthAsync(HttpContext), InRequestModel);
 		var Response = await _MatchService.UnmatchAsync(Model);
 		return Ok(Response);
 	}

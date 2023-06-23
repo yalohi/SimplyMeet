@@ -533,7 +533,7 @@ public class DatabaseService
 	public async Task<Int32> UpdateModelByIdAsync<T>(T InModel, IDbConnection InConnection) => await InConnection.ExecuteAsync(UPDATE_BY_ID_DICT[typeof(T)], InModel);
 	public async Task<Int32> UpdateAccountActiveAsync(AccountModel InAccount, IDbConnection InConnection)
 	{
-		InAccount.LastActive = DateTime.UtcNow;
+		InAccount = InAccount with { LastActive = DateTime.UtcNow };
 		return await UpdateModelByIdAsync(InAccount, InConnection);
 	}
 

@@ -42,26 +42,11 @@ public class MatchService
 			if (Filter == null) return new MatchGetNewResponseModel { Error = ErrorConstants.ERROR_DATABASE };
 
 			var GetNewMatchModel = new GetNewMatchModel
-			{
-				AccountId = Account.Id,
-
-				Profile_PronounsId = Profile.PronounsId,
-				Profile_SexId = Profile.SexId,
-				Profile_GenderId = Profile.GenderId,
-				Profile_RegionId = Profile.RegionId,
-				Profile_CountryId = Profile.CountryId,
-				Profile_Age = (Profile.BirthDate != null ? Profile.BirthDate.Value.GetAge() : null),
-				Profile_LookingFor = Profile.LookingFor,
-
-				Filter_PronounsId = Filter.PronounsId,
-				Filter_SexId = Filter.SexId,
-				Filter_GenderId = Filter.GenderId,
-				Filter_RegionId = Filter.RegionId,
-				Filter_CountryId = Filter.CountryId,
-				Filter_FromAge = Filter.FromAge,
-				Filter_ToAge = Filter.ToAge,
-				Filter_AgeEnabled = Filter.AgeEnabled,
-			};
+			(
+				Account.Id,
+				Profile.PronounsId, Profile.SexId, Profile.GenderId, Profile.RegionId, Profile.CountryId, Profile.BirthDate?.GetAge(), Profile.LookingFor,
+				Filter.PronounsId, Filter.SexId, Filter.GenderId, Filter.RegionId, Filter.CountryId, Filter.FromAge, Filter.ToAge, Filter.AgeEnabled
+			);
 
 			var MatchAccount = await _DatabaseService.GetNewMatchAsync(GetNewMatchModel, InConnection);
 			if (MatchAccount == null) return new MatchGetNewResponseModel();
@@ -83,14 +68,7 @@ public class MatchService
 
 			if (await _DatabaseService.UpdateAccountActiveAsync(Account, InConnection) <= 0) return new MatchGetChoicesResponseModel { Error = ErrorConstants.ERROR_DATABASE };
 
-			var GetMatchChoicesModel = new GetMatchChoicesModel
-			{
-				AccountId = InModel.Auth.AccountId,
-				Offset = InModel.Request.Offset,
-				Count = InModel.Request.Count,
-				Choice = InModel.Request.Choice,
-			};
-
+			var GetMatchChoicesModel = new GetMatchChoicesModel(InModel.Auth.AccountId, InModel.Request.Offset, InModel.Request.Count, InModel.Request.Choice);
 			var MatchChoices = await _DatabaseService.GetMatchChoicesAsync(GetMatchChoicesModel, InConnection);
 			var CompactProfileList = new List<ProfileCompactModel>();
 
@@ -146,14 +124,17 @@ public class MatchService
 			var Region = InModel.Request.RegionId != null ? ProfileData.AllRegions.FirstOrDefault(X => X.Id == InModel.Request.RegionId) : null;
 			var Country = InModel.Request.CountryId != null ? ProfileData.AllCountries.FirstOrDefault(X => X.Id == InModel.Request.CountryId) : null;
 
-			Filter.PronounsId = Pronouns?.Id;
-			Filter.SexId = Sex?.Id;
-			Filter.GenderId = Gender?.Id;
-			Filter.RegionId = Country != null ? Country.RegionId : Region?.Id;
-			Filter.CountryId = Country?.Id;
-			Filter.FromAge = Math.Clamp(InModel.Request.FromAge, ProfileConstants.MIN_AGE, ProfileConstants.MAX_AGE);
-			Filter.ToAge = Math.Clamp(InModel.Request.ToAge, Filter.FromAge, ProfileConstants.MAX_AGE);
-			Filter.AgeEnabled = InModel.Request.AgeEnabled;
+			Filter = Filter with
+			{
+				PronounsId = Pronouns?.Id,
+				SexId = Sex?.Id,
+				GenderId = Gender?.Id,
+				RegionId = Country != null ? Country.RegionId : Region?.Id,
+				CountryId = Country?.Id,
+				FromAge = Math.Clamp(InModel.Request.FromAge, ProfileConstants.MIN_AGE, ProfileConstants.MAX_AGE),
+				ToAge = Math.Clamp(InModel.Request.ToAge, Filter.FromAge, ProfileConstants.MAX_AGE),
+				AgeEnabled = InModel.Request.AgeEnabled,
+			};
 
 			if (await _DatabaseService.UpdateModelByIdAsync(Filter, InConnection) <= 0)
 				return new MatchEditFilterResponseModel { Error = ErrorConstants.ERROR_DATABASE };
@@ -178,7 +159,7 @@ public class MatchService
 
 			var NewMatchChoice = new MatchChoiceModel { AccountId = Account.Id, MatchAccountId = MatchAccount.Id, Choice = InModel.Request.Choice };
 			var PreviousMatchChoice = await _DatabaseService.GetMatchChoiceAsync(NewMatchChoice, InConnection);
-			if (PreviousMatchChoice != null) NewMatchChoice.Id = PreviousMatchChoice.Id;
+			if (PreviousMatchChoice != null) NewMatchChoice = NewMatchChoice with { Id = PreviousMatchChoice.Id };
 			if (PreviousMatchChoice != null && NewMatchChoice.Choice == PreviousMatchChoice.Choice) return new MatchChooseResponseModel { Error = ErrorConstants.ERROR_INVALID_OPERATION };
 
 			var InvertedMatchChoice = new MatchChoiceModel { AccountId = MatchAccount.Id, MatchAccountId = Account.Id };
@@ -186,7 +167,7 @@ public class MatchService
 
 			if (InvertedMatchChoice == null || InvertedMatchChoice.Choice <= 0 || NewMatchChoice.Choice <= 0)
 			{
-				if (PreviousMatchChoice == null && (NewMatchChoice.Id = await _DatabaseService.InsertModelReturnIdAsync<MatchChoiceModel>(NewMatchChoice, InConnection)) <= 0)
+				if (PreviousMatchChoice == null && await _DatabaseService.InsertModelAsync<MatchChoiceModel>(NewMatchChoice, InConnection) <= 0)
 					return new MatchChooseResponseModel { Error = ErrorConstants.ERROR_DATABASE };
 				if (PreviousMatchChoice != null && await _DatabaseService.UpdateModelByIdAsync<MatchChoiceModel>(NewMatchChoice, InConnection) <= 0)
 					return new MatchChooseResponseModel { Error = ErrorConstants.ERROR_DATABASE };
@@ -197,10 +178,11 @@ public class MatchService
 			await _DatabaseService.DeleteModelAsync<MatchChoiceModel>(NewMatchChoice, InConnection);
 			await _DatabaseService.DeleteModelAsync<MatchChoiceModel>(InvertedMatchChoice, InConnection);
 
-			var Match = new MatchModel { AccountId = Account.Id, MatchAccountId = MatchAccount.Id };
-			if ((Match.Id = await _DatabaseService.InsertModelReturnIdAsync<MatchModel>(Match, InConnection)) <= 0) return new MatchChooseResponseModel { Error = ErrorConstants.ERROR_DATABASE };
+			var NewMatch = new MatchModel { AccountId = Account.Id, MatchAccountId = MatchAccount.Id };
+			if (await _DatabaseService.InsertModelReturnIdAsync<MatchModel>(NewMatch, InConnection) is var MatchId && MatchId <= 0) return new MatchChooseResponseModel { Error = ErrorConstants.ERROR_DATABASE };
 
-			await _MainHubService.OnMatchAsync(Match, InConnection);
+			NewMatch = NewMatch with { Id = MatchId };
+			await _MainHubService.OnMatchAsync(NewMatch, InConnection);
 			return new MatchChooseResponseModel();
 		});
 	}

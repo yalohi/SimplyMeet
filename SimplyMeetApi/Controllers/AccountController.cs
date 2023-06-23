@@ -30,7 +30,7 @@ public class AccountController : ControllerBase
 	{
 		if (!ModelState.IsValid) return BadRequest();
 
-		var Model = new ServiceModel<AccountGetChallengeRequestModel> { Auth = await _AuthorizationService.GetControllerAuthAsync(HttpContext), Request = InRequestModel };
+		var Model = new ServiceModel<AccountGetChallengeRequestModel>(await _AuthorizationService.GetControllerAuthAsync(HttpContext), InRequestModel);
 		var Response = await _AccountService.GetChallengeAsync(Model);
 		return Ok(Response);
 	}
@@ -43,7 +43,7 @@ public class AccountController : ControllerBase
 	{
 		if (!ModelState.IsValid) return BadRequest();
 
-		var Model = new ServiceModel<AccountLoginRequestModel> { Auth = await _AuthorizationService.GetControllerAuthAsync(HttpContext), Request = InRequestModel };
+		var Model = new ServiceModel<AccountLoginRequestModel>(await _AuthorizationService.GetControllerAuthAsync(HttpContext), InRequestModel);
 		var Response = await _AccountService.LoginAsync(Model);
 		return Ok(Response);
 	}
@@ -56,7 +56,7 @@ public class AccountController : ControllerBase
 	{
 		if (!ModelState.IsValid) return BadRequest();
 
-		var Model = new ServiceModel<AccountCreateRequestModel> { Auth = await _AuthorizationService.GetControllerAuthAsync(HttpContext), Request = InRequestModel };
+		var Model = new ServiceModel<AccountCreateRequestModel>(await _AuthorizationService.GetControllerAuthAsync(HttpContext), InRequestModel);
 		var Response = await _AccountService.CreateAsync(Model);
 		return Ok(Response);
 	}
@@ -68,7 +68,7 @@ public class AccountController : ControllerBase
 	{
 		if (!ModelState.IsValid) return BadRequest();
 
-		var Model = new ServiceModel<AccountDeleteRequestModel> { Auth = await _AuthorizationService.GetControllerAuthAsync(HttpContext), Request = InRequestModel };
+		var Model = new ServiceModel<AccountDeleteRequestModel>(await _AuthorizationService.GetControllerAuthAsync(HttpContext), InRequestModel);
 		var Response = await _AccountService.DeleteAsync(Model);
 		return Ok(Response);
 	}

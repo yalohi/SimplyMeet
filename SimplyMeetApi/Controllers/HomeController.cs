@@ -30,7 +30,7 @@ public class HomeController : ControllerBase
 	{
 		if (!ModelState.IsValid) return BadRequest();
 
-		var Model = new ServiceModel<HomeGetDataRequestModel> { Auth = await _AuthorizationService.GetControllerAuthAsync(HttpContext), Request = InRequestModel };
+		var Model = new ServiceModel<HomeGetDataRequestModel>(await _AuthorizationService.GetControllerAuthAsync(HttpContext), InRequestModel);
 		var Response = await _HomeService.GetDataAsync(Model);
 		return Ok(Response);
 	}

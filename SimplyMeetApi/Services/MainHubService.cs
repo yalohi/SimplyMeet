@@ -81,13 +81,13 @@ public class MainHubService
 		if (_ConnectionIdDict.TryGetValue(InMatch.AccountId, out var ConnectionIdList))
 		{
 			foreach (var ConnectionId in ConnectionIdList)
-				await AddToGroupsAsync(new AuthHubModel { ConnectionId = ConnectionId, AccountId = InMatch.AccountId }, InConnection);
+				await AddToGroupsAsync(new AuthHubModel(ConnectionId, InMatch.AccountId), InConnection);
 		}
 
 		if (_ConnectionIdDict.TryGetValue(InMatch.MatchAccountId, out var MatchConnectionIdList))
 		{
 			foreach (var ConnectionId in MatchConnectionIdList)
-				await AddToGroupsAsync(new AuthHubModel { ConnectionId = ConnectionId, AccountId = InMatch.MatchAccountId }, InConnection);
+				await AddToGroupsAsync(new AuthHubModel(ConnectionId, InMatch.MatchAccountId), InConnection);
 		}
 
 		var FirstMatchUser = await GetMatchUserAsync(InMatch.MatchAccountId, InMatch.Id, InConnection);
@@ -105,7 +105,7 @@ public class MainHubService
 
 		foreach (var ConnectionId in ConnectionIdList)
 		{
-			var Auth = new AuthHubModel { ConnectionId = ConnectionId, AccountId = InAccountId };
+			var Auth = new AuthHubModel(ConnectionId, InAccountId);
 			await RemoveFromGroupAsync(Auth, $"{CHAT_GROUP}{InMatchId}");
 			await _MainHubContext.Clients.Client(ConnectionId).SendAsync(MainHubConstants.RECEIVE_UNMATCH, InMatchId);
 		}
@@ -158,9 +158,7 @@ public class MainHubService
 		var MessageInfo = await GetMessageInfoAsync(InModel.Auth, InModel.Request.MatchId);
 		if (MessageInfo == null) return;
 
-		var ServerData = new MessageServerDataModel();
-		ServerData.DateTime = DateTime.UtcNow;
-
+		var ServerData = new MessageServerDataModel { DateTime = DateTime.UtcNow };
 		var ServerDataJson = JsonSerializer.Serialize(ServerData);
 
 		var Message = new MessageModel
@@ -175,7 +173,7 @@ public class MainHubService
 
 		await _DatabaseService.PerformTransactionAsync(async InConnection =>
 		{
-			Message.Id = await _DatabaseService.InsertModelReturnIdAsync(Message, InConnection);
+			Message = Message with { Id = await _DatabaseService.InsertModelReturnIdAsync(Message, InConnection) };
 		});
 
 		await _MainHubContext.Clients.Group($"{CHAT_GROUP}{Message.MatchId}").SendAsync(MainHubConstants.RECEIVE_CHAT_MESSAGE, Message);
@@ -266,7 +264,7 @@ public class MainHubService
 			MatchAccount = await _DatabaseService.GetModelByIdAsync<AccountModel>(MatchAccount, InConnection);
 			if (MatchAccount == null) return null;
 
-			return new MessageInfoModel { FromPublicId = Account.PublicId };
+			return new MessageInfoModel(Account.PublicId);
 		});
 	}
 

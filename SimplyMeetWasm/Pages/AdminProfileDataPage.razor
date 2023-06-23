@@ -73,7 +73,7 @@
 	// Global Variables
 	//===========================================================================================
 	#region Properties
-	public ProfileDataModel Data => _EditRequest.Data;
+	public M_ProfileDataModel Data => _EditRequest.Data;
 	public Boolean IsSaveDisabled => _IsSubmitting || !_DataChanged;
 	#endregion
 	#region Fields
@@ -139,7 +139,7 @@
 	private void OnAddSexualityClick(String InName) => Data.AllSexualities = AddProfileData(Data.AllSexualities, new SexualityModel { Name = InName });
 	private void OnRemoveSexualityClick(String InName) => Data.AllSexualities = RemoveProfileData(Data.AllSexualities, InName);
 
-	private IEnumerable<T> AddProfileData<T>(IEnumerable<T> InItems, T InModel) where T : ProfileDataBaseModel
+	private IEnumerable<T> AddProfileData<T>(IEnumerable<T> InItems, T InModel) where T : ProfileDataModelBase
 	{
 		NotificationService.ClearMainNotification();
 		if (InItems.Any(X => X.Name == InModel.Name))
@@ -151,7 +151,7 @@
 		_DataChanged = true;
 		return InItems.Append(InModel);
 	}
-	private IEnumerable<T> RemoveProfileData<T>(IEnumerable<T> InItems, String InName) where T : ProfileDataBaseModel
+	private IEnumerable<T> RemoveProfileData<T>(IEnumerable<T> InItems, String InName) where T : ProfileDataModelBase
 	{
 		_DataChanged = true;
 		return InItems.Where(X => X.Name != InName);

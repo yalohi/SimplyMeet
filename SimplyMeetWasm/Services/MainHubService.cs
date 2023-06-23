@@ -1,4 +1,3 @@
-
 namespace SimplyMeetWasm.Services;
 
 public class MainHubService
@@ -18,7 +17,7 @@ public class MainHubService
 	public MainHubLocalUserModel LocalUser { get; private set; }
 
 	public HubConnectionState State => _Connection?.State ?? HubConnectionState.Connecting;
-	public MatchUserStateModel FirstMatchUserState => _MatchUserStateList.FirstOrDefault();
+	public M_MatchUserStateModel FirstMatchUserState => _MatchUserStateList.FirstOrDefault();
 	public MainHubMatchUserModel FirstMatchUser => FirstMatchUserState?.User;
 	public Boolean IsAdmin => LocalUser != null && LocalUser.Roles.Any(X => X == EAccountRole.Admin.ToString());
 	public Boolean IsModerator => LocalUser != null && LocalUser.Roles.Any(X => X == EAccountRole.Moderator.ToString());
@@ -32,7 +31,7 @@ public class MainHubService
 	private readonly NotificationService _NotificationService;
 
 	private HubConnection _Connection;
-	private List<MatchUserStateModel> _MatchUserStateList;
+	private List<M_MatchUserStateModel> _MatchUserStateList;
 	private Dictionary<Int32, List<DecryptedMessageModel>> _MessageDict;
 	private List<String> _UnsentMessageList;
 	private Boolean _IsSetup;
@@ -190,7 +189,7 @@ public class MainHubService
 
 		return GetMessageList(InMatchId).AsReadOnly();
 	}
-	public void ResetUnreadMessageCount(MatchUserStateModel InMatchUserState)
+	public void ResetUnreadMessageCount(M_MatchUserStateModel InMatchUserState)
 	{
 		if (InMatchUserState == null) throw new ArgumentNullException(nameof(InMatchUserState));
 
@@ -219,16 +218,16 @@ public class MainHubService
 		if (!InModel.Forward && InModel.RemainingMessageCount <= 0)
 		{
 			MessageList.Add(new DecryptedMessageModel
-			{
-				Id = -2,
-				ClientData = new MessageClientDataModel { Message = _LocalizationService["MatchStartMessage"] },
-			});
+			(
+				Id: -2,
+				ClientData: new MessageClientDataModel { Message = _LocalizationService["MatchStartMessage"] }
+			));
 
 			MessageList.Add(new DecryptedMessageModel
-			{
-				Id = -1,
-				ClientData = new MessageClientDataModel { Message = _LocalizationService["MatchChatSuggestion"] },
-			});
+			(
+				Id: -1,
+				ClientData: new MessageClientDataModel { Message = _LocalizationService["MatchChatSuggestion"] }
+			));
 		}
 
 		MessageList.Sort((X1, X2) => X1.Id.CompareTo(X2.Id));
@@ -287,11 +286,11 @@ public class MainHubService
 			{
 				var EncodedMessage = HttpUtility.HtmlEncode(ClientData.Message);
 				var EncodedMessageWithUrls = URL_REGEX.Replace(EncodedMessage, URL_REPLACE);
-				ClientData.Message = EncodedMessageWithUrls;
+				ClientData = ClientData with { Message = EncodedMessageWithUrls };
 			}
 
 			var Sender = InMessage.FromPublicId == LocalUser.CompactProfile.PublicId ? LocalUser.CompactProfile : FirstMatchUser.CompactProfile;
-			var DecryptedMessage = new DecryptedMessageModel { Id = InMessage.Id, Sender = Sender, ServerData = ServerData, ClientData = ClientData };
+			var DecryptedMessage = new DecryptedMessageModel(InMessage.Id, Sender, ServerData, ClientData);
 			var MessageList = GetMessageList(InMessage.MatchId);
 			MessageList.Add(DecryptedMessage);
 		}
@@ -319,7 +318,7 @@ public class MainHubService
 		var LastCount = _MatchUserStateList.Count;
 		foreach (var MatchUser in InMatchUsers)
 		{
-			var NewMatchUserState = new MatchUserStateModel
+			var NewMatchUserState = new M_MatchUserStateModel
 			{
 				User = MatchUser,
 				RemainingPreviousMessageCount = Int32.MaxValue,
@@ -355,7 +354,7 @@ public class MainHubService
 				if (Message.Sender != null && Message.Sender.PublicId == InCompactProfile.PublicId)
 				{
 					MessageList.RemoveAt(Index);
-					MessageList.Insert(Index, new DecryptedMessageModel { Id = Message.Id, Sender = InCompactProfile, ServerData = Message.ServerData, ClientData = Message.ClientData });
+					MessageList.Insert(Index, new DecryptedMessageModel(Message.Id, InCompactProfile, Message.ServerData, Message.ClientData));
 				}
 			}
 		}
@@ -379,7 +378,7 @@ public class MainHubService
 				var MatchUserState = _MatchUserStateList[MatchUserStateIndex];
 				_MatchUserStateList.RemoveAt(MatchUserStateIndex);
 
-				_MatchUserStateList.Add(new MatchUserStateModel
+				_MatchUserStateList.Add(new M_MatchUserStateModel
 				{
 					User = new MainHubMatchUserModel
 					{

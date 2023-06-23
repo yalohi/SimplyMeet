@@ -29,7 +29,7 @@ public class ProfileController : ControllerBase
 	{
 		if (!ModelState.IsValid) return BadRequest();
 
-		var Model = new ServiceModel<ProfileGetRequestModel> { Auth = await _AuthorizationService.GetControllerAuthAsync(HttpContext), Request = InRequestModel };
+		var Model = new ServiceModel<ProfileGetRequestModel>(await _AuthorizationService.GetControllerAuthAsync(HttpContext), InRequestModel);
 		var Response = await _ProfileService.GetAsync(Model);
 		return Ok(Response);
 	}
@@ -41,7 +41,7 @@ public class ProfileController : ControllerBase
 	{
 		if (!ModelState.IsValid) return BadRequest();
 
-		var Model = new ServiceModel<ProfileGetCompactRequestModel> { Auth = await _AuthorizationService.GetControllerAuthAsync(HttpContext), Request = InRequestModel };
+		var Model = new ServiceModel<ProfileGetCompactRequestModel>(await _AuthorizationService.GetControllerAuthAsync(HttpContext), InRequestModel);
 		var Response = await _ProfileService.GetCompactAsync(Model);
 		return Ok(Response);
 	}
@@ -53,7 +53,7 @@ public class ProfileController : ControllerBase
 	{
 		if (!ModelState.IsValid) return BadRequest();
 
-		var Model = new ServiceModel<ProfileGetEditDataRequestModel> { Auth = await _AuthorizationService.GetControllerAuthAsync(HttpContext), Request = InRequestModel };
+		var Model = new ServiceModel<ProfileGetEditDataRequestModel>(await _AuthorizationService.GetControllerAuthAsync(HttpContext), InRequestModel);
 		var Response = await _ProfileService.GetEditDataAsync(Model);
 		return Ok(Response);
 	}
@@ -65,7 +65,7 @@ public class ProfileController : ControllerBase
 	{
 		if (!ModelState.IsValid) return BadRequest();
 
-		var Model = new ServiceModel<ProfileEditRequestModel> { Auth = await _AuthorizationService.GetControllerAuthAsync(HttpContext), Request = InRequestModel };
+		var Model = new ServiceModel<ProfileEditRequestModel>(await _AuthorizationService.GetControllerAuthAsync(HttpContext), InRequestModel);
 		var Response = await _ProfileService.EditAsync(Model);
 		return Ok(Response);
 	}
@@ -77,7 +77,7 @@ public class ProfileController : ControllerBase
 	{
 		if (!ModelState.IsValid) return BadRequest();
 
-		var Model = new ProfileEditAvatarModel { Auth = await _AuthorizationService.GetControllerAuthAsync(HttpContext), File = InFile };
+		var Model = new ProfileEditAvatarModel(await _AuthorizationService.GetControllerAuthAsync(HttpContext), InFile);
 		var Response = await _ProfileService.EditAvatarAsync(Model);
 		return Ok(Response);
 	}
@@ -89,7 +89,7 @@ public class ProfileController : ControllerBase
 	{
 		if (!ModelState.IsValid) return BadRequest();
 
-		var Model = new ServiceModel<ProfileResetAvatarRequestModel> { Auth = await _AuthorizationService.GetControllerAuthAsync(HttpContext), Request = InRequestModel };
+		var Model = new ServiceModel<ProfileResetAvatarRequestModel>(await _AuthorizationService.GetControllerAuthAsync(HttpContext), InRequestModel);
 		var Response = await _ProfileService.ResetAvatarAsync(Model);
 		return Ok(Response);
 	}
@@ -101,7 +101,7 @@ public class ProfileController : ControllerBase
 	{
 		if (!ModelState.IsValid) return BadRequest();
 
-		var Model = new ServiceModel<ProfileReportRequestModel> { Auth = await _AuthorizationService.GetControllerAuthAsync(HttpContext), Request = InRequestModel };
+		var Model = new ServiceModel<ProfileReportRequestModel>(await _AuthorizationService.GetControllerAuthAsync(HttpContext), InRequestModel);
 		var Response = await _ProfileService.ReportAsync(Model);
 		return Ok(Response);
 	}

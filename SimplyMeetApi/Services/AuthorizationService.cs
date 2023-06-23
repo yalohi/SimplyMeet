@@ -24,18 +24,18 @@ public class AuthorizationService
 		if (InContext == null) throw new ArgumentNullException(nameof(InContext));
 
 		var AccountId = GetAccountId(InContext.User);
-		if (!InGetRoles || AccountId == -1) return new AuthModel { RemoteIpAddress = InContext.Connection.RemoteIpAddress, AccountId = AccountId, Roles = Enumerable.Empty<RoleModel>() };
+		if (!InGetRoles || AccountId == -1) return new AuthModel(InContext.Connection.RemoteIpAddress, AccountId, Enumerable.Empty<RoleModel>());
 
-		return new AuthModel { RemoteIpAddress = InContext.Connection.RemoteIpAddress, AccountId = AccountId, Roles = await GetRolesAsync(AccountId) };
+		return new AuthModel(InContext.Connection.RemoteIpAddress, AccountId, await GetRolesAsync(AccountId));
 	}
 	public async Task<AuthHubModel> GetHubAuthAsync(HubCallerContext InContext, Boolean InGetRoles = false)
 	{
 		if (InContext == null) throw new ArgumentNullException(nameof(InContext));
 
 		var AccountId = GetAccountId(InContext.User);
-		if (!InGetRoles || AccountId == -1) return new AuthHubModel { ConnectionId = InContext.ConnectionId, AccountId = AccountId };
+		if (!InGetRoles || AccountId == -1) return new AuthHubModel(InContext.ConnectionId, AccountId);
 
-		return new AuthHubModel { ConnectionId = InContext.ConnectionId, AccountId = AccountId, Roles = await GetRolesAsync(AccountId) };
+		return new AuthHubModel(InContext.ConnectionId, AccountId, await GetRolesAsync(AccountId));
 	}
 	public async Task<AuthHubModel> GetHubAuthAsync(String InConnectionId, Int32 InAccountId, IDbConnection InConnection, Boolean InGetRoles = false)
 	{
@@ -43,8 +43,8 @@ public class AuthorizationService
 		if (InAccountId < 0) throw new ArgumentOutOfRangeException(nameof(InAccountId));
 		if (InConnection == null) throw new ArgumentNullException(nameof (InConnection));
 
-		if (!InGetRoles) return new AuthHubModel { ConnectionId = InConnectionId, AccountId = InAccountId };
-		return new AuthHubModel { ConnectionId = InConnectionId, AccountId = InAccountId, Roles = await GetRolesAsync(InAccountId, InConnection) };
+		if (!InGetRoles) return new AuthHubModel(InConnectionId, InAccountId);
+		return new AuthHubModel(InConnectionId, InAccountId, await GetRolesAsync(InAccountId, InConnection));
 	}
 
 	public Boolean HasRole(AuthModel InAuth, EAccountRole InAccountRole)
