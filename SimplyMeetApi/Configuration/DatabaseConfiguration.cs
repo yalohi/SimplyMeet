@@ -1,6 +1,6 @@
 ﻿namespace SimplyMeetApi.Configuration;
 
-public class DatabaseConfiguration
+public class DatabaseConfiguration : IApiConfiguration
 {
 	//===========================================================================================
 	// Global Variables

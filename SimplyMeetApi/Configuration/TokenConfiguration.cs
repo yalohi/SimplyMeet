@@ -1,6 +1,6 @@
 ﻿namespace SimplyMeetApi.Configuration;
 
-public class TokenConfiguration
+public class TokenConfiguration : IApiConfiguration
 {
 	//===========================================================================================
 	// Global Variables

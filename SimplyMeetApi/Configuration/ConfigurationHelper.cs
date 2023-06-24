@@ -5,7 +5,7 @@ public static class ConfigurationHelper
 	//===========================================================================================
 	// Public Static Methods
 	//===========================================================================================
-	public static T Configure<T>(IConfiguration InConfiguration, IServiceCollection InServices) where T : class
+	public static T Configure<T>(IConfiguration InConfiguration, IServiceCollection InServices) where T : class, IApiConfiguration
 	{
 		var ConfigurationSection = InConfiguration.GetSection(typeof(T).Name);
 		InServices.Configure<T>(ConfigurationSection, InBinderOptions => InBinderOptions.BindNonPublicProperties = true);

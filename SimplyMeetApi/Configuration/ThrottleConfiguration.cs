@@ -1,6 +1,6 @@
 namespace SimplyMeetApi.Configuration;
 
-public class ThrottleConfiguration
+public class ThrottleConfiguration : IApiConfiguration
 {
 	//===========================================================================================
 	// Global Variables

@@ -38,6 +38,7 @@ global using FluentMigrator.Builders.Create.Table;
 global using FluentMigrator.Runner;
 
 global using SimplyMeetApi.Attributes;
+global using SimplyMeetApi.Base;
 global using SimplyMeetApi.Configuration;
 global using SimplyMeetApi.Enums;
 global using SimplyMeetApi.Extensions;

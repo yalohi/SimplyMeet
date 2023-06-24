@@ -1,6 +1,6 @@
 ﻿namespace SimplyMeetApi.Configuration;
 
-public class StaticFilesConfiguration
+public class StaticFilesConfiguration : IApiConfiguration
 {
 	//===========================================================================================
 	// Global Variables
