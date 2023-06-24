@@ -124,7 +124,6 @@ public class MainHubService
 			var Account = await _DatabaseService.GetModelByIdAsync(new AccountModel { Id = InModel.Auth.AccountId }, InConnection);
 			if (Account == null || await _DatabaseService.UpdateAccountActiveAsync(Account, InConnection) <= 0) return null;
 
-
 			var Messages = Enumerable.Empty<MessageModel>();
 			if (InModel.Request.Forward) Messages = await _DatabaseService.GetFollowingMessagesAsync(InModel.Request, InConnection);
 			else Messages = await _DatabaseService.GetPreviousMessagesAsync(InModel.Request, InConnection);
@@ -159,7 +158,7 @@ public class MainHubService
 		if (MessageInfo == null) return;
 
 		var ServerData = new MessageServerDataModel { DateTime = DateTime.UtcNow };
-		var ServerDataJson = JsonSerializer.Serialize(ServerData);
+		var ServerDataJson = JsonSerializer.Serialize(ServerData, ApiJsonSerializerContext.Default.MessageServerDataModel);
 
 		var Message = new MessageModel
 		{
