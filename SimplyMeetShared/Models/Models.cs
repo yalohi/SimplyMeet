@@ -9,7 +9,7 @@ public abstract record FilterModelBase(Int32 Id = default, Int32? PronounsId = d
 public abstract record MainHubLocalUserModelBase(ProfileCompactModel CompactProfile = default, IEnumerable<String> Roles = default);
 public abstract record MainHubMatchUserModelBase(ProfileCompactModel CompactProfile = default, Byte[] PublicKey = default, Int32 MatchId = default);
 public abstract record MatchChoiceModelBase(Int32 Id = default, Int32 AccountId = default, Int32 MatchAccountId = default, EMatchChoice Choice = default);
-public abstract record MatchModelBase(Int32 Id = default, Int32 AccountId = default, Int32 MatchAccountId = default, EMatchChoice Choice = default);
+public abstract record MatchModelBase(Int32 Id = default, Int32 AccountId = default, Int32 MatchAccountId = default);
 public abstract record MessageClientDataModelBase(String Message = default);
 public abstract record MessageModelBase(Int32 Id = default, Int32 MatchId = default, String FromPublicId = default, String ServerDataJson = default, String ClientDataJson_Encrypted_Base64 = default, String ClientDataJson_Nonce_Base64 = default); //Int32 ToPublicKeyId
 public abstract record MessageServerDataModelBase(DateTime DateTime = default);
