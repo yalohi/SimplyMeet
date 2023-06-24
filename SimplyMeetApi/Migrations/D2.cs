@@ -13,7 +13,7 @@ public class D2 : Migration
 	//===========================================================================================
 	// Migration Models
 	//===========================================================================================
-	private class D2_AccountModel
+	public class D2_AccountModel
 	{
 		public Int32 Id { get; set; }
 

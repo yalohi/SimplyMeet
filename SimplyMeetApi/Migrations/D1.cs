@@ -32,13 +32,13 @@ public class D1 : Migration
 	//===========================================================================================
 	// Migration Models
 	//===========================================================================================
-	internal class D1_CardModel
+	public class D1_CardModel
 	{
 		public Int32 Id { get; set; }
 		public String Title { get; set; }
 		public String Content { get; set; }
 	}
-	internal class D1_AccountModel
+	public class D1_AccountModel
 	{
 		public Int32 Id { get; set; }
 
@@ -51,13 +51,13 @@ public class D1 : Migration
 		public Int32 ProfileId { get; set; }
 		public Int32 FilterId { get; set; }
 	}
-	internal class D1_AccountRoleModel
+	public class D1_AccountRoleModel
 	{
 		public Int32 Id { get; set; }
 		public Int32 RoleId { get; set; }
 		public String AccountPublicId { get; set; }
 	}
-	internal class D1_ProfileModel
+	public class D1_ProfileModel
 	{
 		public Int32 Id { get; set; }
 
@@ -77,17 +77,17 @@ public class D1 : Migration
 		public String AboutMe { get; set; }
 		public String AboutYou { get; set; }
 	}
-	internal class D1_ProfileTagModel
+	public class D1_ProfileTagModel
 	{
 		public Int32 ProfileId { get; set; }
 		public Int32 TagId { get; set; }
 	}
-	internal class D1_ProfileSexualityModel
+	public class D1_ProfileSexualityModel
 	{
 		public Int32 ProfileId { get; set; }
 		public Int32 SexualityId { get; set; }
 	}
-	internal class D1_FilterModel
+	public class D1_FilterModel
 	{
 		public Int32 Id { get; set; }
 
@@ -101,58 +101,58 @@ public class D1 : Migration
 		public Int32 ToAge { get; set; }
 		public Boolean AgeEnabled { get; set; }
 	}
-	internal class D1_RoleModel
+	public class D1_RoleModel
 	{
 		public Int32 Id { get; set; }
 		public String Name { get; set; }
 	}
-	internal class D1_TagModel
+	public class D1_TagModel
 	{
 		public Int32 Id { get; set; }
 		public String Name { get; set; }
 	}
-	internal class D1_SexualityModel : D1_ProfileDataBaseModel
+	public class D1_SexualityModel : D1_ProfileDataBaseModel
 	{
 	}
-	internal class D1_PronounsModel : D1_ProfileDataBaseModel
+	public class D1_PronounsModel : D1_ProfileDataBaseModel
 	{
 	}
-	internal class D1_SexModel : D1_ProfileDataIconBaseModel
+	public class D1_SexModel : D1_ProfileDataIconBaseModel
 	{
 	}
-	internal class D1_GenderModel : D1_ProfileDataBaseModel
+	public class D1_GenderModel : D1_ProfileDataBaseModel
 	{
 	}
-	internal class D1_RegionModel : D1_ProfileDataIconBaseModel
+	public class D1_RegionModel : D1_ProfileDataIconBaseModel
 	{
 	}
-	internal class D1_CountryModel : D1_ProfileDataIconBaseModel
+	public class D1_CountryModel : D1_ProfileDataIconBaseModel
 	{
 		public Int32 RegionId { get; set; }
 	}
-	internal abstract class D1_ProfileDataIconBaseModel : D1_ProfileDataBaseModel
+	public abstract class D1_ProfileDataIconBaseModel : D1_ProfileDataBaseModel
 	{
 		public String Icon { get; set; }
 	}
-	internal abstract class D1_ProfileDataBaseModel
+	public abstract class D1_ProfileDataBaseModel
 	{
 		public Int32 Id { get; set; }
 		public String Name { get; set; }
 	}
-	internal class D1_MatchChoiceModel
+	public class D1_MatchChoiceModel
 	{
 		public Int32 Id { get; set; }
 		public Int32 AccountId { get; set; }
 		public Int32 MatchAccountId { get; set; }
 		public EMatchChoice Choice { get; set; }
 	}
-	internal class D1_MatchModel
+	public class D1_MatchModel
 	{
 		public Int32 Id { get; set; }
 		public Int32 AccountId { get; set; }
 		public Int32 MatchAccountId { get; set; }
 	}
-	internal class D1_MessageModel
+	public class D1_MessageModel
 	{
 		public Int32 Id { get; set; }
 		public Int32 MatchId { get; set; }
@@ -162,14 +162,14 @@ public class D1 : Migration
 		public String ClientDataJson_Encrypted_Base64 { get; set; }
 		public String ClientDataJson_Nonce_Base64 { get; set; }
 	}
-	internal class D1_ReportModel
+	public class D1_ReportModel
 	{
 		public Int32 Id { get; set; }
 		public Int32 ReporterAccountId { get; set; }
 		public Int32 ReportedAccountId { get; set; }
 		public Int32 ReportReasonId { get; set; }
 	}
-	internal class D1_ReportReasonModel
+	public class D1_ReportReasonModel
 	{
 		public Int32 Id { get; set; }
 		public String Name { get; set; }
