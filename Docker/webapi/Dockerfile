@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/runtime-deps:5.0-alpine
+FROM mcr.microsoft.com/dotnet/runtime-deps:7.0-alpine
 RUN apk add --update sqlite
 COPY app /app
 WORKDIR /app
