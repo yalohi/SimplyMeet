@@ -1,0 +1,3 @@
+namespace SimplyMeetShared.RequestModels;
+
+public record AdminGetAccountRolesRequestModel : RequestModelBase;

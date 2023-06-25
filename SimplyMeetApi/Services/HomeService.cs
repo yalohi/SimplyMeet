@@ -1,44 +1,36 @@
-using System;
-using System.Threading.Tasks;
-using SimplyMeetApi.Models;
-using SimplyMeetShared.Models;
-using SimplyMeetShared.RequestModels;
-using SimplyMeetShared.ResponseModels;
+namespace SimplyMeetApi.Services;
 
-namespace SimplyMeetApi.Services
+public class HomeService
 {
-	public class HomeService
+	//===========================================================================================
+	// Global Variables
+	//===========================================================================================
+	#region Fields
+	private readonly DatabaseService _DatabaseService;
+	#endregion
+
+	//===========================================================================================
+	// Public Methods
+	//===========================================================================================
+	public HomeService(DatabaseService InDatabaseService)
 	{
-		//===========================================================================================
-		// Global Variables
-		//===========================================================================================
-		#region Fields
-		private readonly DatabaseService _DatabaseService;
-		#endregion
+		_DatabaseService = InDatabaseService;
+	}
 
-		//===========================================================================================
-		// Public Methods
-		//===========================================================================================
-		public HomeService(DatabaseService InDatabaseService)
+	public async Task<HomeGetDataResponseModel> GetDataAsync(ServiceModel<HomeGetDataRequestModel> InModel)
+	{
+		if (InModel == null) throw new ArgumentNullException(nameof(InModel));
+
+		return await _DatabaseService.PerformTransactionAsync(async InConnection =>
 		{
-			_DatabaseService = InDatabaseService;
-		}
+			var Cards = await _DatabaseService.GetAllAsync<CardModel>(InConnection);
 
-		public async Task<HomeGetDataResponseModel> GetDataAsync(ServiceModel<HomeGetDataRequestModel> InModel)
-		{
-			if (InModel == null) throw new ArgumentNullException(nameof(InModel));
-
-			return await _DatabaseService.PerformTransactionAsync(async InConnection =>
+			return new HomeGetDataResponseModel
 			{
-				var Cards = await _DatabaseService.GetAllAsync<CardModel>(InConnection);
-
-				return new HomeGetDataResponseModel
-				{
-					Cards = Cards,
-					TotalActiveAccounts = await _DatabaseService.GetTotalActiveAccountsAsync(InConnection),
-					TotalActiveMatches = await _DatabaseService.GetTotalActiveMatchesAsync(InConnection),
-				};
-			});
-		}
+				Cards = Cards,
+				TotalActiveAccounts = await _DatabaseService.GetTotalActiveAccountsAsync(InConnection),
+				TotalActiveMatches = await _DatabaseService.GetTotalActiveMatchesAsync(InConnection),
+			};
+		});
 	}
 }

@@ -1,15 +1,12 @@
-﻿using System;
+﻿namespace SimplyMeetApi.Configuration;
 
-namespace SimplyMeetApi.Configuration
+public class TokenConfiguration : IApiConfiguration
 {
-	public class TokenConfiguration
-	{
-		//===========================================================================================
-		// Global Variables
-		//===========================================================================================
-		#region Properties
-		public String SecretKey { get; private set; }
-		public String Issuer { get; private set; }
-		#endregion
-	}
+	//===========================================================================================
+	// Global Variables
+	//===========================================================================================
+	#region Properties
+	public String SecretKey { get; private set; }
+	public String Issuer { get; private set; }
+	#endregion
 }

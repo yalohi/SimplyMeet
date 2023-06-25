@@ -1,11 +1,10 @@
-namespace SimplyMeetApi.Enums
+namespace SimplyMeetApi.Enums;
+
+public enum EThrottleGroup
 {
-	public enum EThrottleGroup
-	{
-		General,
-		AccountLogin,
-		AccountCreate,
-		Report,
-		Chat,
-	}
+	General,
+	AccountLogin,
+	AccountCreate,
+	Report,
+	Chat,
 }

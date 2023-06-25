@@ -1,8 +1,7 @@
-namespace SimplyMeetShared.Enums
+namespace SimplyMeetShared.Enums;
+
+public enum EAccountStatus
 {
-	public enum EAccountStatus
-	{
-		Normal = 0,
-		Suspended = 1,
-	}
+	Normal = 0,
+	Suspended = 1,
 }

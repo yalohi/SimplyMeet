@@ -318,7 +318,7 @@
 
 			if (IsNewBlock && TempMessageList.Count > 0)
 			{
-				_MessageBlockList.Add(new MessageBlockModel { MessageList = TempMessageList, IsNewDate = IsBlockNewDate });
+				_MessageBlockList.Add(new MessageBlockModel(TempMessageList, IsBlockNewDate));
 				TempMessageList = new List<DecryptedMessageModel>();
 				IsBlockNewDate = false;
 			}
@@ -327,7 +327,7 @@
 			TempMessageList.Add(Message);
 		}
 
-		if (TempMessageList.Count > 0) _MessageBlockList.Add(new MessageBlockModel { MessageList = TempMessageList, IsNewDate = IsBlockNewDate });
+		if (TempMessageList.Count > 0) _MessageBlockList.Add(new MessageBlockModel(TempMessageList, IsBlockNewDate));
 		if (!_ShowProfile) StateHasChanged();
 	}
 }

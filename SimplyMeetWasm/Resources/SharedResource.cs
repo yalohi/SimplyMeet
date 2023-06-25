@@ -1,6 +1,5 @@
-namespace SimplyMeetWasm.Resources
+namespace SimplyMeetWasm.Resources;
+
+public sealed class SharedResource
 {
-	public sealed class SharedResource
-	{
-	}
 }

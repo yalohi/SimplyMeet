@@ -1,18 +1,14 @@
-using System;
-using FluentMigrator.Builders.Create.Table;
+namespace SimplyMeetApi.Extensions;
 
-namespace SimplyMeetApi.Extensions
+public static class MigrationExtensions
 {
-	public static class MigrationExtensions
+	//===========================================================================================
+	// Public Static Methods
+	//===========================================================================================
+	public static ICreateTableColumnOptionOrWithColumnSyntax WithIdColumn(this ICreateTableWithColumnSyntax InTableWithColumnSyntax, String InName)
 	{
-		//===========================================================================================
-		// Public Static Methods
-		//===========================================================================================
-		public static ICreateTableColumnOptionOrWithColumnSyntax WithIdColumn(this ICreateTableWithColumnSyntax InTableWithColumnSyntax, String InName)
-		{
-			return InTableWithColumnSyntax
-				.WithColumn(InName).AsInt32().NotNullable().PrimaryKey().Identity().Unique()
-				;
-		}
+		return InTableWithColumnSyntax
+			.WithColumn(InName).AsInt32().NotNullable().PrimaryKey().Identity().Unique()
+			;
 	}
 }

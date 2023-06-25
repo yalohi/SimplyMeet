@@ -1,10 +1,9 @@
-namespace SimplyMeetWasm.Enums
+namespace SimplyMeetWasm.Enums;
+
+public enum ENotificationType
 {
-	public enum ENotificationType
-	{
-		None = 0,
-		Info = 1,
-		Warning = 2,
-		Danger = 3,
-	}
+	None = 0,
+	Info = 1,
+	Warning = 2,
+	Danger = 3,
 }
