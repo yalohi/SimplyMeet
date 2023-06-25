@@ -7,9 +7,5 @@ public static class TokenConstants
 	//===========================================================================================
 	#region Const Fields
 	public const String TYPE = "Bearer";
-	public const String WS_QUERY = "access_token";
-	#endregion
-	#region Static Fields
-	public static readonly String HEADER = HttpRequestHeader.Authorization.ToString();
 	#endregion
 }
