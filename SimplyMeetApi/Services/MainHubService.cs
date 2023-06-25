@@ -138,6 +138,10 @@ namespace SimplyMeetApi.Services
 				var Match = await _DatabaseService.GetModelByIdAsync(new MatchModel { Id = InModel.Request.MatchId }, InConnection);
 				if (Match == null || (InModel.Auth.AccountId != Match.AccountId && InModel.Auth.AccountId != Match.MatchAccountId)) return null;
 
+				var Account = await _DatabaseService.GetModelByIdAsync(new AccountModel { Id = InModel.Auth.AccountId }, InConnection);
+				if (Account == null || await _DatabaseService.UpdateAccountActiveAsync(Account, InConnection) <= 0) return null;
+
+
 				var Messages = Enumerable.Empty<MessageModel>();
 				if (InModel.Request.Forward) Messages = await _DatabaseService.GetFollowingMessagesAsync(InModel.Request, InConnection);
 				else Messages = await _DatabaseService.GetPreviousMessagesAsync(InModel.Request, InConnection);

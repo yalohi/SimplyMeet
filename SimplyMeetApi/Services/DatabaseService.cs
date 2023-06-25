@@ -133,7 +133,7 @@ namespace SimplyMeetApi.Services
 
 		private static readonly String GET_TOTAL_ACTIVE_ACCOUNTS_SQL =
 			$@"{SELECT_COUNT_FROM} {ACCOUNTS_TABLE}
-			{WHERE} {DATE}({NOW}) < {DATE}({nameof(AccountModel.LastLogin)}, '+{AccountConstants.FLAG_ACTIVE_DAYS} {DAYS}')";
+			{WHERE} {DATE}({NOW}) < {DATE}({nameof(AccountModel.LastActive)}, '+{AccountConstants.FLAG_ACTIVE_DAYS} {DAYS}')";
 
 		private static readonly String GET_TOTAL_ACTIVE_MATCHES_SQL =
 			$@"{SELECT_COUNT_FROM} {MATCHES_TABLE}";
@@ -241,17 +241,23 @@ namespace SimplyMeetApi.Services
 			{AND} (@{nameof(GetNewMatchModel.Filter_AgeEnabled)} <= 0 {OR} {CAST}(({JULIANDAY}({NOW}) - {JULIANDAY}(P.{nameof(ProfileModel.BirthDate)})) / {ProfileConstants.DAYS_PER_YEAR} {AS} {INTEGER}) >= @{nameof(GetNewMatchModel.Filter_FromAge)})
 			{AND} (@{nameof(GetNewMatchModel.Filter_AgeEnabled)} <= 0 {OR} {CAST}(({JULIANDAY}({NOW}) - {JULIANDAY}(P.{nameof(ProfileModel.BirthDate)})) / {ProfileConstants.DAYS_PER_YEAR} {AS} {INTEGER}) <= @{nameof(GetNewMatchModel.Filter_ToAge)})
 
-			{AND} (F.{nameof(FilterModel.PronounsId)} {IS} {NULL} {OR} @{nameof(GetNewMatchModel.Profile_PronounsId)} = F.{nameof(FilterModel.PronounsId)})
-			{AND} (F.{nameof(FilterModel.SexId)} {IS} {NULL} {OR} @{nameof(GetNewMatchModel.Profile_SexId)} = F.{nameof(FilterModel.SexId)})
-			{AND} (F.{nameof(FilterModel.GenderId)} {IS} {NULL} {OR} @{nameof(GetNewMatchModel.Profile_GenderId)} = F.{nameof(FilterModel.GenderId)})
-			{AND} (F.{nameof(FilterModel.RegionId)} {IS} {NULL} {OR} @{nameof(GetNewMatchModel.Profile_RegionId)} = F.{nameof(FilterModel.RegionId)})
-			{AND} (F.{nameof(FilterModel.CountryId)} {IS} {NULL} {OR} @{nameof(GetNewMatchModel.Profile_CountryId)} = F.{nameof(FilterModel.CountryId)})
-			{AND} (F.{nameof(FilterModel.AgeEnabled)} <= 0 {OR} @{nameof(GetNewMatchModel.Profile_Age)} >= F.{nameof(FilterModel.FromAge)})
-			{AND} (F.{nameof(FilterModel.AgeEnabled)} <= 0 {OR} @{nameof(GetNewMatchModel.Profile_Age)} <= F.{nameof(FilterModel.ToAge)})
+			{AND}
+			(
+				C.{nameof(MatchChoiceModel.Choice)} > 0 {OR}
+				(
+					(F.{nameof(FilterModel.PronounsId)} {IS} {NULL} {OR} @{nameof(GetNewMatchModel.Profile_PronounsId)} = F.{nameof(FilterModel.PronounsId)})
+					{AND} (F.{nameof(FilterModel.SexId)} {IS} {NULL} {OR} @{nameof(GetNewMatchModel.Profile_SexId)} = F.{nameof(FilterModel.SexId)})
+					{AND} (F.{nameof(FilterModel.GenderId)} {IS} {NULL} {OR} @{nameof(GetNewMatchModel.Profile_GenderId)} = F.{nameof(FilterModel.GenderId)})
+					{AND} (F.{nameof(FilterModel.RegionId)} {IS} {NULL} {OR} @{nameof(GetNewMatchModel.Profile_RegionId)} = F.{nameof(FilterModel.RegionId)})
+					{AND} (F.{nameof(FilterModel.CountryId)} {IS} {NULL} {OR} @{nameof(GetNewMatchModel.Profile_CountryId)} = F.{nameof(FilterModel.CountryId)})
+					{AND} (F.{nameof(FilterModel.AgeEnabled)} <= 0 {OR} @{nameof(GetNewMatchModel.Profile_Age)} >= F.{nameof(FilterModel.FromAge)})
+					{AND} (F.{nameof(FilterModel.AgeEnabled)} <= 0 {OR} @{nameof(GetNewMatchModel.Profile_Age)} <= F.{nameof(FilterModel.ToAge)})
+				)
+			)
 
 			{AND} (@{nameof(GetNewMatchModel.Profile_LookingFor)} <= 0 {OR} P.{nameof(ProfileModel.LookingFor)} <= 0 {OR} @{nameof(GetNewMatchModel.Profile_LookingFor)} & P.{nameof(ProfileModel.LookingFor)} > 0)
 
-			{ORDER_BY} {DATE}({NOW}) < {DATE}(A.{nameof(AccountModel.LastLogin)}, '+{AccountConstants.FLAG_ACTIVE_DAYS} {DAYS}') {DESC},
+			{ORDER_BY} {DATE}({NOW}) < {DATE}(A.{nameof(AccountModel.LastActive)}, '+{AccountConstants.FLAG_ACTIVE_DAYS} {DAYS}') {DESC},
 			C.{nameof(MatchChoiceModel.Choice)} {DESC}
 
 			{LIMIT} 1";
@@ -542,6 +548,11 @@ namespace SimplyMeetApi.Services
 
 		// Update
 		public async Task<Int32> UpdateModelByIdAsync<T>(T InModel, IDbConnection InConnection) => await InConnection.ExecuteAsync(UPDATE_BY_ID_DICT[typeof(T)], InModel);
+		public async Task<Int32> UpdateAccountActiveAsync(AccountModel InAccount, IDbConnection InConnection)
+		{
+			InAccount.LastActive = DateTime.UtcNow;
+			return await UpdateModelByIdAsync(InAccount, InConnection);
+		}
 
 		// Delete
 		public async Task<Int32> DeleteModelsAsync<T>(IEnumerable<T> InModels, IDbConnection InConnection) => await InConnection.ExecuteAsync(DELETE_DICT[typeof(T)], InModels);

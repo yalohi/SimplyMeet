@@ -112,9 +112,6 @@ namespace SimplyMeetApi.Services
 			var Account = await _DatabaseService.GetAccountByPublicKeyAsync(UserPublicKey_Base64, InConnection);
 			if (Account == null) return null;
 
-			Account.LastLogin = DateTime.UtcNow;
-			await _DatabaseService.UpdateModelByIdAsync<AccountModel>(Account, InConnection);
-
 			return CreateToken(Account);
 		}
 

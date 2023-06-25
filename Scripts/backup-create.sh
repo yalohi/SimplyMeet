@@ -24,5 +24,5 @@ if [ "${CONTAINER_WAS_RUNNING}" ]; then
 	docker start ${MY_CONTAINER_NAME_WEBAPI}
 fi
 
-find ./* -maxdepth 0 -type d -mtime +${MY_BACKUP_DAYS} -exec rm -rf {} +
+find ./*.tar -maxdepth 0 -type f -mtime +${MY_BACKUP_DAYS} -exec rm -rf {} +
 echo "Created Backup: ${MY_BACKUP_NAME}"
