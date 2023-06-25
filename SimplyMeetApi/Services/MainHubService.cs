@@ -207,7 +207,7 @@ public class MainHubService
 			ChatUserList.Add(MatchUser);
 		}
 
-		await SendMatchUsersAsync(Account.Id, ChatUserList, null);
+		await SendMatchUsersAsync(InAuth.ConnectionId, ChatUserList, null);
 	}
 	public async Task SendUserUpdateAsync(AccountModel InAccount, IDbConnection InConnection)
 	{
@@ -268,6 +268,10 @@ public class MainHubService
 	}
 
 	// Notifications
+	private async Task SendMatchUsersAsync(String InConnectionId, IEnumerable<MainHubMatchUserModel> InMatchUsers, IDbConnection InConnection)
+	{
+		await _MainHubContext.Clients.Client(InConnectionId).SendAsync(MainHubConstants.RECEIVE_MATCH_USERS, InMatchUsers);
+	}
 	private async Task SendMatchUsersAsync(Int32 InAccountId, IEnumerable<MainHubMatchUserModel> InMatchUsers, IDbConnection InConnection)
 	{
 		await _MainHubContext.Clients.Group($"{USER_GROUP}{InAccountId}").SendAsync(MainHubConstants.RECEIVE_MATCH_USERS, InMatchUsers);
