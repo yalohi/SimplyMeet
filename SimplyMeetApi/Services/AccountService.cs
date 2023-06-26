@@ -86,19 +86,25 @@ public class AccountService
 
 		return await _DatabaseService.PerformTransactionAsync(async InConnection =>
 		{
-			var Account = await _DatabaseService.GetModelByIdAsync(new AccountModel { Id = InModel.Auth.AccountId }, InConnection);
-			if (Account == null) return new AccountDeleteResponseModel { Error = ErrorConstants.ERROR_DATABASE };
-
-			var Matches = await _DatabaseService.GetAllMatchesAsync(Account, InConnection);
-			foreach (var Match in Matches)
-			{
-				var MatchedAccountId = Match.AccountId == Account.Id ? Match.MatchAccountId : Match.AccountId;
-				await _MainHubService.OnUnmatchAsync(MatchedAccountId, Match.Id);
-			}
-
-			if (await _DatabaseService.DeleteAccountAsync(Account, InConnection) <= 0) return new AccountDeleteResponseModel { Error = ErrorConstants.ERROR_DATABASE };
-			return new AccountDeleteResponseModel();
+			return await DeleteAsync(InModel.Auth.AccountId, InConnection);
 		});
+	}
+	public async Task<AccountDeleteResponseModel> DeleteAsync(Int32 InAccountId, IDbConnection InConnection)
+	{
+		if (InAccountId <= 0) throw new ArgumentOutOfRangeException(nameof(InAccountId));
+
+		var Account = await _DatabaseService.GetModelByIdAsync(new AccountModel { Id = InAccountId }, InConnection);
+		if (Account == null) return new AccountDeleteResponseModel { Error = ErrorConstants.ERROR_DATABASE };
+
+		var Matches = await _DatabaseService.GetAllMatchesAsync(Account, InConnection);
+		foreach (var Match in Matches)
+		{
+			var MatchedAccountId = Match.AccountId == Account.Id ? Match.MatchAccountId : Match.AccountId;
+			await _MainHubService.OnUnmatchAsync(MatchedAccountId, Match.Id);
+		}
+
+		if (await _DatabaseService.DeleteAccountAsync(Account, InConnection) <= 0) return new AccountDeleteResponseModel { Error = ErrorConstants.ERROR_DATABASE };
+		return new AccountDeleteResponseModel();
 	}
 
 	//===========================================================================================

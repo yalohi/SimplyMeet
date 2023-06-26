@@ -258,6 +258,13 @@ public class DatabaseService
 		{ORDER_BY} {nameof(ReportedAccountModel.ReportCount)} {DESC}
 		{LIMIT} @{nameof(AdminGetReportedProfilesRequestModel.Count)} {OFFSET} @{nameof(AdminGetReportedProfilesRequestModel.Offset)}";
 
+	private static readonly String GET_EXPIRED_ACCOUNT_IDS_SQL =
+		$@"{SELECT} {nameof(AccountModel.Id)} {FROM} {ACCOUNTS_TABLE}
+		{WHERE} ({nameof(AccountModel.LastActive)} {IS} {NOT} {NULL}
+		{AND} {DATE}({NOW}) > {DATE}({nameof(AccountModel.LastActive)}, '+' || @{nameof(GetExpiredAccountIdsModel.AccountExpirationDayCount)} || ' {DAYS}'))
+		{OR} ({nameof(AccountModel.LastActive)} {IS} {NULL}
+		{AND} {DATE}({NOW}) > {DATE}({nameof(AccountModel.Creation)}, '+' || @{nameof(GetExpiredAccountIdsModel.AccountExpirationDayCount)} || ' {DAYS}'))";
+
 	// Insert
 	private static readonly ReadOnlyDictionary<Type, String> INSERT_DICT = new (new Dictionary<Type, String>()
 	{
@@ -523,6 +530,7 @@ public class DatabaseService
 	public async Task<AccountModel> GetNewMatchAsync(GetNewMatchModel InModel, IDbConnection InConnection) => await InConnection.QueryFirstOrDefaultAsync<AccountModel>(GET_NEW_MATCH_SQL, InModel);
 	public async Task<Int32> GetTotalReportedAccounts(IDbConnection InConnection) => await InConnection.ExecuteScalarAsync<Int32>(GET_TOTAL_REPORTED_ACCOUNTS_SQL);
 	public async Task<IEnumerable<ReportedAccountModel>> GetReportedAccountsAsync(AdminGetReportedProfilesRequestModel InRequest, IDbConnection InConnection) => await InConnection.QueryAsync<Models.ReportedAccountModel>(GET_REPORTED_ACCOUNTS_SQL, InRequest);
+	public async Task<IEnumerable<Int32>> GetExpiredAccountIdsAsync(GetExpiredAccountIdsModel InModel, IDbConnection InConnection) => await InConnection.QueryAsync<Int32>(GET_EXPIRED_ACCOUNT_IDS_SQL, InModel);
 
 	// Insert
 	public async Task<Int32> InsertModelsAsync<T>(IEnumerable<T> InModels, IDbConnection InConnection) => await InConnection.ExecuteAsync(INSERT_DICT[typeof(T)], InModels);

@@ -23,6 +23,7 @@ public class Startup
 	public void ConfigureServices(IServiceCollection InServices)
 	{
 		// Config
+		ConfigurationHelper.Configure<AccountConfiguration>(_Configuration, InServices);
 		ConfigurationHelper.Configure<AdminConfiguration>(_Configuration, InServices);
 		_DatabaseConfig = ConfigurationHelper.Configure<DatabaseConfiguration>(_Configuration, InServices);
 		_StaticFilesConfig = ConfigurationHelper.Configure<StaticFilesConfiguration>(_Configuration, InServices);
@@ -30,6 +31,7 @@ public class Startup
 		_TokenConfig = ConfigurationHelper.Configure<TokenConfiguration>(_Configuration, InServices);
 
 		// Services
+		InServices.AddHostedService<AccountExpirationService>();
 		InServices.AddSingleton<AccountService>();
 		InServices.AddSingleton<AdminService>();
 		InServices.AddSingleton<AuthorizationService>();
