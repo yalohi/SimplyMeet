@@ -21,7 +21,7 @@ I believe we can do better. We can develop, host and share our own platforms. Si
 To build and run SimplyMeet you will need the following software installed:
 * [**Git**](https://git-scm.com/) (Cloning + Scripts)
 * [**Rsync**](https://rsync.samba.org/) (Scripts)
-* [**.NET 5.0 SDK**](https://dotnet.microsoft.com/download/dotnet/5.0) (Building)
+* [**.NET 7.0 SDK**](https://dotnet.microsoft.com/download/dotnet/7.0) (Building)
 * [**Docker + Docker-Compose**](https://www.docker.com/) (Building + Running) [Optional]
 
 ## Clone the project
