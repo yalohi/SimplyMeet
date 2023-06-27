@@ -18,10 +18,10 @@ if [ -z "${MY_BUILD_PATH}" ]; then exit 1; fi
 cd ${SCRIPT_PATH}/../
 
 if [ "${MY_BUILD_CONFIG^^}" = "DEBUG" ]; then
-	dotnet publish SimplyMeetWasm/SimplyMeetWasm.csproj -c ${MY_BUILD_CONFIG} -o ${MY_BUILD_PATH}/wasm/app -r ${MY_BUILD_ARCH} -p:PublishTrimmed=False -p:BlazorEnableCompression=False
-	dotnet publish SimplyMeetApi/SimplyMeetApi.csproj -c ${MY_BUILD_CONFIG} -o ${MY_BUILD_PATH}/webapi/app -r ${MY_BUILD_ARCH} -p:SelfContained=True -p:PublishReadyToRun=False -p:PublishSingleFile=True -p:PublishTrimmed=False -p:TrimMode=Link -p:IncludeNativeLibrariesForSelfExtract=True
+	dotnet publish SimplyMeetWasm/SimplyMeetWasm.csproj -c ${MY_BUILD_CONFIG} -o ${MY_BUILD_PATH}/wasm/app -r ${MY_BUILD_ARCH} -p:SelfContained=True -p:PublishTrimmed=False -p:BlazorEnableCompression=False
+	dotnet publish SimplyMeetApi/SimplyMeetApi.csproj -c ${MY_BUILD_CONFIG} -o ${MY_BUILD_PATH}/webapi/app -r ${MY_BUILD_ARCH} -p:SelfContained=True -p:PublishReadyToRun=False -p:PublishSingleFile=True -p:PublishTrimmed=False -p:IncludeNativeLibrariesForSelfExtract=True
 elif [ "${MY_BUILD_CONFIG^^}" = "RELEASE" ]; then
-	dotnet publish SimplyMeetWasm/SimplyMeetWasm.csproj -c ${MY_BUILD_CONFIG} -o ${MY_BUILD_PATH}/wasm/app -r ${MY_BUILD_ARCH} -p:PublishTrimmed=True -p:BlazorEnableCompression=True
-	dotnet publish SimplyMeetApi/SimplyMeetApi.csproj -c ${MY_BUILD_CONFIG} -o ${MY_BUILD_PATH}/webapi/app -r ${MY_BUILD_ARCH} -p:SelfContained=True -p:PublishReadyToRun=False -p:PublishSingleFile=True -p:PublishTrimmed=True -p:TrimMode=Link -p:IncludeNativeLibrariesForSelfExtract=True
+	dotnet publish SimplyMeetWasm/SimplyMeetWasm.csproj -c ${MY_BUILD_CONFIG} -o ${MY_BUILD_PATH}/wasm/app -r ${MY_BUILD_ARCH} -p:SelfContained=True -p:PublishTrimmed=True -p:BlazorEnableCompression=True
+	dotnet publish SimplyMeetApi/SimplyMeetApi.csproj -c ${MY_BUILD_CONFIG} -o ${MY_BUILD_PATH}/webapi/app -r ${MY_BUILD_ARCH} -p:SelfContained=True -p:PublishReadyToRun=False -p:PublishSingleFile=True -p:PublishTrimmed=True -p:IncludeNativeLibrariesForSelfExtract=True
 	rm -f ${MY_BUILD_PATH}/wasm/app/*.pdb ${MY_BUILD_PATH}/webapi/app/*.pdb
 fi
