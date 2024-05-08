@@ -1,20 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 	<PropertyGroup>
-		<TargetFramework>net7.0</TargetFramework>
-		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-		<OutputPath>Build</OutputPath>
-		<OutputType>Exe</OutputType>
-
 		<BlazorEnableTimeZoneSupport>true</BlazorEnableTimeZoneSupport>
 		<BlazorWebAssemblyPreserveCollationData>false</BlazorWebAssemblyPreserveCollationData>
 		<InvariantGlobalization>true</InvariantGlobalization>
 	</PropertyGroup>
+
 	<ItemGroup>
 		<ProjectReference Include="../SimplyMeetShared/SimplyMeetShared.csproj" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.7" />
-		<PackageReference Include="Microsoft.Extensions.Localization" Version="7.0.7" />
-		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.7" />
-		<PackageReference Include="System.Net.Http.Json" Version="7.0.1" />
+
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.4" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.4" />
+		<PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.4" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.4" />
+		<PackageReference Include="System.Net.Http.Json" Version="8.0.0" />
 		<PackageReference Include="NaCl.Net" Version="0.1.13" />
 	</ItemGroup>
 </Project>

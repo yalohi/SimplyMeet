@@ -1,0 +1,11 @@
+<Project>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<OutputType>Exe</OutputType>
+
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<MSBuildProjectExtensionsPath></MSBuildProjectExtensionsPath>
+		<BaseIntermediateOutputPath>../Build/obj/$(MSBuildProjectName)</BaseIntermediateOutputPath>
+		<OutputPath>../Build/out/$(MSBuildProjectName)</OutputPath>
+	</PropertyGroup>
+</Project>
