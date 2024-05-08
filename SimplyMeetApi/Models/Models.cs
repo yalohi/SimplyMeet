@@ -9,7 +9,7 @@ public record GetNewMatchModel(Int32 AccountId = default, Int32? Profile_Pronoun
 public record IdsModel(IEnumerable<Int32> Ids = default);
 public record MessageInfoModel(String FromPublicId = default);
 public record ProfileEditAvatarModel(AuthModel Auth = default, IFormFile File = default);
-public record ReportedAccountModel(Int32 AccountId = default, Int32 ReportCount = default);
+public record ReportedAccountModel(Int32 AccountId = default, Int32 ReportCount = default) { public ReportedAccountModel() :this(0, 0) {} }
 public record ServiceHubModel<TRequest>(AuthHubModel Auth = default, TRequest Request = default);
 public record ServiceModel<TRequest>(AuthModel Auth = default, TRequest Request = default);
 public record ThrottleLimitModel(Int32 Limit = default, Int32 ResetMinutes = default);
