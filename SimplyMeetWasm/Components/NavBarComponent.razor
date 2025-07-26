@@ -4,26 +4,26 @@
 @inject AccountService AccountService
 @inject MainHubService MainHubService
 
-<nav class="navbar navbar-expand navbar-dark bg-dark justify-content-center p-0">
+<nav class="navbar navbar-expand navbar-dark bg-dark justify-content-center p-0 py-2">
 	<div class="justify-content-center">
 		<ul class="navbar-nav me-auto">
 			<li class="nav-item">
 				<NavLink class="@_LinkClasses" href="@NavigationConstants.NAV_HOME" Match="NavLinkMatch.All">
-					<i class="fas fa-home fa-3x"></i>
+					<i class="fas fa-home fa-2x"></i>
 					<br />@Loc["Home"]
 				</NavLink>
 			</li>
 
 			<li class="nav-item">
 				<NavLink class="@_LoginLinkClasses" href="@NavigationConstants.NAV_PROFILE" Match="NavLinkMatch.Prefix">
-					<i class="fas fa-user fa-3x"></i>
+					<i class="fas fa-user fa-2x"></i>
 					<br />@Loc["Profile"]
 				</NavLink>
 			</li>
 
 			<li class="nav-item">
 				<NavLink class="@_LoginLinkClasses" href="@NavigationConstants.NAV_MATCH" Match="NavLinkMatch.Prefix">
-					<i class="fas fa-heart fa-3x"></i>
+					<i class="fas fa-heart fa-2x"></i>
 					@if (MainHubService.TotalUnreadMessageCount > 0)
 					{
 						<span class="notify-bubble badge rounded-pill bg-danger">@MainHubService.TotalUnreadMessageCount</span>
@@ -32,11 +32,18 @@
 				</NavLink>
 			</li>
 
+			<li class="nav-item">
+				<NavLink class="@_LinkClasses" href="@NavigationConstants.NAV_SETTINGS" Match="NavLinkMatch.Prefix">
+					<i class="fas fa-cog fa-2x"></i>
+					<br />@Loc["Settings"]
+				</NavLink>
+			</li>
+
 			@if (MainHubService.IsAdmin || MainHubService.IsModerator)
 			{
 				<li class="nav-item">
 					<NavLink class="@_LoginLinkClasses" href="@NavigationConstants.NAV_ADMIN" Match="NavLinkMatch.Prefix">
-						<i class="fas fa-cog fa-3x"></i>
+						<i class="fas fa-key fa-2x"></i>
 						<br />@Loc["Admin"]
 					</NavLink>
 				</li>
