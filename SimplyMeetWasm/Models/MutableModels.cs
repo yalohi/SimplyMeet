@@ -8,3 +8,10 @@ public record M_MatchUserStateModel
 	public Boolean IsLoadingFollowingMessages { get; set; }
 	public Boolean IsChatSetup { get; set; }
 }
+
+public record M_SettingsModel
+{
+	[Required]
+	[Url]
+	public String ApiServer { get; set; }
+}

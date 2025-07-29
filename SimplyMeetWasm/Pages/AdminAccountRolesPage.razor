@@ -132,6 +132,10 @@
 	{
 		_IsRequesting = true;
 		await base.OnInitializedAsync();
+	}
+	protected override async Task OnSetupAsync()
+	{
+		await base.OnSetupAsync();
 		await ReloadAccountRolesAsync();
 	}
 

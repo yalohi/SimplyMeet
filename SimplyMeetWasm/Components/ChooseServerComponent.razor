@@ -1,0 +1,114 @@
+@inherits InputBase<String>
+@inject IStringLocalizer<SharedResource> Loc
+
+<div class="card-body">
+	<ContainerComponent
+		T="TableListComponent"
+		@ref="_ServerListContainer">
+
+		<TableListComponent
+			@ref="_OfficialServerTable"
+			Title="@Loc["Official"]"
+			HeaderColorClass="table-success"
+			RowList="_OfficialServerList"
+			RemoveRowClick="OnListRemoveRowClick"
+			SelectedIndexChanged="OnListSelectedIndexChanged"
+		/>
+
+		@if (_OfficialServerList.Count > 0)
+		{
+			<div class="mt-3"></div>
+		}
+
+		<TableListComponent
+			@ref="_CustomServerTable"
+			Title="@Loc["Custom"]"
+			HeaderColorClass="table-primary"
+			RowList="_CustomServerList"
+			SelectedIndexChanged="OnListSelectedIndexChanged"
+			RemoveRowClick="OnListRemoveRowClick"
+			ShowRemoveRowButton=true
+		/>
+
+		@if (_CustomServerList.Count > 0)
+		{
+			<div class="mt-3"></div>
+		}
+	</ContainerComponent>
+
+	<div class="d-flex input-group">
+		<InputText_OnInput
+			type="text"
+			class="form-control bg-secondary text-white border-0"
+			placeholder="@Loc["NewApiServer"]"
+			autocomplete="off"
+			autocorrect="off"
+			autocapitalize="off"
+			spellcheck="false"
+			@bind-Value="_NewCustomApiServer"
+		/>
+
+		<button type="button" class="btn btn-success border-0" @onclick="OnAddCustomApiServerClick" disabled="@String.IsNullOrEmpty(_NewCustomApiServer)">
+			<i class="fas fa-plus"></i>
+		</button>
+	</div>
+
+	@if (_ServerInfoResponse == null || _ServerInfoResponse.Error != null)
+	{
+	}
+
+	else
+	{
+		<div class="bg-secondary rounded text-center mt-3">
+			@if (_IsRequestingServerInfo)
+			{
+				<div class="spinner-border m-2 mt-3"></div>
+			}
+
+			else
+			{
+				<div class="row g-2 m-0 p-1 pb-2">
+					<div class="col-12">
+						<h4 class="text-center p-2 m-0">
+							<strong>Server Info</strong>
+						</h4>
+					</div>
+
+					<!-- <img src="" alt="" /> -->
+
+					<div class="col-12">
+						<SmallCardComponent
+							Title="@Loc["Administration"]"
+							Content="@_ServerInfoResponse.Administration"
+						/>
+					</div>
+
+					<div class="col-12">
+						<SmallCardComponent
+							Title="@Loc["ShortDescription"]"
+							Content="@_ServerInfoResponse.ShortDescription"
+						/>
+					</div>
+
+					<div class="col-12 col-sm-6">
+						<SmallCardComponent
+							Title="@Loc["ActiveAccounts"]"
+							Content="@_ServerInfoResponse.TotalActiveAccounts.ToString()"
+							IconClasses="fa-user text-info"
+							ContentClasses="fw-bold"
+						/>
+					</div>
+
+					<div class="col-12 col-sm-6">
+						<SmallCardComponent
+							Title="@Loc["ActiveMatches"]"
+							Content="@_ServerInfoResponse.TotalActiveMatches.ToString()"
+							IconClasses="fa-heart text-danger"
+							ContentClasses="fw-bold"
+						/>
+					</div>
+				</div>
+			}
+		</div>
+	}
+</div>

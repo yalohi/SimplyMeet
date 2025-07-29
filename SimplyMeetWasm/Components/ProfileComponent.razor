@@ -50,7 +50,7 @@
 			<ImageModalComponent
 				Title="@FullProfile.Profile.DisplayName"
 				CssClass="bg-dark rounded-circle d-block mx-auto my-3 cursor-pointer avatar"
-				ImageSrc="@(ProfileService.GetAvatarUrl(FullProfile.Profile.Avatar))"
+				ImageSrc="@_AvatarUri"
 				Alt="avatar" />
 
 			<h4 class="text-center m-0">
@@ -265,6 +265,8 @@
 	public EventCallback RateClick { get; set; }
 	#endregion
 	#region Fields
+	private String _AvatarUri;
+
 	private PronounsModel _Pronouns;
 	private SexModel _Sex;
 	private GenderModel _Gender;
@@ -293,6 +295,8 @@
 
 			FullProfile = Response.FullProfile;
 		}
+
+		_AvatarUri = (await ProfileService.GetAvatarUriAsync(FullProfile.Profile.Avatar)).ToString();
 
 		_Pronouns = FullProfile.Profile.PronounsId != null ? FullProfile.Data.AllPronouns.FirstOrDefault(X => X.Id == FullProfile.Profile.PronounsId) : null;
 		_Sex = FullProfile.Profile.SexId != null ? FullProfile.Data.AllSexes.FirstOrDefault(X => X.Id == FullProfile.Profile.SexId) : null;

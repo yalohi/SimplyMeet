@@ -5,11 +5,16 @@ public class ProfileService
 	//===========================================================================================
 	// Global Variables
 	//===========================================================================================
+	#region Fields
+	private readonly SettingsService _SettingsService;
+	#endregion
+
 	//===========================================================================================
 	// Public Methods
 	//===========================================================================================
-	public ProfileService()
+	public ProfileService(SettingsService InSettingsService)
 	{
+		_SettingsService = InSettingsService;
 	}
 
 	public String GetLookingForIconClasses(ELookingFor InLookingFor)
@@ -19,10 +24,11 @@ public class ProfileService
 		if (InLookingFor.HasFlag(ELookingFor.Love)) return "fas fa-heartbeat text-danger";
 		return String.Empty;
 	}
-	public String GetAvatarUrl(String InAvatar)
+
+	public async Task<Uri> GetAvatarUriAsync(String InAvatar)
 	{
 		if (InAvatar == null) throw new ArgumentNullException(nameof(InAvatar));
 
-		return $"{ApiRequestConstants.BASE_PATH}{ApiRequestConstants.AVATARS}/{InAvatar}";
+		return new Uri(await _SettingsService.GetApiServerAsync(), $"{ApiRequestConstants.AVATARS}/{InAvatar}");
 	}
 }

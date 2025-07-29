@@ -7,27 +7,42 @@ public class HomeService
 	//===========================================================================================
 	#region Fields
 	private readonly DatabaseService _DatabaseService;
+	private readonly HomeConfiguration _HomeConfig;
 	#endregion
 
 	//===========================================================================================
 	// Public Methods
 	//===========================================================================================
-	public HomeService(DatabaseService InDatabaseService)
+	public HomeService(DatabaseService InDatabaseService, IOptions<HomeConfiguration> InHomeConfig)
 	{
 		_DatabaseService = InDatabaseService;
+		_HomeConfig = InHomeConfig.Value;
 	}
 
 	public async Task<HomeGetDataResponseModel> GetDataAsync(ServiceModel<HomeGetDataRequestModel> InModel)
 	{
-		if (InModel == null) throw new ArgumentNullException(nameof(InModel));
+		ArgumentNullException.ThrowIfNull(InModel);
 
 		return await _DatabaseService.PerformTransactionAsync(async InConnection =>
 		{
-			var Cards = await _DatabaseService.GetAllAsync<CardModel>(InConnection);
-
 			return new HomeGetDataResponseModel
 			{
-				Cards = Cards,
+				Cards = _HomeConfig.Cards,
+				TotalActiveAccounts = await _DatabaseService.GetTotalActiveAccountsAsync(InConnection),
+				TotalActiveMatches = await _DatabaseService.GetTotalActiveMatchesAsync(InConnection),
+			};
+		});
+	}
+	public async Task<HomeGetServerInfoResponseModel> GetServerInfoAsync(ServiceModel<HomeGetServerInfoRequestModel> InModel)
+	{
+		ArgumentNullException.ThrowIfNull(InModel);
+
+		return await _DatabaseService.PerformTransactionAsync(async InConnection =>
+		{
+			return new HomeGetServerInfoResponseModel
+			{
+				ShortDescription = _HomeConfig.ShortDescription,
+				Administration = _HomeConfig.Administration,
 				TotalActiveAccounts = await _DatabaseService.GetTotalActiveAccountsAsync(InConnection),
 				TotalActiveMatches = await _DatabaseService.GetTotalActiveMatchesAsync(InConnection),
 			};

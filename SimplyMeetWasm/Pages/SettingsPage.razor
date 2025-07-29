@@ -1,4 +1,4 @@
-﻿@page "/admin"
+﻿@page "/settings"
 @inherits PageBase
 
 @code
@@ -6,9 +6,9 @@
 	//===========================================================================================
 	// Protected Methods
 	//===========================================================================================
-	protected override async Task<Boolean> OnCheckSetupAsync()
+	protected override async Task OnSetupAsync()
 	{
-		NavigationService.NavigateTo(NavigationConstants.NAV_ADMIN_REPORTED_PROFILES);
-		return await Task.FromResult(false);
+		await base.OnSetupAsync();
+		NavigationService.NavigateTo(NavigationConstants.NAV_SETTINGS_SERVER);
 	}
 }

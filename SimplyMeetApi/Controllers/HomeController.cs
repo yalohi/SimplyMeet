@@ -34,4 +34,17 @@ public class HomeController : ControllerBase
 		var Response = await _HomeService.GetDataAsync(Model);
 		return Ok(Response);
 	}
+
+	[HttpPost]
+	[Route(nameof(GetServerInfo))]
+	[Throttle(Group = EThrottleGroup.General)]
+	[AllowAnonymous]
+	public async Task<IActionResult> GetServerInfo(HomeGetServerInfoRequestModel InRequestModel)
+	{
+		if (!ModelState.IsValid) return BadRequest();
+
+		var Model = new ServiceModel<HomeGetServerInfoRequestModel>(await _AuthorizationService.GetControllerAuthAsync(HttpContext), InRequestModel);
+		var Response = await _HomeService.GetServerInfoAsync(Model);
+		return Ok(Response);
+	}
 }

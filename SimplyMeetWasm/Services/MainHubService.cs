@@ -29,6 +29,7 @@ public class MainHubService
 	private readonly LocalizationService _LocalizationService;
 	private readonly NavigationService _NavigationService;
 	private readonly NotificationService _NotificationService;
+	private readonly SettingsService _SettingsService;
 
 	private HubConnection _Connection;
 	private List<M_MatchUserStateModel> _MatchUserStateList;
@@ -48,7 +49,7 @@ public class MainHubService
 	//===========================================================================================
 	// Public Methods
 	//===========================================================================================
-	public MainHubService(IJSRuntime InJS, AppState InAppState, AccountService InAccountService, LocalizationService InLocalizationService, NavigationService InNavigationService, NotificationService InNotificationService)
+	public MainHubService(IJSRuntime InJS, AppState InAppState, AccountService InAccountService, LocalizationService InLocalizationService, NavigationService InNavigationService, NotificationService InNotificationService, SettingsService InSettingsService)
 	{
 		_JS = InJS;
 		_AppState = InAppState;
@@ -56,6 +57,7 @@ public class MainHubService
 		_LocalizationService = InLocalizationService;
 		_NavigationService = InNavigationService;
 		_NotificationService = InNotificationService;
+		_SettingsService = InSettingsService;
 
 		_AccountService.Login += async (InSender, InArgs) => await ReconnectAsync();
 		_AccountService.Logout += async (InSender, InArgs) => await ReconnectAsync();
@@ -79,7 +81,7 @@ public class MainHubService
 		var Token = await _AppState.GetLoginTokenAsync();
 
 		_Connection = new HubConnectionBuilder()
-			.WithUrl(_NavigationService.ToAbsoluteUri($"{ApiRequestConstants.BASE_PATH}{MainHubConstants.PATH}"), InOptions =>
+			.WithUrl(new Uri(await _SettingsService.GetApiServerAsync(), MainHubConstants.PATH), InOptions =>
 			{
 				InOptions.AccessTokenProvider = () => Task.FromResult(Token);
 				InOptions.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransportType.WebSockets;

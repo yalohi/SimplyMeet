@@ -1,7 +1,6 @@
 @page "/match/liked"
 @page "/match/liked/{pageindex:int}"
 @inherits PageBase
-@inject NavigationService NavigationService
 
 <MatchNavBarComponent />
 
@@ -25,7 +24,7 @@
 	//===========================================================================================
 	// Protected Methods
 	//===========================================================================================
-	protected override async Task OnInitializedAsync()
+	protected override async Task OnSetupAsync()
 	{
 		if (MainHubService.FirstMatchUser != null)
 		{
@@ -33,6 +32,6 @@
 			return;
 		}
 
-		await base.OnInitializedAsync();
+		await base.OnSetupAsync();
 	}
 }

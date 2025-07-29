@@ -1,0 +1,33 @@
+@page "/settings/server"
+@inherits PageBase
+@inject IStringLocalizer<SharedResource> Loc
+
+<SettingsNavBarComponent />
+
+<SectionCardComponent BackgroundClass="bg-primary">
+	<div class="card-header p-3">
+		<h4 class="text-center m-0">
+			<strong>@Loc["Server"]</strong>
+		</h4>
+	</div>
+
+	@if (_EditContext != null)
+	{
+		<EditForm EditContext="@_EditContext" OnValidSubmit="OnSaveChangesClick">
+			<DataAnnotationsValidator />
+
+			<ChooseServerComponent
+				@ref="_ChooseServerComponent"
+				@bind-Value="_SettingsModel.ApiServer" />
+
+			<div class="card-footer p-3">
+				<SubmitButtonComponent
+					CssClass="btn btn-success border-0 w-100"
+					Text=@Loc["SaveChanges"]
+					IsDisabled=IsSaveChangesDisabled
+					IsSubmitting=_IsSubmittingSaveChanges
+					Click=@OnSaveChangesClick />
+			</div>
+		</EditForm>
+	}
+</SectionCardComponent>

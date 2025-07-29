@@ -135,9 +135,9 @@
 	//===========================================================================================
 	// Protected Methods
 	//===========================================================================================
-	protected override async Task OnInitializedAsync()
+	protected override async Task OnSetupAsync()
 	{
-		await base.OnInitializedAsync();
+		await base.OnSetupAsync();
 		AppState.ShowFooter = true;
 	}
 }

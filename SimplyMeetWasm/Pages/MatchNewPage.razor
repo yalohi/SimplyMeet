@@ -2,7 +2,6 @@
 @inherits PageBase
 @inject IStringLocalizer<SharedResource> Loc
 @inject HttpService HttpService
-@inject NavigationService NavigationService
 
 <MatchNavBarComponent />
 
@@ -67,13 +66,17 @@
 	protected override async Task OnInitializedAsync()
 	{
 		_IsRequesting = true;
+		await base.OnInitializedAsync();
+	}
+	protected override async Task OnSetupAsync()
+	{
 		if (MainHubService.FirstMatchUser != null)
 		{
 			NavigationService.NavigateTo(NavigationConstants.NAV_MATCH);
 			return;
 		}
 
-		await base.OnInitializedAsync();
+		await base.OnSetupAsync();
 		await GetNextAsync();
 	}
 

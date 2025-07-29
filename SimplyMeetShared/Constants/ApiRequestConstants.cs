@@ -6,12 +6,12 @@ public static class ApiRequestConstants
 	// Global Variables
 	//===========================================================================================
 	#region Const Fields
-	public const String BASE_ADDRESS = "https://127.0.0.1/api/";
-	public const String BASE_PATH = "/api/";
+	public const String DEFAULT_API_SERVER = "http://127.0.0.1:5002/api";
 
 	public const String AVATARS = "Avatars";
 
 	public const String HOME_GET_DATA = "Home/GetData";
+	public const String HOME_GET_SERVER_INFO = "Home/GetServerInfo";
 
 	public const String ACCOUNT_CREATE = "Account/Create";
 	public const String ACCOUNT_DELETE = "Account/Delete";

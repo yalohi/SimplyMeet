@@ -1,0 +1,30 @@
+﻿@page "/setup"
+@inject IStringLocalizer<SharedResource> Loc
+@inject NavigationService NavigationService
+
+<SectionCardComponent BackgroundClass="bg-primary">
+	<div class="card-header p-3">
+		<h4 class="text-center m-0">
+			<strong>@Loc["Server"]</strong>
+		</h4>
+	</div>
+
+	@if (_EditContext != null)
+	{
+		<EditForm EditContext="@_EditContext" OnValidSubmit="OnContinueClick">
+			<DataAnnotationsValidator />
+
+			<ChooseServerComponent
+				@bind-Value="_SettingsModel.ApiServer" />
+
+			<div class="card-footer p-3">
+				<SubmitButtonComponent
+					CssClass="btn btn-info border-0 w-100"
+					Text=@Loc["Continue"]
+					IsDisabled=IsContinueDisabled
+					IsSubmitting=_IsSubmittingContinue
+					Click=@OnContinueClick />
+			</div>
+		</EditForm>
+	}
+</SectionCardComponent>

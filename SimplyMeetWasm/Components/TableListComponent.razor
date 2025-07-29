@@ -1,0 +1,52 @@
+@inject IStringLocalizer<SharedResource> Loc
+
+@if (RowList.Count > 0)
+{
+	<div class="table-responsive">
+		<table class="table table-dark table-hover table-borderless rounded-3 overflow-hidden m-0">
+			<thead class="@HeaderColorClass">
+				<tr class="pe-none text-center border-bottom border-dark @HeaderColorClass">
+					<th scope="colgroup" colspan="@ColumnCount">@Title</th>
+				</tr>
+				@if (HeaderList != null && HeaderList.Count > 0)
+				{
+					<tr class="pe-none">
+						@foreach (var Header in HeaderList)
+						{
+							<th class="py-1" scope="col">@Loc[@Header]</th>
+						}
+
+						@if (ShowRemoveRowButton)
+						{
+							<th></th>
+						}
+					</tr>
+				}
+			</thead>
+			<tbody>
+				@for (var RowIndex = 0; RowIndex < RowList.Count; RowIndex++)
+				{
+					var LocalRowIndex = RowIndex;
+					var ColumnList = RowList[RowIndex];
+					var RowClasses = RowIndex == SelectedIndex ? "table-primary table-active" : "table-secondary";
+
+					<tr class="@RowClasses" role="button" @onclick="() => OnRowClickAsync(LocalRowIndex)">
+						@foreach (var Column in ColumnList)
+						{
+							<td class="align-middle">@Column</td>
+						}
+
+						@if (ShowRemoveRowButton)
+						{
+							<td class="align-middle text-end p-0 pe-1">
+								<button type="button" class="btn btn-danger border-0 px-1 py-0 m-1 rounded-1" @onclick:stopPropagation="true" @onclick="() => OnRemoveRowClickAsync(LocalRowIndex)">
+									<i class="fas fa-minus"></i>
+								</button>
+							</td>
+						}
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}

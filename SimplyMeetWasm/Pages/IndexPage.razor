@@ -22,11 +22,11 @@ else
 	<SectionCardComponent BackgroundClass="bg-dark">
 		<div class="row gx-0 m-1">
 			<div class="col d-flex align-items-center bg-secondary rounded p-3 m-1">
-				<i class="fas fa-user fa-2x text-info me-3"></i>
+				<i class="fas fa-user fa-2x fa-fw text-info me-3"></i>
 				<strong>@_GetResponse.TotalActiveAccounts @Loc["ActiveAccounts"]</strong>
 			</div>
 			<div class="col d-flex align-items-center bg-secondary rounded p-3 m-1">
-				<i class="fas fa-heart fa-2x text-danger me-3"></i>
+				<i class="fas fa-heart fa-2x fa-fw text-danger me-3"></i>
 				<strong>@_GetResponse.TotalActiveMatches @Loc["ActiveMatches"]</strong>
 			</div>
 		</div>
@@ -64,6 +64,10 @@ else
 	{
 		_IsRequesting = true;
 		await base.OnInitializedAsync();
+	}
+	protected override async Task OnSetupAsync()
+	{
+		await base.OnSetupAsync();
 		await ReloadCardsAsync();
 		AppState.ShowFooter = true;
 	}

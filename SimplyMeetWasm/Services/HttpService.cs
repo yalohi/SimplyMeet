@@ -7,27 +7,48 @@ public class HttpService
 	//===========================================================================================
 	#region Fields
 	private readonly AppState _AppState;
+
 	private readonly LocalizationService _LocalizationService;
 	private readonly LocalStorageService _LocalStorageService;
 	private readonly NavigationService _NavigationService;
 	private readonly NotificationService _NotificationService;
+	private readonly SettingsService _SettingsService;
 
 	private readonly HttpClient _HttpClient;
 	#endregion
 	//===========================================================================================
 	// Public Methods
 	//===========================================================================================
-	public HttpService(AppState InAppState, LocalizationService InLocalizationService, LocalStorageService InLocalStorageService, NavigationService InNavigationService, NotificationService InNotificationService, HttpClient InHttpClient)
+	public HttpService(AppState InAppState, LocalizationService InLocalizationService, LocalStorageService InLocalStorageService, NavigationService InNavigationService, NotificationService InNotificationService, SettingsService InSettingsService, HttpClient InHttpClient)
 	{
 		_AppState = InAppState;
 		_LocalizationService = InLocalizationService;
 		_LocalStorageService = InLocalStorageService;
 		_NavigationService = InNavigationService;
 		_NotificationService = InNotificationService;
+		_SettingsService = InSettingsService;
 
 		_HttpClient = InHttpClient;
 	}
 
+	public async Task<Stream> GetFileAsync(String InRequestPath)
+	{
+		return await GetFileAsync(await _SettingsService.GetApiServerAsync(), InRequestPath);
+	}
+	public async Task<Stream> GetFileAsync(Uri InApiServerUri, String InRequestPath)
+	{
+		try
+		{
+			var RequestUri = _NavigationService.ToAbsoluteUri(InRequestPath);
+			return await _HttpClient.GetStreamAsync(RequestUri);
+		}
+
+		catch (Exception Ex)
+		{
+			Console.WriteLine(Ex.ToString());
+			return default;
+		}
+	}
 	public async Task<T> PostFileAsync<T>(String InRequestUri, Stream InStream, String InContentType)
 	{
 		if (InRequestUri == null) throw new ArgumentNullException(nameof(InRequestUri));
@@ -43,7 +64,7 @@ public class HttpService
 			var Request = new HttpRequestMessage
 			{
 				Method = HttpMethod.Post,
-				RequestUri = new Uri($"{_HttpClient.BaseAddress}{InRequestUri}"),
+				RequestUri = new Uri(await _SettingsService.GetApiServerAsync(), InRequestUri),
 				Content = Content
 			};
 
@@ -59,11 +80,17 @@ public class HttpService
 			return default;
 		}
 	}
-	public async Task<TResponse> PostJsonRequestAsync<TRequest, TResponse>(String InRequestUri, TRequest InRequestModel)
+	public async Task<TResponse> PostJsonRequestAsync<TRequest, TResponse>(String InRequestPath, TRequest InRequestModel)
 		where TRequest : RequestModelBase
 		where TResponse : ResponseModelBase, new()
 	{
-		if (InRequestUri == null) throw new ArgumentNullException(nameof(InRequestUri));
+		return await PostJsonRequestAsync<TRequest, TResponse>(await _SettingsService.GetApiServerAsync(), InRequestPath, InRequestModel);
+	}
+	public async Task<TResponse> PostJsonRequestAsync<TRequest, TResponse>(Uri InApiServerUri, String InRequestPath, TRequest InRequestModel)
+		where TRequest : RequestModelBase
+		where TResponse : ResponseModelBase, new()
+	{
+		if (InRequestPath == null) throw new ArgumentNullException(nameof(InRequestPath));
 		if (InRequestModel == null) throw new ArgumentNullException(nameof(InRequestModel));
 
 		try
@@ -71,7 +98,7 @@ public class HttpService
 			var Request = new HttpRequestMessage
 			{
 				Method = HttpMethod.Post,
-				RequestUri = new Uri($"{_HttpClient.BaseAddress}{InRequestUri}"),
+				RequestUri = new Uri(InApiServerUri, InRequestPath),
 				Content = new StringContent(JsonSerializer.Serialize(InRequestModel)),
 			};
 

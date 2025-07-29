@@ -12,8 +12,8 @@ public class Program
 
 		Builder.Services.AddLocalization();
 
-		Builder.Services.AddScoped(InProvider => new HttpClient { BaseAddress = new Uri(ApiRequestConstants.BASE_ADDRESS) });
-		Builder.Services.AddScoped<HttpService>();
+		Builder.Services.AddSingleton(InProvider => new HttpClient());
+		Builder.Services.AddSingleton<HttpService>();
 
 		Builder.Services.AddSingleton<AppState>();
 		Builder.Services.AddSingleton<AccountService>();
@@ -23,6 +23,7 @@ public class Program
 		Builder.Services.AddSingleton<NavigationService>();
 		Builder.Services.AddSingleton<NotificationService>();
 		Builder.Services.AddSingleton<ProfileService>();
+		Builder.Services.AddSingleton<SettingsService>();
 
 		await Builder.Build().RunAsync();
 	}

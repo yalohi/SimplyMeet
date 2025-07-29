@@ -1,0 +1,11 @@
+@inject IStringLocalizer<SharedResource> Loc
+@inject MainHubService MainHubService
+
+<div class="row gx-0 sticky-top">
+	<div class="col">
+		<NavLink class="nav btn btn-secondary border-0 rounded-0 p-1 w-100 h-100" href="@NavigationConstants.NAV_SETTINGS_SERVER">
+			<i class="fas fa-server text-info"></i>
+			<strong>@Loc["Server"]</strong>
+		</NavLink>
+	</div>
+</div>

@@ -594,4 +594,19 @@
     <data name="ImageSizeLimit" xml:space="preserve">
         <value>Image file too big. Max Size: {0}</value>
     </data>
+    <data name="Official" xml:space="preserve">
+        <value>Official</value>
+    </data>
+    <data name="Custom" xml:space="preserve">
+        <value>Custom</value>
+    </data>
+    <data name="NewApiServer" xml:space="preserve">
+        <value>New Api Server</value>
+    </data>
+    <data name="Administration" xml:space="preserve">
+        <value>Administration</value>
+    </data>
+    <data name="ShortDescription" xml:space="preserve">
+        <value>Short Description</value>
+    </data>
 </root>

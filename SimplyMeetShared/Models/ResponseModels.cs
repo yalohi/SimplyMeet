@@ -9,6 +9,7 @@ public abstract record AdminGetAccountRolesResponseModelBase(IEnumerable<RoleMod
 public abstract record AdminGetProfileDataResponseModelBase(M_ProfileDataModel ProfileData = default) : ResponseModelBase;
 public abstract record AdminGetReportedProfilesResponseModelBase(IEnumerable<ReportedProfileModel> ReportedProfiles = default, Int32 TotalReportedAccounts = default) : ResponseModelBase;
 public abstract record HomeGetDataResponseModelBase(IEnumerable<CardModel> Cards = default, Int32 TotalActiveAccounts = default, Int32 TotalActiveMatches = default) : ResponseModelBase;
+public abstract record HomeGetServerInfoResponseModelBase(String ShortDescription = default, String Administration = default, Int32 TotalActiveAccounts = default, Int32 TotalActiveMatches = default) : ResponseModelBase;
 public abstract record MatchGetChoicesResponseModelBase(IEnumerable<ProfileCompactModel> CompactProfiles = default, Int32 TotalProfiles = default) : ResponseModelBase;
 public abstract record MatchGetFilterResponseModelBase(ProfileFullModel FullProfile = default) : ResponseModelBase;
 public abstract record MatchGetNewResponseModelBase(ProfileFullModel FullProfile = default) : ResponseModelBase;
@@ -28,6 +29,7 @@ public record AdminGetReportedProfilesResponseModel : AdminGetReportedProfilesRe
 public record AdminSuspendAccountResponseModel : ResponseModelBase;
 public record ErrorResponseModel : ResponseModelBase;
 public record HomeGetDataResponseModel : HomeGetDataResponseModelBase;
+public record HomeGetServerInfoResponseModel : HomeGetServerInfoResponseModelBase;
 public record MatchChooseResponseModel : ResponseModelBase;
 public record MatchEditFilterResponseModel : ResponseModelBase;
 public record MatchGetChoicesResponseModel : MatchGetChoicesResponseModelBase;

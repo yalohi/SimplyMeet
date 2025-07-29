@@ -7,8 +7,10 @@ public static class NavigationConstants
 	//===========================================================================================
 	#region Const Fields
 	public const String NAV_HOME = "/";
+	public const String NAV_SETUP = "/setup";
 	public const String NAV_PROFILE = "/profile";
 	public const String NAV_MATCH = "/match";
+	public const String NAV_SETTINGS = "/settings";
 	public const String NAV_ADMIN = "/admin";
 
 	public const String NAV_MATCH_NEW = "/match/new";
@@ -17,11 +19,13 @@ public static class NavigationConstants
 	public const String NAV_MATCH_FILTER = "/match/filter";
 	public const String NAV_MATCH_CHAT = "/match/chat";
 
-	public const String NAV_PRIVACY = "/privacy";
-	public const String NAV_DONATE = "/donate";
+	public const String NAV_SETTINGS_SERVER = $"{NAV_SETTINGS}/server";
 
 	public const String NAV_ADMIN_REPORTED_PROFILES = "/admin/reported_profiles";
 	public const String NAV_ADMIN_ACCOUNT_ROLES = "/admin/account_roles";
 	public const String NAV_ADMIN_PROFILE_DATA = "/admin/profile_data";
+
+	public const String NAV_PRIVACY = "/privacy";
+	public const String NAV_DONATE = "/donate";
 	#endregion
 }

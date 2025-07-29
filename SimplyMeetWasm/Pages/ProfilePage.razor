@@ -3,7 +3,6 @@
 @inject IStringLocalizer<SharedResource> Loc
 @inject AccountService AccountService
 @inject HttpService HttpService
-@inject NavigationService NavigationService
 @inject ProfileService ProfileService
 
 <SectionCardComponent BackgroundClass="bg-primary">
@@ -75,7 +74,7 @@
 				<ImageModalComponent
 					Title="@Profile.DisplayName"
 					CssClass="bg-dark rounded-circle d-block mx-auto my-3 cursor-pointer avatar"
-					ImageSrc="@(_PreviewAvatar ?? ProfileService.GetAvatarUrl(Profile.Avatar))"
+					ImageSrc="@(_PreviewAvatar ?? _AvatarUri)"
 					Alt="avatar" />
 
 				<h4 class="text-center m-0">
@@ -371,6 +370,7 @@
 	private Stream _AvatarStream;
 	private String _AvatarContentType;
 	private String _PreviewAvatar;
+	private String _AvatarUri;
 	private Boolean _HasDefaultAvatar;
 
 	private IEnumerable<CountryModel> _Countries;
@@ -398,6 +398,10 @@
 	{
 		_IsRequesting = true;
 		await base.OnInitializedAsync();
+	}
+	protected override async Task OnSetupAsync()
+	{
+		await base.OnSetupAsync();
 		await ReloadProfileAsync();
 
 		_PrivateKey_Base64 = await AppState.GetPrivateKeyAsync();
@@ -427,6 +431,8 @@
 			NavigationService.NavigateTo(NavigationConstants.NAV_HOME);
 			return;
 		}
+
+		_AvatarUri = (await ProfileService.GetAvatarUriAsync(FullProfile.Profile.Avatar)).ToString();
 
 		FullProfile.Data.AllPronouns = FullProfile.Data.AllPronouns.OrderBy(X => X.Name);
 		FullProfile.Data.AllSexes = FullProfile.Data.AllSexes.OrderBy(X => X.Name);

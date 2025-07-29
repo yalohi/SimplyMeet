@@ -25,6 +25,7 @@ public class Startup
 		// Config
 		ConfigurationHelper.Configure<AccountConfiguration>(_Configuration, InServices);
 		ConfigurationHelper.Configure<AdminConfiguration>(_Configuration, InServices);
+		ConfigurationHelper.Configure<HomeConfiguration>(_Configuration, InServices);
 		_DatabaseConfig = ConfigurationHelper.Configure<DatabaseConfiguration>(_Configuration, InServices);
 		_StaticFilesConfig = ConfigurationHelper.Configure<StaticFilesConfiguration>(_Configuration, InServices);
 		ConfigurationHelper.Configure<ThrottleConfiguration>(_Configuration, InServices);
