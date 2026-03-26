@@ -3,16 +3,16 @@
 		<BlazorEnableTimeZoneSupport>true</BlazorEnableTimeZoneSupport>
 		<BlazorWebAssemblyPreserveCollationData>false</BlazorWebAssemblyPreserveCollationData>
 		<InvariantGlobalization>true</InvariantGlobalization>
+		<WasmEnableStreamingResponse>false</WasmEnableStreamingResponse>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="../SimplyMeetShared/SimplyMeetShared.csproj" />
 
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.4" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.4" />
-		<PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.4" />
-		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.4" />
-		<PackageReference Include="System.Net.Http.Json" Version="8.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.5" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.5" />
+		<PackageReference Include="Microsoft.Extensions.Localization" Version="10.0.5" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="10.0.5" />
 		<PackageReference Include="NaCl.Net" Version="0.1.13" />
 	</ItemGroup>
 </Project>

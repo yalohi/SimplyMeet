@@ -31,7 +31,7 @@ global using Microsoft.Extensions.Hosting;
 global using Microsoft.Extensions.Logging;
 global using Microsoft.Extensions.Options;
 global using Microsoft.IdentityModel.Tokens;
-global using Microsoft.OpenApi.Models;
+global using Microsoft.OpenApi;
 
 global using ConcurrentCollections;
 global using Dapper;
