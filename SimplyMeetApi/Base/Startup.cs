@@ -44,6 +44,7 @@ public class Startup
 		InServices.AddSingleton<ProfileService>();
 		InServices.AddSingleton<ThrottleService>();
 		InServices.AddSingleton<TokenService>();
+		InServices.AddCors(Options => Options.AddDefaultPolicy(Policy => Policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 		InServices.AddControllers();
 
 		InServices.AddSingleton<ExceptionFilter>();
@@ -106,10 +107,11 @@ public class Startup
 			InApp.UseSwaggerUI(C => C.SwaggerEndpoint("/swagger/v1/swagger.json", "SimplyMeetApi v1"));
 		}
 
-		InApp.UseResponseCompression();
 		InApp.UseRouting();
+		InApp.UseCors();
 		InApp.UseAuthentication();
 		InApp.UseAuthorization();
+		InApp.UseResponseCompression();
 		InApp.UseMiddleware<ExceptionHandlerMiddleware>();
 
 		InApp.UseStaticFiles(new StaticFileOptions
@@ -120,7 +122,7 @@ public class Startup
 
 		InApp.UseEndpoints(InEndpoints =>
 		{
-			InEndpoints.MapHub<MainHub>($"/{MainHubConstants.PATH}");
+			InEndpoints.MapHub<MainHub>($"/{MainHubConstants.PATH}").RequireCors();
 			InEndpoints.MapControllers();
 		});
 	}
