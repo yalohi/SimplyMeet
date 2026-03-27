@@ -1,27 +1,62 @@
 #!/bin/bash
+set -euo pipefail
 
-SCRIPT_PATH=$(dirname $(realpath "$0"))
-MY_BUILD_CONFIG=${1}
-MY_BUILD_ARCH=${2}
-. ${SCRIPT_PATH}/env.sh
+readonly SCRIPT_DIR="$(cd "$(dirname "${0}")"; pwd -P)"
+readonly SM_MAIN_DIR="${SCRIPT_DIR}/.."
 
-if [ $# -le 0 ]; then
-	MY_BUILD_CONFIG=release
-fi
+readonly SM_BUILD_CONFIG="${1:-"release"}"
+readonly SM_BUILD_ARCH="${2:-"linux-musl-x64"}"
 
-if [ $# -le 1 ]; then
-	MY_BUILD_ARCH=linux-musl-x64
-fi
+readonly SM_BUILD_DIR="Build"
+readonly SM_WASM_PROJECT="${SM_MAIN_DIR}/SimplyMeetWasm/SimplyMeetWasm.csproj"
+readonly SM_WEBAPI_PROJECT="${SM_MAIN_DIR}/SimplyMeetApi/SimplyMeetApi.csproj"
+readonly SM_WASM_BUILD_DIR="${SM_BUILD_DIR}/SimplyMeetWasm"
+readonly SM_WEBAPI_BUILD_DIR="${SM_BUILD_DIR}/SimplyMeetApi"
 
-if [ -z "${MY_BUILD_PATH}" ]; then exit 1; fi
+cd "${SM_MAIN_DIR}"
 
-cd ${SCRIPT_PATH}/../
+if [ "${SM_BUILD_CONFIG^^}" = "DEBUG" ]; then
+	[ -f "${SM_WASM_PROJECT}" ] && \
+		dotnet publish "${SM_WASM_PROJECT}" \
+			-c "${SM_BUILD_CONFIG}" \
+			-o "${SM_WASM_BUILD_DIR}" \
+			-r "${SM_BUILD_ARCH}" \
+			-p:SelfContained=True \
+			-p:PublishTrimmed=False \
+			-p:BlazorEnableCompression=False
 
-if [ "${MY_BUILD_CONFIG^^}" = "DEBUG" ]; then
-	dotnet publish SimplyMeetWasm/SimplyMeetWasm.csproj -c ${MY_BUILD_CONFIG} -o ${MY_BUILD_PATH}/wasm/app -r ${MY_BUILD_ARCH} -p:SelfContained=True -p:PublishTrimmed=False -p:BlazorEnableCompression=False
-	dotnet publish SimplyMeetApi/SimplyMeetApi.csproj -c ${MY_BUILD_CONFIG} -o ${MY_BUILD_PATH}/webapi/app -r ${MY_BUILD_ARCH} -p:SelfContained=True -p:PublishReadyToRun=False -p:PublishSingleFile=True -p:PublishTrimmed=False -p:IncludeNativeLibrariesForSelfExtract=True
-elif [ "${MY_BUILD_CONFIG^^}" = "RELEASE" ]; then
-	dotnet publish SimplyMeetWasm/SimplyMeetWasm.csproj -c ${MY_BUILD_CONFIG} -o ${MY_BUILD_PATH}/wasm/app -r ${MY_BUILD_ARCH} -p:SelfContained=True -p:PublishTrimmed=True -p:BlazorEnableCompression=True
-	dotnet publish SimplyMeetApi/SimplyMeetApi.csproj -c ${MY_BUILD_CONFIG} -o ${MY_BUILD_PATH}/webapi/app -r ${MY_BUILD_ARCH} -p:SelfContained=True -p:PublishReadyToRun=False -p:PublishSingleFile=True -p:PublishTrimmed=True -p:IncludeNativeLibrariesForSelfExtract=True
-	rm -f ${MY_BUILD_PATH}/wasm/app/*.pdb ${MY_BUILD_PATH}/webapi/app/*.pdb
+	[ -f "${SM_WEBAPI_PROJECT}" ] && \
+		dotnet publish "${SM_WEBAPI_PROJECT}" \
+			-c "${SM_BUILD_CONFIG}" \
+			-o "${SM_WEBAPI_BUILD_DIR}" \
+			-r "${SM_BUILD_ARCH}" \
+			-p:SelfContained=True \
+			-p:PublishReadyToRun=False \
+			-p:PublishSingleFile=True \
+			-p:PublishTrimmed=False \
+			-p:IncludeNativeLibrariesForSelfExtract=True
+elif [ "${SM_BUILD_CONFIG^^}" = "RELEASE" ]; then
+	[ -f "${SM_WASM_PROJECT}" ] && \
+		dotnet publish "${SM_WASM_PROJECT}" \
+			-c "${SM_BUILD_CONFIG}" \
+			-o "${SM_WASM_BUILD_DIR}" \
+			-r "${SM_BUILD_ARCH}" \
+			-p:SelfContained=True \
+			-p:PublishTrimmed=True \
+			-p:BlazorEnableCompression=True
+
+	[ -f "${SM_WEBAPI_PROJECT}" ] && \
+		dotnet publish "${SM_WEBAPI_PROJECT}" \
+			-c "${SM_BUILD_CONFIG}" \
+			-o "${SM_WEBAPI_BUILD_DIR}" \
+			-r "${SM_BUILD_ARCH}" \
+			-p:SelfContained=True \
+			-p:PublishReadyToRun=False \
+			-p:PublishSingleFile=True \
+			-p:PublishTrimmed=True \
+			-p:IncludeNativeLibrariesForSelfExtract=True
+
+	rm -f \
+		"${SM_WASM_BUILD_DIR}/"*".pdb" \
+		"${SM_WEBAPI_BUILD_DIR}/"*".pdb"
 fi
