@@ -7,9 +7,8 @@ public class TokenService
 	//===========================================================================================
 	#region Fields
 	private readonly ILogger _Logger;
+	private readonly EnvironmentService _EnvironmentService;
 	private readonly DatabaseService _DatabaseService;
-	private readonly AdminConfiguration _AdminConfig;
-	private readonly TokenConfiguration _TokenConfig;
 
 	private readonly Dictionary<String, List<ChallengeModel>> _ChallengeDict;
 	#endregion
@@ -17,12 +16,11 @@ public class TokenService
 	//===========================================================================================
 	// Public Methods
 	//===========================================================================================
-	public TokenService(ILogger<TokenService> InLogger, DatabaseService InDatabaseService, IOptions<AdminConfiguration> InAdminConfig, IOptions<TokenConfiguration> InTokenConfig)
+	public TokenService(ILogger<TokenService> InLogger, EnvironmentService InEnvironmentService, DatabaseService InDatabaseService)
 	{
 		_Logger = InLogger;
+		_EnvironmentService = InEnvironmentService;
 		_DatabaseService = InDatabaseService;
-		_AdminConfig = InAdminConfig.Value;
-		_TokenConfig = InTokenConfig.Value;
 
 		_ChallengeDict = new ();
 	}
@@ -101,9 +99,9 @@ public class TokenService
 		var Claims = new List<Claim>();
 		Claims.Add(new Claim(ClaimTypes.NameIdentifier, InAccount.Id.ToString()));
 
-		var SecurityKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_TokenConfig.SecretKey));
+		var SecurityKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_EnvironmentService.JwtSecret));
 		var Credentials = new SigningCredentials(SecurityKey, SecurityAlgorithms.HmacSha256Signature);
-		var TokenDescriptor = new JwtSecurityToken(_TokenConfig.Issuer, _TokenConfig.Issuer, Claims, null, null, Credentials);
+		var TokenDescriptor = new JwtSecurityToken(nameof(SimplyMeetApi), nameof(SimplyMeetApi), Claims, null, null, Credentials);
 		return new JwtSecurityTokenHandler().WriteToken(TokenDescriptor);
 	}
 }

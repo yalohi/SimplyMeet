@@ -6,10 +6,10 @@ public class Startup
 	// Global Variables
 	//===========================================================================================
 	#region Fields
-	private IConfiguration _Configuration;
+	private readonly IConfiguration _Configuration;
+
 	private DatabaseConfiguration _DatabaseConfig;
 	private StaticFilesConfiguration _StaticFilesConfig;
-	private TokenConfiguration _TokenConfig;
 	#endregion
 
 	//===========================================================================================
@@ -29,14 +29,15 @@ public class Startup
 		_DatabaseConfig = ConfigurationHelper.Configure<DatabaseConfiguration>(_Configuration, InServices);
 		_StaticFilesConfig = ConfigurationHelper.Configure<StaticFilesConfiguration>(_Configuration, InServices);
 		ConfigurationHelper.Configure<ThrottleConfiguration>(_Configuration, InServices);
-		_TokenConfig = ConfigurationHelper.Configure<TokenConfiguration>(_Configuration, InServices);
 
 		// Services
+
 		InServices.AddHostedService<AccountExpirationService>();
 		InServices.AddSingleton<AccountService>();
 		InServices.AddSingleton<AdminService>();
 		InServices.AddSingleton<AuthorizationService>();
 		InServices.AddSingleton<DatabaseService>();
+		InServices.AddSingleton<EnvironmentService>();
 		InServices.AddSingleton<HomeService>();
 		InServices.AddSingleton<MainHubService>();
 		InServices.AddSingleton<MatchService>();
@@ -58,33 +59,10 @@ public class Startup
 
 		InServices.AddResponseCompression(InOptions =>
 		{
-			InOptions.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "application/octet-stream" });
+			InOptions.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat([ "application/octet-stream" ]);
 		});
 
-		InServices.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(InOptions =>
-		{
-			InOptions.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-			{
-				ValidateIssuer = true,
-				ValidateAudience = true,
-				ValidateLifetime = false,
-				ValidateIssuerSigningKey = true,
-				ValidIssuer = _TokenConfig.Issuer,
-				ValidAudience = _TokenConfig.Issuer,
-				IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_TokenConfig.SecretKey))
-			};
-
-			InOptions.Events = new JwtBearerEvents
-			{
-				OnMessageReceived = InContext =>
-				{
-					var Token = InContext.Request.Query["access_token"];
-					var Path = InContext.HttpContext.Request.Path;
-					if (!String.IsNullOrEmpty(Token) && (Path.StartsWithSegments($"/{MainHubConstants.PATH}"))) InContext.Token = Token;
-					return Task.CompletedTask;
-				}
-			};
-		});
+		InServices.ConfigureOptions<JwtBearerOptionsConfigurator>().AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
 
 		InServices.AddSwaggerGen(InOptions =>
 		{
