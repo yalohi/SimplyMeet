@@ -6,6 +6,14 @@
 		<WasmEnableStreamingResponse>false</WasmEnableStreamingResponse>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+		<WasmApplicationEnvironmentName>Development</WasmApplicationEnvironmentName>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<WasmApplicationEnvironmentName>Production</WasmApplicationEnvironmentName>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<ProjectReference Include="../SimplyMeetShared/SimplyMeetShared.csproj" />
 
