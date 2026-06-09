@@ -16,6 +16,11 @@ public class Program
 	public static IHostBuilder CreateHostBuilder(String[] InArgs)
 	{
 		return Host.CreateDefaultBuilder(InArgs)
+#if DEBUG
+			.UseEnvironment(Environments.Development)
+#else
+			.UseEnvironment(Environments.Production)
+#endif
 			.ConfigureLogging(InLogging =>
 			{
 				InLogging.AddFile("Logs/Error-{Date}.log", LogLevel.Error);
