@@ -1,4 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
+	<PropertyGroup>
+		<TrimMode>link</TrimMode>
+		<_TrimmerDefaultAction>copy</_TrimmerDefaultAction>
+		<ILLinkWarningLevel>0</ILLinkWarningLevel>
+
+		<JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
+		<MvcEnhancedModelMetadataSupport>true</MvcEnhancedModelMetadataSupport>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<TrimmerRootAssembly Include="System.ComponentModel.TypeConverter" />
+		<TrimmerRootAssembly Include="Microsoft.AspNetCore.Mvc.Core" />
+	</ItemGroup>
+
 	<ItemGroup>
 		<Content Include="App_Data/**/*" CopyToOutputDirectory="Never" CopyToPublishDirectory="Always" />
 	</ItemGroup>
