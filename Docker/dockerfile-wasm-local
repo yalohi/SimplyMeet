@@ -1,0 +1,14 @@
+FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS simplymeet-wasm-builder
+WORKDIR /source
+COPY ./Docker /source/Docker
+COPY ./Scripts /source/Scripts
+COPY ./SimplyMeetWasm /source/SimplyMeetWasm
+COPY ./SimplyMeetShared /source/SimplyMeetShared
+COPY ./Directory.Build.props /source
+RUN apk add --no-cache --update bash
+RUN ./Scripts/build-no-docker.sh release linux-musl-x64 wasm
+
+FROM docker.io/nginx:mainline-alpine AS simplymeet-wasm
+WORKDIR /etc/nginx/html
+COPY --from=simplymeet-wasm-builder /source/Docker/nginx-wasm.conf /etc/nginx/nginx.conf
+COPY --from=simplymeet-wasm-builder /source/Build/SimplyMeetWasm/wwwroot .

@@ -1,0 +1,11 @@
+FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS simplymeet-api-builder
+WORKDIR /source
+RUN apk add --no-cache --update bash git
+RUN git clone --depth 1 --branch main "https://github.com/yalohi/SimplyMeet" .
+RUN ./Scripts/build-no-docker.sh release linux-musl-x64 api
+
+FROM mcr.microsoft.com/dotnet/runtime-deps:10.0-alpine AS simplymeet-api
+WORKDIR /app
+COPY --from=simplymeet-api-builder /source/Build/SimplyMeetApi .
+RUN apk add --no-cache --update sqlite
+ENTRYPOINT [ "./SimplyMeetApi" ]

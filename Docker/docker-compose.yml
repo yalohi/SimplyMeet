@@ -1,18 +1,88 @@
 services:
+  # ======================================================================================
+  # Regular services will download a pre-built version from the GitHub container registry.
+  # ======================================================================================
+
   wasm:
     hostname: wasm
-    # image: ghcr.io/yalohi/SimplyMeet
-    build: SimplyMeetWasm
+    containername: wasm
+    image: ghcr.io/yalohi/simplymeet-wasm:latest
     ports:
       - 5001:5001/tcp
-  webapi:
-    hostname: webapi
-    # image: ghcr.io/yalohi/SimplyMeet
-    build: SimplyMeetApi
+    volumes:
+      - ./wasm/config/appsettings.Production.json:/etc/nginx/html/appsettings.Production.json:ro
+
+  api:
+    hostname: api
+    containername: api
+    image: ghcr.io/yalohi/simplymeet-api:latest
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
+      - JWT_SECRET="PUT_A_STRONG_SECRET_HERE" # 32+ Characters
     ports:
       - 5002:5002/tcp
     volumes:
-      - ./webapi/config/appsettings.Production.json:/app/appsettings.Production.json:ro
-      - ./webapi/data/:/app/App_Data
+      - ./api/config/appsettings.Production.json:/app/appsettings.Production.json:ro
+      - ./api/data/:/app/App_Data
+
+  # ===============================================================================================
+  # *-source-github services will clone the remote repository from GitHub and then build from that.
+  # ===============================================================================================
+
+  # wasm-source-github:
+  #   hostname: wasm
+  #   containername: wasm
+  #   build:
+  #     dockerfile: dockerfile-wasm-github
+  #   image: simplymeet-wasm
+  #   ports:
+  #     - 5001:5001/tcp
+  #   volumes:
+  #     - ./wasm/config/appsettings.Production.json:/etc/nginx/html/appsettings.Production.json:ro
+
+  # api-source-github:
+  #   hostname: api
+  #   containername: api
+  #   build:
+  #     dockerfile: dockerfile-api-github
+  #   image: simplymeet-api
+  #   environment:
+  #     - ASPNETCORE_ENVIRONMENT=Production
+  #     - JWT_SECRET="PUT_A_STRONG_SECRET_HERE" # 32+ Characters
+  #   ports:
+  #     - 5002:5002/tcp
+  #   volumes:
+  #     - ./api/config/appsettings.Production.json:/app/appsettings.Production.json:ro
+  #     - ./api/data/:/app/App_Data
+
+  # =====================================================================================================================================
+  # *-source-local services will build from source files already present on your machine. It will not download them from a remote server.
+  # =====================================================================================================================================
+
+  # wasm-source-local:
+  #   hostname: wasm
+  #   containername: wasm
+  #   build:
+  #     context: ..
+  #     dockerfile: Docker/dockerfile-wasm-local
+  #   image: simplymeet-wasm
+  #   ports:
+  #     - 5001:5001/tcp
+  #   volumes:
+  #     - ./wasm/config/appsettings.Production.json:/etc/nginx/html/appsettings.Production.json:ro
+
+  # api-source-local:
+  #   hostname: api
+  #   containername: api
+  #   build:
+  #     context: ..
+  #     dockerfile: Docker/dockerfile-api-local
+  #   image: simplymeet-api
+  #   environment:
+  #     - ASPNETCORE_ENVIRONMENT=Production
+  #     - JWT_SECRET="PUT_A_STRONG_SECRET_HERE" # 32+ Characters
+  #   ports:
+  #     - 5002:5002/tcp
+  #   volumes:
+  #     - ./api/config/appsettings.Production.json:/app/appsettings.Production.json:ro
+  #     - ./api/data/:/app/App_Data
