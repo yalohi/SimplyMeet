@@ -1,6 +1,6 @@
 Backups
 Build
 obj/
-SimplyMeetApi/App_Data/SimplyMeet
+SimplyMeetApi/App_Data/*.sqlite
 SimplyMeetApi/Logs
 \_*/
