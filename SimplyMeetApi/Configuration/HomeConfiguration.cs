@@ -9,5 +9,6 @@ public class HomeConfiguration : IApiConfiguration
 	public IEnumerable<CardModel> Cards { get; private set; }
 	public String ShortDescription { get; private set; }
 	public String Administration { get; private set; }
+	public String RootRedirectUrl { get; private set; }
 	#endregion
 }
