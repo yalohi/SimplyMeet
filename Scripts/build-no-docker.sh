@@ -5,13 +5,15 @@ readonly SCRIPT_DIR="$(cd "$(dirname "${0}")"; pwd -P)"
 readonly SM_MAIN_DIR="${SCRIPT_DIR}/.."
 
 readonly SM_BUILD_CONFIG="${1:-"release"}"
-readonly SM_BUILD_ARCH="${2:-"linux-musl-x64"}"
+readonly SM_BUILD_ARCH="${2:-}"
 
 readonly SM_BUILD_DIR="Build"
 readonly SM_WASM_PROJECT="${SM_MAIN_DIR}/SimplyMeetWasm/SimplyMeetWasm.csproj"
 readonly SM_WEBAPI_PROJECT="${SM_MAIN_DIR}/SimplyMeetApi/SimplyMeetApi.csproj"
 readonly SM_WASM_BUILD_DIR="${SM_BUILD_DIR}/SimplyMeetWasm"
 readonly SM_WEBAPI_BUILD_DIR="${SM_BUILD_DIR}/SimplyMeetApi"
+
+[ -z "${SM_BUILD_ARCH}" ] || readonly SM_RID_OPTION="-r ${SM_BUILD_ARCH}"
 
 cd "${SM_MAIN_DIR}"
 
@@ -20,7 +22,7 @@ if [ "${SM_BUILD_CONFIG^^}" = "DEBUG" ]; then
 		dotnet publish "${SM_WASM_PROJECT}" \
 			-c "${SM_BUILD_CONFIG}" \
 			-o "${SM_WASM_BUILD_DIR}" \
-			-r "${SM_BUILD_ARCH}" \
+			"${SM_RID_OPTION:-}" \
 			-p:SelfContained=True \
 			-p:PublishTrimmed=False \
 			-p:BlazorEnableCompression=False
@@ -29,7 +31,7 @@ if [ "${SM_BUILD_CONFIG^^}" = "DEBUG" ]; then
 		dotnet publish "${SM_WEBAPI_PROJECT}" \
 			-c "${SM_BUILD_CONFIG}" \
 			-o "${SM_WEBAPI_BUILD_DIR}" \
-			-r "${SM_BUILD_ARCH}" \
+			"${SM_RID_OPTION:-}" \
 			-p:SelfContained=True \
 			-p:PublishReadyToRun=False \
 			-p:PublishSingleFile=True \
@@ -40,7 +42,7 @@ elif [ "${SM_BUILD_CONFIG^^}" = "RELEASE" ]; then
 		dotnet publish "${SM_WASM_PROJECT}" \
 			-c "${SM_BUILD_CONFIG}" \
 			-o "${SM_WASM_BUILD_DIR}" \
-			-r "${SM_BUILD_ARCH}" \
+			"${SM_RID_OPTION:-}" \
 			-p:SelfContained=True \
 			-p:PublishTrimmed=True \
 			-p:BlazorEnableCompression=True
@@ -49,7 +51,7 @@ elif [ "${SM_BUILD_CONFIG^^}" = "RELEASE" ]; then
 		dotnet publish "${SM_WEBAPI_PROJECT}" \
 			-c "${SM_BUILD_CONFIG}" \
 			-o "${SM_WEBAPI_BUILD_DIR}" \
-			-r "${SM_BUILD_ARCH}" \
+			"${SM_RID_OPTION:-}" \
 			-p:SelfContained=True \
 			-p:PublishReadyToRun=False \
 			-p:PublishSingleFile=True \
