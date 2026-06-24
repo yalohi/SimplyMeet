@@ -17,87 +17,94 @@ Then there are dating apps. Centralized and controlled by large companies, tryin
 
 I believe we can do better. We can develop, host and share our own platforms. SimplyMeet aims to solve these problems, offering you the possibility to create your own community spaces and meet like-minded people.
 
-## Dependencies
-To build and run SimplyMeet you will need the following software installed:
-* [**Git**](https://git-scm.com/) (Cloning + Scripts)
-* [**Rsync**](https://rsync.samba.org/) (Scripts)
-* [**.NET 7.0 SDK**](https://dotnet.microsoft.com/download/dotnet/7.0) (Building)
-* [**Docker + Docker-Compose**](https://www.docker.com/) (Building + Running) [Optional]
+## Projects
 
-## Clone the project
+* SimplyMeetWasm: The web client frontend, which can connect to any SimplyMeetApi server publicly available.
+* SimplyMeetApi: The api server backend, which let's you host your own community instance.
+**NOTE:** If you only want to host your own community, you'll only need the SimplyMeetApi project.
+
+## Get started (Linux Server + Docker) [Recommended]
+
+### Dependencies
+* [**Docker + Docker-Compose**](https://www.docker.com/) (Building + Running)
+
+### Run from pre-built Docker images
+This method will download a pre-built version from the GitHub container registry.
+
+* Download the [**docker-compose.yml**](Docker/docker-compose.yml) file.
+* In your **docker-compose.yml** make sure to set a strong **`JWT_SECRET`** that is at least **32** characters long.
+
+```
+docker compose up -d
+```
+
+### Build from source (github) with Dockerfile
+This method will clone the remote repository from GitHub and then build from that.
+
+* Download the [**docker-compose.yml**](Docker/docker-compose.yml) file.
+* Download the [**dockerfile-api-github**](Docker/dockerfile-api-github) file.
+* Download the [**dockerfile-wasm-github**](Docker/dockerfile-wasm-github) file.
+* In your **docker-compose.yml** comment out all services except **api-source-github** and **wasm-source-github**
+* In your **docker-compose.yml** make sure to set a strong **`JWT_SECRET`** that is at least **32** characters long.
+
+```
+docker compose up -d
+```
+
+### Build from source (local) with Dockerfile
+This method will build from source files already present on your machine. It will not download them from a remote server.
+
+* Download the [**docker-compose.yml**](Docker/docker-compose.yml) file.
+* Download the [**dockerfile-api-github**](Docker/dockerfile-api-github) file.
+* Download the [**dockerfile-wasm-github**](Docker/dockerfile-wasm-github) file.
+* In your **docker-compose.yml** comment out all services except **api-source-local** and **wasm-source-local**
+* In your **docker-compose.yml** make sure to set a strong **`JWT_SECRET`** that is at least **32** characters long.
+
+```
+docker compose up -d
+```
+
+### Configuration
+* Create the following folder structures where the docker-compose.yml file resides. They will serve as Docker volumes:
+  * `wasm/config/appsettings.Production.json` (WASM Configuration) [Defaults: [**appsettings.Production.json**](SimplyMeetWasm/wwwroot/appsettings.Production.json)]
+  * `api/config/appsettings.Production.json` (API Configuration) [Defaults: [**appsettings.Production.json**](SimplyMeetApi/appsettings.Production.json)]
+  * `api/data` (API Data Storage)
+
+## Get Started (Linux Server) [DIY Method]
+
+### Dependencies
+To build and run SimplyMeet you will need the following software installed:
+* [**Git**](https://git-scm.com/) (Cloning)
+* [**.NET 10.0 SDK**](https://dotnet.microsoft.com/download/dotnet/10.0) (Building)
+
+### Clone the project
 ```
 git clone https://github.com/yalohi/SimplyMeet
 cd SimplyMeet
 ```
 
-## Configuration
-### Client (WASM)
-* **`SimplyMeetShared/Constants/ApiRequestConstants.cs`**
-  * Set **`BASE_ADDRESS`** to the location of your WebApi Backend on your domain.
-
-### Server (WebApi)
-* **`SimplyMeetApi/appsettings.Production.json`**
-  * Make sure to set a strong **`SecretKey`** in the **`TokenConfiguration`** section.
-  * Use the **`MainAdminPublicId`** field in the **`AdminConfiguration`** section to give yourself administrative privileges after creating your first account.
-
-### Docker
-* Add your own certificates to **`Docker/reverse-proxy/`**
-
-## Get started (Linux Server + Docker) [Recommended]
-
-Run the scripts with **`sudo`** if your user isn't part of the docker group!
-
+### Build the project
 ```
-cd Scripts
-./build.sh
-./run.sh
-```
-
-**Done.** This will launch 3 Docker containers.
-* **`simplymeet-reverse-proxy`**
-* **`simplymeet-wasm`**
-* **`simplymeet-webapi`**
-
-And 3 Docker volumes.
-* **`simplymeet-wasm-app`**
-* **`simplymeet-webapi-app`**
-* **`simplymeet-webapi-data`**
-
-Some utility scripts you can use include:
-
-```
-./backup-create.sh
-```
-
-Creates a new backup of the **`simplymeet-webapi-data`** volume and deletes backups older than 7 days.
-
-```
-./backup-restore.sh [N]
-```
-
-Restores the **`N`**'th available backup. A higher number means an older backup. When omitted **`N`**=1 by default for the latest backup.
-
-```
-./update.sh
-```
-
-Creates a data backup, pulls the latest changes and rebuilds the project.
-
-## Get Started (Linux Server) [DIY Method]
-```
-cd Scripts
-./build-no-docker.sh
+Scripts/build-no-docker.sh
 ```
 
 In the newly created Build folder you will find:
 * The Blazor WASM client, which you can serve as a static webpage using a web server such as [**nginx**](https://nginx.com/)
 * The WebApi Backend, which runs its own web server (Kestrel) on a port configured in the appsettings file and can be served directly or behind a reverse proxy.
 
+### Configuration
+* Environment Variables
+  * Make sure to set a strong **`JWT_SECRET`** that is at least **32** characters long.
+
+## Administration
+* [**appsettings.Production.json**](SimplyMeetApi/appsettings.Production.json)
+  * Use the **`MainAdminPublicId`** field in the **`AdminConfiguration`** section to give yourself administrative privileges after creating your first account.
+
 ## License
 SimplyMeet is licensed under the [**AGPLv3**](LICENSE) free software license.
 
 ## Joining our list of communities
-If you want your own community listed on [**simplymeet.app**](https://simplymeet.app/) hop onto our Matrix or Discord server and send me a message with a link to your project, a short description and proof of ownership.
+If you want your own community listed on [**simplymeet.app**](https://simplymeet.app/) hop onto our Matrix server and send me a message with a link to your project, a short description and proof of ownership.
 
 ## Donate
 If you want to support the development of this project, consider sending a small donation via one of the following ways. All your support is greatly appreciated. Thank you!
