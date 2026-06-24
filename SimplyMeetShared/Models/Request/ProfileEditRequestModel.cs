@@ -3,7 +3,7 @@ namespace SimplyMeetShared.RequestModels;
 public record ProfileEditRequestModel : RequestModelBase
 {
 	[Required]
-	[MaxLength(ProfileConstants.MAX_DISPLAY_NAME_LENGTH)]
+	[StringLength(ProfileConstants.MAX_DISPLAY_NAME_LENGTH)]
 	public String DisplayName { get; set; }
 
 	[Range(0, Int32.MaxValue)]
@@ -26,9 +26,9 @@ public record ProfileEditRequestModel : RequestModelBase
 	[Required]
 	public ELookingFor LookingFor { get; set; }
 
-	[MaxLength(ProfileConstants.MAX_ABOUT_LENGTH)]
+	[StringLength(ProfileConstants.MAX_ABOUT_LENGTH)]
 	public String AboutMe { get; set; }
 
-	[MaxLength(ProfileConstants.MAX_ABOUT_LENGTH)]
+	[StringLength(ProfileConstants.MAX_ABOUT_LENGTH)]
 	public String AboutYou { get; set; }
 }

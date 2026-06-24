@@ -7,11 +7,10 @@ public record ChatSendRequestModel : RequestModelBase
 	public Int32 MatchId { get; set; }
 
 	[Required]
-	[MaxLength(MainHubConstants.CHAT_MAX_LENGTH)]
+	[StringLength(MainHubConstants.CHAT_MAX_LENGTH)]
 	public String ClientDataJson_Encrypted_Base64 { get; set; }
 
 	[Required]
-	[MinLength(CryptoConstants.NONCE_BASE64_LENGTH)]
-	[MaxLength(CryptoConstants.NONCE_BASE64_LENGTH)]
+	[StringLength(CryptoConstants.NONCE_BASE64_LENGTH, MinimumLength = CryptoConstants.NONCE_BASE64_LENGTH)]
 	public String ClientDataJson_Nonce_Base64 { get; set; }
 }

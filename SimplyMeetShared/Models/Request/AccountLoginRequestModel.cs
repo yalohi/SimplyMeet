@@ -3,12 +3,10 @@ namespace SimplyMeetShared.RequestModels;
 public record AccountLoginRequestModel : RequestModelBase
 {
 	[Required]
-	[MinLength(AccountConstants.PUBLIC_KEY_LENGTH)]
-	[MaxLength(AccountConstants.PUBLIC_KEY_LENGTH)]
+	[StringLength(AccountConstants.PUBLIC_KEY_LENGTH, MinimumLength = AccountConstants.PUBLIC_KEY_LENGTH)]
 	public Byte[] UserPublicKey { get; set; }
 
 	[Required]
-	[MinLength(AccountConstants.SOLVED_CHALLENGE_LENGTH)]
-	[MaxLength(AccountConstants.SOLVED_CHALLENGE_LENGTH)]
+	[StringLength(AccountConstants.SOLVED_CHALLENGE_LENGTH, MinimumLength = AccountConstants.SOLVED_CHALLENGE_LENGTH)]
 	public Byte[] SolvedChallenge { get; set; }
 }
