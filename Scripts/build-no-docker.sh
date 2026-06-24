@@ -59,7 +59,7 @@ elif [ "${SM_BUILD_CONFIG^^}" = "RELEASE" ]; then
 			-p:PublishTrimmed=True \
 			-p:IncludeNativeLibrariesForSelfExtract=True
 
-	rm -f \
+	rm -vf \
 		"${SM_WASM_BUILD_DIR}/"*".pdb" \
 		"${SM_API_BUILD_DIR}/"*".pdb"
 fi
