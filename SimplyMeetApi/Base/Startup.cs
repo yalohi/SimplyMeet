@@ -98,6 +98,8 @@ public class Startup
 			Environment.Exit(1);
 		}
 
+		Directory.CreateDirectory(_StaticFilesConfig.AvatarsPath);
+
 		InApp.UseStaticFiles(new StaticFileOptions
 		{
 			FileProvider = new PhysicalFileProvider(Path.Combine(InEnv.ContentRootPath, _StaticFilesConfig.AvatarsPath)),
