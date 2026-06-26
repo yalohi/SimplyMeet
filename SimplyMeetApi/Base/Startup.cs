@@ -76,7 +76,7 @@ public class Startup
 				.ScanIn(typeof(Migrations.D1).Assembly).For.Migrations())
 			.AddLogging(InLogBuilder => InLogBuilder.AddFluentMigratorConsole());
 	}
-	public void Configure(IApplicationBuilder InApp, IWebHostEnvironment InEnv)
+	public void Configure(IApplicationBuilder InApp, IWebHostEnvironment InEnv, ILogger<Startup> InLogger)
 	{
 		if (InEnv.IsDevelopment())
 		{
@@ -91,6 +91,12 @@ public class Startup
 		InApp.UseAuthorization();
 		InApp.UseResponseCompression();
 		InApp.UseMiddleware<ExceptionHandlerMiddleware>();
+
+		if (String.IsNullOrEmpty(_StaticFilesConfig.AvatarsPath))
+		{
+			InLogger.LogCritical($"{nameof(_StaticFilesConfig.AvatarsPath)} not set! Check your configuration.");
+			Environment.Exit(1);
+		}
 
 		InApp.UseStaticFiles(new StaticFileOptions
 		{
