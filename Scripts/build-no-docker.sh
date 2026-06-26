@@ -23,7 +23,7 @@ if [ "${SM_BUILD_CONFIG^^}" = "DEBUG" ]; then
 		dotnet publish "${SM_WASM_PROJECT}" \
 			-c "${SM_BUILD_CONFIG}" \
 			-o "${SM_WASM_BUILD_DIR}" \
-			"${SM_RID_OPTION:-}" \
+			${SM_RID_OPTION:-} \
 			-p:SelfContained=True \
 			-p:PublishTrimmed=False \
 			-p:BlazorEnableCompression=False
@@ -32,7 +32,7 @@ if [ "${SM_BUILD_CONFIG^^}" = "DEBUG" ]; then
 		dotnet publish "${SM_API_PROJECT}" \
 			-c "${SM_BUILD_CONFIG}" \
 			-o "${SM_API_BUILD_DIR}" \
-			"${SM_RID_OPTION:-}" \
+			${SM_RID_OPTION:-} \
 			-p:SelfContained=True \
 			-p:PublishReadyToRun=False \
 			-p:PublishSingleFile=True \
@@ -43,7 +43,7 @@ elif [ "${SM_BUILD_CONFIG^^}" = "RELEASE" ]; then
 		dotnet publish "${SM_WASM_PROJECT}" \
 			-c "${SM_BUILD_CONFIG}" \
 			-o "${SM_WASM_BUILD_DIR}" \
-			"${SM_RID_OPTION:-}" \
+			${SM_RID_OPTION:-} \
 			-p:SelfContained=True \
 			-p:PublishTrimmed=True \
 			-p:BlazorEnableCompression=True
@@ -52,7 +52,7 @@ elif [ "${SM_BUILD_CONFIG^^}" = "RELEASE" ]; then
 		dotnet publish "${SM_API_PROJECT}" \
 			-c "${SM_BUILD_CONFIG}" \
 			-o "${SM_API_BUILD_DIR}" \
-			"${SM_RID_OPTION:-}" \
+			${SM_RID_OPTION:-} \
 			-p:SelfContained=True \
 			-p:PublishReadyToRun=False \
 			-p:PublishSingleFile=True \
