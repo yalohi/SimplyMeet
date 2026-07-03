@@ -19,9 +19,11 @@ I believe we can do better. We can develop, host and share our own platforms. Si
 
 ## Projects
 
-* SimplyMeetWasm: The web client frontend, which can connect to any SimplyMeetApi server publicly available.
-* SimplyMeetApi: The api server backend, which let's you host your own community instance.
-**NOTE:** If you only want to host your own community, you'll only need the SimplyMeetApi project.
+* **SimplyMeetWasm**: The web client frontend, which can connect to any SimplyMeetApi server publicly available.
+
+* **SimplyMeetApi**: The api server backend, which let's you host your own community instance.
+
+**NOTE:** If you only want to host your own community, you'll only need the **SimplyMeetApi** project.
 
 ## Get started (Linux Server + Docker) [Recommended]
 
@@ -33,12 +35,13 @@ This method will download a pre-built version from the GitHub container registry
 
 * Download the [**docker-compose.yml**](Docker/docker-compose.yml) file.
 * In your **docker-compose.yml** make sure to set a strong **`JWT_SECRET`** that is at least **32** characters long.
+* [Configure](#configuration) the services.
 
 ```
 docker compose up -d
 ```
 
-### Build from source (github) with Dockerfile
+### Build and run from source (github)
 This method will clone the remote repository from GitHub and then build from that.
 
 * Download the [**docker-compose.yml**](Docker/docker-compose.yml) file.
@@ -46,12 +49,13 @@ This method will clone the remote repository from GitHub and then build from tha
 * Download the [**dockerfile-wasm-github**](Docker/dockerfile-wasm-github) file.
 * In your **docker-compose.yml** comment out all services except **api-source-github** and **wasm-source-github**
 * In your **docker-compose.yml** make sure to set a strong **`JWT_SECRET`** that is at least **32** characters long.
+* [Configure](#configuration) the services.
 
 ```
 docker compose up -d
 ```
 
-### Build from source (local) with Dockerfile
+### Build and run from source (local)
 This method will build from source files already present on your machine. It will not download them from a remote server.
 
 * Download the [**docker-compose.yml**](Docker/docker-compose.yml) file.
@@ -59,6 +63,7 @@ This method will build from source files already present on your machine. It wil
 * Download the [**dockerfile-wasm-github**](Docker/dockerfile-wasm-github) file.
 * In your **docker-compose.yml** comment out all services except **api-source-local** and **wasm-source-local**
 * In your **docker-compose.yml** make sure to set a strong **`JWT_SECRET`** that is at least **32** characters long.
+* [Configure](#configuration) the services.
 
 ```
 docker compose up -d
@@ -66,9 +71,12 @@ docker compose up -d
 
 ### Configuration
 * Create the following folder structures where the docker-compose.yml file resides. They will serve as Docker volumes:
-  * `wasm/config/appsettings.Production.json` (WASM Configuration) [Defaults: [**appsettings.Production.json**](SimplyMeetWasm/wwwroot/appsettings.Production.json)]
-  * `api/config/appsettings.Production.json` (API Configuration) [Defaults: [**appsettings.Production.json**](SimplyMeetApi/appsettings.Production.json)]
+  * `wasm/config/appsettings.Production.json` (WASM Configuration) [Default: [**appsettings.Production.json**](SimplyMeetWasm/wwwroot/appsettings.Production.json)]
+  * `api/config/appsettings.Production.json` (API Configuration) [Default: [**appsettings.Production.json**](SimplyMeetApi/appsettings.Production.json)]
   * `api/data` (API Data Storage)
+
+* Create a default Avatar for new users
+  * `api/data/Avatars/Default.webp` [Default: [**Default.webp**](SimplyMeetApi/App_Data/Avatars/Default.webp)]
 
 ## Get Started (Linux Server) [DIY Method]
 
