@@ -9,6 +9,13 @@ textarea
 	resize: none;
 }
 
+.cover-img
+{
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
 .btn-outline-success:hover
 {
 	background-color:gray;

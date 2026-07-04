@@ -15,22 +15,27 @@ else if (_GetResponse == null || _GetResponse.Error != null)
 
 else
 {
-	<SectionCardComponent BackgroundClass="bg-success">
-		<AccountComponent Title="@Loc["GetStarted"]" />
-	</SectionCardComponent>
+	<SectionComponent BackgroundClass="bg-success" BackgroundUri="@_BannerUri">
+		<div class="card bg-dark bg-opacity-75 text-white border-0 rounded">
+			<AccountComponent Title="@Loc["GetStarted"]" />
+		</div>
 
-	<SectionCardComponent BackgroundClass="bg-dark">
-		<div class="row gx-0 m-1">
-			<div class="col d-flex align-items-center bg-secondary rounded p-3 m-1">
-				<i class="fas fa-user fa-2x fa-fw text-info me-3"></i>
-				<strong>@_GetResponse.TotalActiveAccounts @Loc["ActiveAccounts"]</strong>
+		<div class="row bg-dark bg-opacity-75 rounded g-2 m-0 p-1 mt-1">
+			<div class="col-12 col-sm-6 m-0 p-1">
+				<div class="d-flex align-items-center bg-secondary bg-opacity-50 rounded p-3 h-100">
+					<i class="fas fa-user fa-2x fa-fw text-info me-3"></i>
+					<strong>@_GetResponse.TotalActiveAccounts @Loc["ActiveAccounts"]</strong>
+				</div>
 			</div>
-			<div class="col d-flex align-items-center bg-secondary rounded p-3 m-1">
-				<i class="fas fa-heart fa-2x fa-fw text-danger me-3"></i>
-				<strong>@_GetResponse.TotalActiveMatches @Loc["ActiveMatches"]</strong>
+
+			<div class="col-12 col-sm-6 m-0 p-1">
+				<div class="d-flex align-items-center bg-secondary bg-opacity-50 rounded p-3 h-100">
+					<i class="fas fa-heart fa-2x fa-fw text-danger me-3"></i>
+					<strong>@_GetResponse.TotalActiveMatches @Loc["ActiveMatches"]</strong>
+				</div>
 			</div>
 		</div>
-	</SectionCardComponent>
+	</SectionComponent>
 
 	if (_GetResponse.Cards != null)
 	{
@@ -54,6 +59,7 @@ else
 	//===========================================================================================
 	#region Fields
 	private HomeGetDataResponseModel _GetResponse;
+	private Uri _BannerUri;
 	private Boolean _IsRequesting;
 	#endregion
 
@@ -69,6 +75,9 @@ else
 	{
 		await base.OnSetupAsync();
 		await ReloadCardsAsync();
+		var ApiServerUri = await SettingsService.GetApiServerAsync();
+		if (!String.IsNullOrEmpty(_GetResponse?.BannerImage)) _BannerUri = new Uri(ApiServerUri, $"{ApiRequestConstants.IMAGES}/{_GetResponse.BannerImage}");
+		else _BannerUri = null;
 		AppState.ShowFooter = true;
 	}
 

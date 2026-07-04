@@ -8,8 +8,8 @@ public abstract record AccountLoginResponseModelBase(String Token = default) : R
 public abstract record AdminGetAccountRolesResponseModelBase(IEnumerable<RoleModel> Roles = default, IEnumerable<AccountRoleModel> AccountRoles = default, ProfileCompactModel MainAdminCompactProfile = default, IEnumerable<ProfileCompactModel> CompactProfiles = default) : ResponseModelBase;
 public abstract record AdminGetProfileDataResponseModelBase(M_ProfileDataModel ProfileData = default) : ResponseModelBase;
 public abstract record AdminGetReportedProfilesResponseModelBase(IEnumerable<ReportedProfileModel> ReportedProfiles = default, Int32 TotalReportedAccounts = default) : ResponseModelBase;
-public abstract record HomeGetDataResponseModelBase(IEnumerable<CardModel> Cards = default, Int32 TotalActiveAccounts = default, Int32 TotalActiveMatches = default) : ResponseModelBase;
-public abstract record HomeGetServerInfoResponseModelBase(String ShortDescription = default, String Administration = default, Int32 TotalActiveAccounts = default, Int32 TotalActiveMatches = default) : ResponseModelBase;
+public abstract record HomeGetDataResponseModelBase(IEnumerable<CardModel> Cards = default, String BannerImage = default, Int32 TotalActiveAccounts = default, Int32 TotalActiveMatches = default) : ResponseModelBase;
+public abstract record HomeGetServerInfoResponseModelBase(String BannerImage = default, String ShortDescription = default, String Administration = default, Int32 TotalActiveAccounts = default, Int32 TotalActiveMatches = default) : ResponseModelBase;
 public abstract record MatchGetChoicesResponseModelBase(IEnumerable<ProfileCompactModel> CompactProfiles = default, Int32 TotalProfiles = default) : ResponseModelBase;
 public abstract record MatchGetFilterResponseModelBase(ProfileFullModel FullProfile = default) : ResponseModelBase;
 public abstract record MatchGetNewResponseModelBase(ProfileFullModel FullProfile = default) : ResponseModelBase;

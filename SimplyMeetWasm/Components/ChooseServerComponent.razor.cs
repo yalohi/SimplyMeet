@@ -23,6 +23,7 @@ public partial class ChooseServerComponent : InputBase<String>
 	private List<List<String>> _CustomServerList;
 
 	private HomeGetServerInfoResponseModel _ServerInfoResponse;
+	private Uri _BannerUri;
 	private String _NewCustomApiServer;
 	private Boolean _IsRequestingServerInfo;
 	#endregion
@@ -79,7 +80,9 @@ public partial class ChooseServerComponent : InputBase<String>
 
 		var RequestModel = new HomeGetServerInfoRequestModel();
 		_IsRequestingServerInfo = true;
+		_BannerUri = null;
 		_ServerInfoResponse = await HttpService.PostJsonRequestAsync<HomeGetServerInfoRequestModel, HomeGetServerInfoResponseModel>(ApiServerUri, ApiRequestConstants.HOME_GET_SERVER_INFO, RequestModel);
+		if (!String.IsNullOrEmpty(_ServerInfoResponse?.BannerImage)) _BannerUri = new Uri(ApiServerUri, $"{ApiRequestConstants.IMAGES}/{_ServerInfoResponse.BannerImage}");
 		_IsRequestingServerInfo = false;
 
 		StateHasChanged();

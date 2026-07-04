@@ -99,11 +99,18 @@ public class Startup
 		}
 
 		Directory.CreateDirectory(_StaticFilesConfig.AvatarsPath);
+		Directory.CreateDirectory(_StaticFilesConfig.ImagesPath);
 
 		InApp.UseStaticFiles(new StaticFileOptions
 		{
 			FileProvider = new PhysicalFileProvider(Path.Combine(InEnv.ContentRootPath, _StaticFilesConfig.AvatarsPath)),
 			RequestPath = $"/{ApiRequestConstants.AVATARS}"
+		});
+
+		InApp.UseStaticFiles(new StaticFileOptions
+		{
+			FileProvider = new PhysicalFileProvider(Path.Combine(InEnv.ContentRootPath, _StaticFilesConfig.ImagesPath)),
+			RequestPath = $"/{ApiRequestConstants.IMAGES}"
 		});
 
 		InApp.UseEndpoints(InEndpoints =>

@@ -13,6 +13,8 @@ public partial class SmallCardComponent : ComponentBase
 	[Parameter]
 	public String IconClasses { get; set; }
 	[Parameter]
+	public String CardClasses { get; set; }
+	[Parameter]
 	public String ContentClasses { get; set; }
 	#endregion
 }

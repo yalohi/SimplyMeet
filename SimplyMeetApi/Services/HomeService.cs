@@ -28,6 +28,7 @@ public class HomeService
 			return new HomeGetDataResponseModel
 			{
 				Cards = _HomeConfig.Cards,
+				BannerImage = _HomeConfig.BannerImage,
 				TotalActiveAccounts = await _DatabaseService.GetTotalActiveAccountsAsync(InConnection),
 				TotalActiveMatches = await _DatabaseService.GetTotalActiveMatchesAsync(InConnection),
 			};
@@ -41,6 +42,7 @@ public class HomeService
 		{
 			return new HomeGetServerInfoResponseModel
 			{
+				BannerImage = _HomeConfig.BannerImage,
 				ShortDescription = _HomeConfig.ShortDescription,
 				Administration = _HomeConfig.Administration,
 				TotalActiveAccounts = await _DatabaseService.GetTotalActiveAccountsAsync(InConnection),

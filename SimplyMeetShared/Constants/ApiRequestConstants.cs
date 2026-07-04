@@ -9,6 +9,7 @@ public static class ApiRequestConstants
 	public const String DEFAULT_API_SERVER = "http://127.0.0.1:5002/api";
 
 	public const String AVATARS = "Avatars";
+	public const String IMAGES = "Images";
 
 	public const String HOME_GET_DATA = "Home/GetData";
 	public const String HOME_GET_SERVER_INFO = "Home/GetServerInfo";
