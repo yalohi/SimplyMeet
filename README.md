@@ -1,7 +1,6 @@
 # SimplyMeet
 
 [![Matrix](https://img.shields.io/matrix/simplymeet:matrix.org?style=flat-square&label=Matrix&logo=matrix&color=008080)](https://matrix.to/#/#simplymeet:matrix.org)
-[![Discord](https://img.shields.io/discord/900761531308982332?style=flat-square&label=Discord&logo=discord&color=7289DA)](https://discord.gg/bn5f6hryEG)
 
 ![SimplyMeet](SimplyMeet.png)
 
