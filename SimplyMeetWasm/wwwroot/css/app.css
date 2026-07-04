@@ -4,6 +4,41 @@ html, body
 	font-family: 'Roboto';
 }
 
+.loading-progress
+{
+	grid-area: 1 / 1;
+	width: 8rem;
+	height: 8rem;
+}
+
+.loading-progress circle
+{
+	fill: none;
+	stroke: #e0e0e0;
+	stroke-width: 0.2rem;
+	transform-origin: 50% 50%;
+	transform: rotate(-90deg);
+}
+
+.loading-progress circle:last-child
+{
+	stroke: #1b6ec2;
+	stroke-dasharray: calc(3.1415 * var(--blazor-load-percentage, 0%) * 0.8), 500%;
+	transition: stroke-dasharray 0.05s ease-in-out;
+}
+
+.loading-progress-text
+{
+	grid-area: 1 / 1;
+	text-align: center;
+	font-weight: bold;
+}
+
+.loading-progress-text:after
+{
+	content: var(--blazor-load-percentage-text, "Loading");
+}
+
 textarea
 {
 	resize: none;
@@ -126,6 +161,12 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button
 input[type=number]
 {
 	-moz-appearance: textfield;
+}
+
+#app
+{
+	display: grid;
+	place-items: center;
 }
 
 #blazor-error-ui
