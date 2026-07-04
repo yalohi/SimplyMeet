@@ -53,11 +53,7 @@
 		</button>
 	</div>
 
-	@if (_ServerInfoResponse == null || _ServerInfoResponse.Error != null)
-	{
-	}
-
-	else
+	@if (_IsRequestingServerInfo || (_ServerInfoResponse != null && _ServerInfoResponse.Error == null))
 	{
 		<div class="bg-secondary rounded text-center mt-3">
 			@if (_IsRequestingServerInfo)
