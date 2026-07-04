@@ -37,18 +37,22 @@ else
 		</div>
 	</SectionComponent>
 
-	if (_GetResponse.Cards != null)
+	@if (_GetResponse.Cards != null)
 	{
-		var CardCounter = 0;
-		@foreach (var Card in _GetResponse.Cards)
-		{
-			var BackgroundClass = (CardCounter++ % 2 == 0) ? "bg-primary" : "bg-dark";
+		<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xxl-5 bg-dark m-0 p-1 p-sm-2">
+			@{ var CardCounter = 0; }
+			@foreach (var Card in _GetResponse.Cards)
+			{
+				var BackgroundClass = (CardCounter++ % 2 == 0) ? "bg-primary" : "bg-dark";
 
-			<SectionTextComponent
-				BackgroundClass="@BackgroundClass"
-				Title="@Card.Title"
-				Text="@Card.Content" />
-		}
+				<div class="col flex-grow-1 m-0 p-1">
+					<CardComponent
+						Title="@Card.Title"
+						Content="@Card.Content"
+						CardClasses="bg-secondary h-100" />
+				</div>
+			}
+		</div>
 	}
 }
 
