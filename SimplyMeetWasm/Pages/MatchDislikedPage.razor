@@ -2,7 +2,9 @@
 @page "/match/disliked/{pageindex:int}"
 @inherits PageBase
 
-<MatchNavBarComponent />
+<SectionContent SectionName="sub-navbar">
+	<MatchNavBarComponent />
+</SectionContent>
 
 <SectionCardComponent BackgroundClass="bg-primary">
 	<MatchChoicesComponent

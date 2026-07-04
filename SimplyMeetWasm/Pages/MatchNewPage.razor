@@ -3,7 +3,9 @@
 @inject IStringLocalizer<SharedResource> Loc
 @inject HttpService HttpService
 
-<MatchNavBarComponent />
+<SectionContent SectionName="sub-navbar">
+	<MatchNavBarComponent />
+</SectionContent>
 
 <SectionCardComponent BackgroundClass="bg-primary">
 	@if (_IsRequesting)
