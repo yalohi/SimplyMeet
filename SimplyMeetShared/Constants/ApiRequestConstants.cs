@@ -6,8 +6,6 @@ public static class ApiRequestConstants
 	// Global Variables
 	//===========================================================================================
 	#region Const Fields
-	public const String DEFAULT_API_SERVER = "http://127.0.0.1:5002/api";
-
 	public const String AVATARS = "Avatars";
 	public const String IMAGES = "Images";
 
