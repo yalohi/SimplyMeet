@@ -1,14 +1,2 @@
 ﻿@page "/settings"
 @inherits PageBase
-
-@code
-{
-	//===========================================================================================
-	// Protected Methods
-	//===========================================================================================
-	protected override async Task OnSetupAsync()
-	{
-		await base.OnSetupAsync();
-		NavigationService.NavigateTo(NavigationConstants.NAV_SETTINGS_SERVER);
-	}
-}

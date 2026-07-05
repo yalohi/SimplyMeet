@@ -6,18 +6,12 @@ public class PageBase : ComponentBase
 	// Global Variables
 	//===========================================================================================
 	#region Properties
-	[Inject]
-	public IJSRuntime JS { get; set; }
-	[Inject]
-	public AppState AppState { get; set; }
-	[Inject]
-	public MainHubService MainHubService { get; set; }
-	[Inject]
-	public NavigationService NavigationService { get; set; }
-	[Inject]
-	public NotificationService NotificationService { get; set; }
-	[Inject]
-	public SettingsService SettingsService { get; set; }
+	[Inject] public IJSRuntime JS { get; set; }
+	[Inject] public AppState AppState { get; set; }
+	[Inject] public MainHubService MainHubService { get; set; }
+	[Inject] public NavigationService NavigationService { get; set; }
+	[Inject] public NotificationService NotificationService { get; set; }
+	[Inject] public SettingsService SettingsService { get; set; }
 	#endregion
 
 	//===========================================================================================

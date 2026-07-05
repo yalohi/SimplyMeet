@@ -1,11 +1,13 @@
 namespace SimplyMeetWasm.Pages;
 
-public partial class SettingsServerPage
+public partial class SettingsServerPage : PageBase
 {
 	//===========================================================================================
 	// Global Variables
 	//===========================================================================================
 	#region Properties
+	[Inject] public IStringLocalizer<SharedResource> Loc { get; set; } = default!;
+
 	public Boolean IsSaveChangesDisabled => _IsSubmittingSaveChanges || !_EditContext.Validate() || !_EditContext.IsModified();
 	#endregion
 	#region Fields

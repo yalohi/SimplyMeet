@@ -1,13 +1,14 @@
 namespace SimplyMeetWasm.Pages;
 
-public partial class SetupPage
+public partial class SetupPage : ComponentBase
 {
 	//===========================================================================================
 	// Global Variables
 	//===========================================================================================
 	#region Properties
-	[Inject]
-	public SettingsService SettingsService { get; set; }
+	[Inject] public IStringLocalizer<SharedResource> Loc { get; set; } = default!;
+	[Inject] public NavigationService NavigationService { get; set; } = default!;
+	[Inject] public SettingsService SettingsService { get; set; } = default!;
 
 	public Boolean IsContinueDisabled => _IsSubmittingContinue || !_EditContext.Validate() || !_EditContext.IsModified();
 	#endregion

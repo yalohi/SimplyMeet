@@ -29,6 +29,7 @@ global using Microsoft.JSInterop;
 global using SimplyMeetShared.Base;
 global using SimplyMeetShared.Constants;
 global using SimplyMeetShared.Enums;
+global using SimplyMeetShared.Extensions;
 global using SimplyMeetShared.Models;
 global using SimplyMeetShared.RequestModels;
 global using SimplyMeetShared.ResponseModels;

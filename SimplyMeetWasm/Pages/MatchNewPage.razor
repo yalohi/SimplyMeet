@@ -1,7 +1,5 @@
 @page "/match/new"
 @inherits PageBase
-@inject IStringLocalizer<SharedResource> Loc
-@inject HttpService HttpService
 
 <SectionContent SectionName="sub-navbar">
 	<MatchNavBarComponent />
@@ -23,7 +21,7 @@
 		<div class="card-body text-center p-4">
 			<div class="d-flex align-items-center">
 				<h5 class="m-0 w-100 text-center">
-					<strong>@Loc["NoNewMatchCandidates"]</strong
+					<strong>@Loc["NoNewMatchCandidates"]</strong>
 				</h5>
 			</div>
 
@@ -51,56 +49,3 @@
 			RateClick="@GetNextAsync" />
 	}
 </SectionCardComponent>
-
-@code
-{
-	//===========================================================================================
-	// Global Variables
-	//===========================================================================================
-	#region Fields
-	private MatchGetNewResponseModel _GetResponse;
-	private Boolean _IsRequesting;
-	#endregion
-
-	//===========================================================================================
-	// Protected Methods
-	//===========================================================================================
-	protected override async Task OnInitializedAsync()
-	{
-		_IsRequesting = true;
-		await base.OnInitializedAsync();
-	}
-	protected override async Task OnSetupAsync()
-	{
-		if (MainHubService.FirstMatchUser != null)
-		{
-			NavigationService.NavigateTo(NavigationConstants.NAV_MATCH);
-			return;
-		}
-
-		await base.OnSetupAsync();
-		await GetNextAsync();
-	}
-
-	//===========================================================================================
-	// Private Methods
-	//===========================================================================================
-	private async Task GetNextAsync()
-	{
-		var RequestModel = new MatchGetNewRequestModel();
-		_IsRequesting = true;
-		_GetResponse = await HttpService.PostJsonRequestAsync<MatchGetNewRequestModel, MatchGetNewResponseModel>(ApiRequestConstants.MATCH_GET_NEW, RequestModel);
-		_IsRequesting = false;
-
-		if (!HttpService.ValidateResponse(_GetResponse)) return;
-	}
-
-	private void OnReviewDislikedProfilesClick()
-	{
-		NavigationService.NavigateTo(NavigationConstants.NAV_MATCH_DISLIKED);
-	}
-	private void OnAdjustFilterClick()
-	{
-		NavigationService.NavigateTo(NavigationConstants.NAV_MATCH_FILTER);
-	}
-}

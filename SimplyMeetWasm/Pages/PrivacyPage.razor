@@ -1,6 +1,5 @@
 @page "/privacy"
 @inherits PageBase
-@inject IStringLocalizer<SharedResource> Loc
 
 <SectionCardComponent BackgroundClass="bg-primary">
 	<div class="mx-3">
@@ -129,15 +128,3 @@
 		</div>
 	</div>
 </SectionCardComponent>
-
-@code
-{
-	//===========================================================================================
-	// Protected Methods
-	//===========================================================================================
-	protected override async Task OnSetupAsync()
-	{
-		await base.OnSetupAsync();
-		AppState.ShowFooter = true;
-	}
-}

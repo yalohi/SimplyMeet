@@ -1,6 +1,6 @@
 namespace SimplyMeetWasm.Pages;
 
-public partial class MatchChatPage
+public partial class MatchChatPage : PageBase, IDisposable
 {
 	//===========================================================================================
 	// Global Variables
@@ -9,6 +9,11 @@ public partial class MatchChatPage
 	private const String CHAT_ID = "chat";
 	#endregion
 	#region Properties
+	[Inject] public IStringLocalizer<SharedResource> Loc { get; set; } = default!;
+	[Inject] public AccountService AccountService { get; set; } = default!;
+	[Inject] public HttpService HttpService { get; set; } = default!;
+	[Inject] public ProfileService ProfileService { get; set; } = default!;
+
 	public String Message
 	{
 		get { return _Message; }

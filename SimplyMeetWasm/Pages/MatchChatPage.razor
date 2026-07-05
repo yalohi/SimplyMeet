@@ -1,10 +1,5 @@
 @page "/match/chat"
 @inherits PageBase
-@implements IDisposable
-@inject IStringLocalizer<SharedResource> Loc
-@inject AccountService AccountService
-@inject HttpService HttpService
-@inject ProfileService ProfileService
 
 <div class="d-flex flex-column h-100">
 	@if (MainHubService.FirstMatchUser == null)
