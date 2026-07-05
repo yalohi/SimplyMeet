@@ -22,7 +22,6 @@ public partial class SettingsServerPage
 	protected override async Task OnSetupAsync()
 	{
 		await base.OnSetupAsync();
-		AppState.ShowFooter = true;
 	}
 	protected override async Task OnInitializedAsync()
 	{
