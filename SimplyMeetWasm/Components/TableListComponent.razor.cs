@@ -6,22 +6,16 @@ public partial class TableListComponent : ComponentBase
 	// Global Variables
 	//===========================================================================================
 	#region Properties
-	[CascadingParameter]
-	public ContainerComponent<TableListComponent> Container { get; set; }
-	[Parameter]
-	public String Title { get; set; }
-	[Parameter]
-	public String HeaderColorClass { get; set; }
-	[Parameter]
-	public Boolean ShowRemoveRowButton { get; set; }
-	[Parameter]
-	public IReadOnlyList<String> HeaderList { get; set; }
-	[Parameter]
-	public IReadOnlyList<IReadOnlyList<String>> RowList { get; set; }
-	[Parameter]
-	public EventCallback<TableListComponent> SelectedIndexChanged { get; set; }
-	[Parameter]
-	public EventCallback<(TableListComponent, Int32)> RemoveRowClick { get; set; }
+	[Inject] public IStringLocalizer<SharedResource> Loc { get; set; } = default!;
+
+	[CascadingParameter] public ContainerComponent<TableListComponent> Container { get; set; }
+	[Parameter] public String Title { get; set; }
+	[Parameter] public String HeaderColorClass { get; set; }
+	[Parameter] public Boolean ShowRemoveRowButton { get; set; }
+	[Parameter] public IReadOnlyList<String> HeaderList { get; set; }
+	[Parameter] public IReadOnlyList<IReadOnlyList<String>> RowList { get; set; }
+	[Parameter] public EventCallback<TableListComponent> SelectedIndexChanged { get; set; }
+	[Parameter] public EventCallback<(TableListComponent, Int32)> RemoveRowClick { get; set; }
 
 	public Int32 SelectedIndex { get; set; }
 	public Int32 ColumnCount => (HeaderList?.Count ?? 1) + (ShowRemoveRowButton ? 1 : 0);

@@ -1,10 +1,3 @@
-@inject IStringLocalizer<SharedResource> Loc
-@inject AppState AppState
-@inject AccountService AccountService
-@inject HttpService HttpService
-@inject NavigationService NavigationService
-@inject NotificationService NotificationService
-
 @if (!_HasLogin)
 {
 	<div class="card-header bg-primary bg-opacity-75 p-3">
@@ -54,69 +47,4 @@ else
 
 		<button type="button" class="btn btn-danger border-0 w-100" @onclick="OnLogoutClick">@Loc["Logout"]</button>
 	</div>
-}
-
-@code
-{
-	//===========================================================================================
-	// Global Variables
-	//===========================================================================================
-	#region Properties
-	public Boolean IsLoginDisabled => _IsSubmittingLogin || _IsSubmittingGenerateAccount || String.IsNullOrEmpty(_PrivateKey) || _PrivateKey.Length != AccountConstants.PRIVATE_KEY_TEXT_LENGTH;
-	public Boolean IsGenerateAccountDisabled => _IsSubmittingLogin || _IsSubmittingGenerateAccount;
-
-	[Parameter]
-	public String Title { get; set; }
-	#endregion
-	#region Fields
-	private String _PrivateKey;
-	private Boolean _HasLogin;
-	private Boolean _IsSubmittingLogin;
-	private Boolean _IsSubmittingGenerateAccount;
-	#endregion
-
-	//===========================================================================================
-	// Protected Methods
-	//===========================================================================================
-	protected override async Task OnInitializedAsync()
-	{
-		await base.OnInitializedAsync();
-		_HasLogin = await AppState.HasLoginAsync();
-	}
-
-	//===========================================================================================
-	// Private Methods
-	//===========================================================================================
-	private async Task OnPrivateKeyKeyDown(KeyboardEventArgs InArgs)
-	{
-		if ((InArgs.Code == KeyCodeConstants.ENTER || InArgs.Code == KeyCodeConstants.NUMPAD_ENTER) && !String.IsNullOrEmpty(_PrivateKey)) await OnLoginClick();
-	}
-	private async Task OnLoginClick()
-	{
-		_IsSubmittingLogin = true;
-		await AccountService.RequestLoginAsync(_PrivateKey);
-		_HasLogin = await AppState.HasLoginAsync();
-		_IsSubmittingLogin = false;
-	}
-	private async Task OnGenerateAccountClick()
-	{
-		_IsSubmittingGenerateAccount = true;
-		await AccountService.RequestGenerateAccountAsync();
-		_HasLogin = await AppState.HasLoginAsync();
-		_IsSubmittingGenerateAccount = false;
-	}
-	private async Task OnLogoutClick()
-	{
-		await AccountService.LogoutAsync();
-		_HasLogin = await AppState.HasLoginAsync();
-	}
-
-	private void OnProfileClick()
-	{
-		NavigationService.NavigateTo(NavigationConstants.NAV_PROFILE);
-	}
-	private void OnMatchClick()
-	{
-		NavigationService.NavigateTo(NavigationConstants.NAV_MATCH);
-	}
 }

@@ -6,12 +6,10 @@ public partial class ChooseServerComponent : InputBase<String>
 	// Global Variables
 	//===========================================================================================
 	#region Properties
-	[Inject]
-	public IConfiguration Config { get; set; }
-	[Inject]
-	public HttpService HttpService { get; set; }
-	[Inject]
-	public SettingsService SettingsService { get; set; }
+	[Inject] public IStringLocalizer<SharedResource> Loc { get; set; } = default!;
+	[Inject] public IConfiguration Config { get; set; } = default!;
+	[Inject] public HttpService HttpService { get; set; } = default!;
+	[Inject] public SettingsService SettingsService { get; set; } = default!;
 	#endregion
 	#region Fields
 	private ContainerComponent<TableListComponent> _ServerListContainer;

@@ -1,14 +1,12 @@
 namespace SimplyMeetWasm.Components;
 
-public partial class ContainerComponent<T> : ComponentBase where T : ComponentBase
+public partial class NotificationComponent : ComponentBase
 {
 	//===========================================================================================
 	// Global Variables
 	//===========================================================================================
 	#region Properties
-	[Parameter] public RenderFragment ChildContent { get; set; }
-
-	public List<T> ChildComponentList { get; private set; }
+	[Inject] public NotificationService NotificationService { get; set; } = default!;
 	#endregion
 
 	//===========================================================================================
@@ -17,6 +15,6 @@ public partial class ContainerComponent<T> : ComponentBase where T : ComponentBa
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		ChildComponentList = new List<T>();
+		NotificationService.PropertyChanged += (InSender, InArgs) => StateHasChanged();
 	}
 }
