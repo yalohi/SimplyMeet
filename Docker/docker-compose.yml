@@ -5,7 +5,7 @@ services:
 
   wasm:
     hostname: wasm
-    containername: wasm
+    container_name: simplymeet-wasm
     image: ghcr.io/yalohi/simplymeet-wasm:latest
     ports:
       - 5001:5001/tcp
@@ -14,7 +14,7 @@ services:
 
   api:
     hostname: api
-    containername: api
+    container_name: simplymeet-api
     image: ghcr.io/yalohi/simplymeet-api:latest
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
@@ -31,7 +31,7 @@ services:
 
   # wasm-source-github:
   #   hostname: wasm
-  #   containername: wasm
+  #   container_name: simplymeet-wasm
   #   build:
   #     dockerfile: dockerfile-wasm-github
   #   image: simplymeet-wasm
@@ -42,7 +42,7 @@ services:
 
   # api-source-github:
   #   hostname: api
-  #   containername: api
+  #   container_name: simplymeet-api
   #   build:
   #     dockerfile: dockerfile-api-github
   #   image: simplymeet-api
@@ -61,7 +61,7 @@ services:
 
   # wasm-source-local:
   #   hostname: wasm
-  #   containername: wasm
+  #   container_name: simplymeet-wasm
   #   build:
   #     context: ..
   #     dockerfile: Docker/dockerfile-wasm-local
@@ -73,7 +73,7 @@ services:
 
   # api-source-local:
   #   hostname: api
-  #   containername: api
+  #   container_name: simplymeet-api
   #   build:
   #     context: ..
   #     dockerfile: Docker/dockerfile-api-local
